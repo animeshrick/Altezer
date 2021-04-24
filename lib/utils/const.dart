@@ -13,8 +13,9 @@ Widget customText(
   String text,
   Color color,
   double size,
+  {fontWeight}
 ) {
-  return Text(text, style: TextStyle(fontSize: size, color: color));
+  return Text(text, style: TextStyle(fontSize: size, color: color,fontWeight: fontWeight));
 }
 
 /*-------------------------images-------------------------*/
@@ -39,6 +40,8 @@ final foodImg = 'assets/food.jpg';
 final card1 = 'assets/card1.png';
 final card2 = 'assets/card2.png';
 final card3 = 'assets/card3.png';
+final strip = 'assets/strip.png';
+final checkout = 'assets/checkout.gif';
 
 /*-------------------------Fluttertoast-------------------------*/
 

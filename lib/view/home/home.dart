@@ -53,7 +53,7 @@ class _HomeState extends State<Home> {
                       padding: EdgeInsets.zero,
                       onPressed: () {},
                       color: white,
-                      icon: Icon(Icons.card_giftcard),
+                      icon: Icon(Icons.shopping_cart_outlined),
                       label: Text('0')),
                 ),
               ],

@@ -1,8 +1,12 @@
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/view/home/checkout/checkout.dart';
 import 'package:altezar/view/widgets/detailsPageAppBar.dart';
+import 'package:altezar/view/widgets/dropDown.dart';
+import 'package:altezar/view/widgets/searchField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../../widgets/button.dart';
 
@@ -14,13 +18,14 @@ class DealsDetails extends StatefulWidget {
 class _DealsDetailsState extends State<DealsDetails> {
   bool sizeCheckedValue = false;
   bool colorCheckedValue = false;
+  bool pressed = false;
+  TextEditingController quantityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50.0),
-        child: detailsPageAppBar()),
+          preferredSize: Size.fromHeight(50.0), child: detailsPageAppBar()),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -38,17 +43,24 @@ class _DealsDetailsState extends State<DealsDetails> {
                 children: [
                   Text(
                     'Rating of the Product :',
-                    style: Theme.of(context).textTheme.subhead,
+                    style: TextStyle(fontSize: 19),
                   ),
-                  RatingBarIndicator(
-                    rating: 2.75,
-                    itemBuilder: (context, index) => Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                    itemCount: 5,
-                    itemSize: 30.0,
-                    direction: Axis.horizontal,
+                  Row(
+                    children: [
+                      RatingBarIndicator(
+                        rating: 2.5,
+                        itemBuilder: (context, index) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        itemCount: 5,
+                        itemSize: 30.0,
+                        direction: Axis.horizontal,
+                      ),
+                      SizedBox(
+                        width: 0.1.sw,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -155,17 +167,139 @@ class _DealsDetailsState extends State<DealsDetails> {
                 height: 15,
               ),
               SizedBox(
-                  width: 1.sw,
-                  height: 0.06.sh,
-                  child: button(() {}, 'Add to cart', Color(0xff5BC0DE))),
+                  width: 0.95.sw,
+                  height: 0.08.sh,
+                  child: button(() {
+                    // Get.to(CheckOut());
+                    setState(() {
+                      pressed = !pressed;
+                    });
+                  }, pressed ? 'Order Placed' : 'Add to cart',
+                      Color(0xff5BC0DE))),
               SizedBox(
                 height: 15,
               ),
-              SizedBox(
-                  width: 1.sw,
-                  height: 0.06.sh,
-                  child: button(
-                      () {}, '+ Add to List Or Registry', Color(0xff337AB7))),
+              Card(
+                color: Color(0xff337AB7),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top: 0.0, left: 6.0, right: 6.0, bottom: 6.0),
+                  child: ExpansionTile(
+                    backgroundColor: Color(0xff337AB7),
+                    trailing: SizedBox(),
+                    textColor: black,
+                    initiallyExpanded: false,
+                    expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                    title: Container(
+                      height: 0.06.sh,
+                      width: double.infinity,
+                      color: Color(0xff337AB7),
+                      child: Center(
+                        child: Text(
+                          '+ Add to List Or Registry',
+                          style: TextStyle(
+                              color: white,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 18),
+                        ),
+                      ),
+                    ),
+                    children: <Widget>[
+                      ColoredBox(
+                        color: white,
+                        child: Column(
+                          children: [
+                            Text(
+                              'Select List or Regitry and click add item',
+                              style: TextStyle(
+                                  color: black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Select List :',
+                              style: TextStyle(
+                                  color: black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            dropDownWidget('Select Your List or Regitry'),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Quantity :',
+                              style: TextStyle(
+                                  color: black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            searchField(quantityController, 'Enter Quantity'),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Don\'t have a list? ',
+                                  style: TextStyle(
+                                      color: black,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 18),
+                                ),
+                                TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    'Click Here',
+                                    style: TextStyle(
+                                        color: black,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                    height: 0.05.sh,
+                                    width: 0.3.sw,
+                                    child: button(() {}, 'Add item', grey)),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                SizedBox(
+                                    height: 0.05.sh,
+                                    width: 0.3.sw,
+                                    child: button(() {}, 'Cancel', grey)),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // SizedBox(
+              //     width: 1.sw,
+              //     height: 0.06.sh,
+              //     child: button(
+              //         () {}, '+ Add to List Or Registry', Color(0xff337AB7))),
               SizedBox(
                 height: 15,
               ),
@@ -205,12 +339,14 @@ class _DealsDetailsState extends State<DealsDetails> {
                 height: 15,
               ),
               SizedBox(
-                height: 0.06.sh,
-                width: 0.7.sw,
+                width: 0.95.sw,
+                height: 0.08.sh,
                 child: RaisedButton.icon(
                     color: Color(0xff5BC0DE),
-                    onPressed: () {},
-                    icon: Icon(Icons.card_travel_rounded),
+                    onPressed: () {
+                      Get.to(CheckOut());
+                    },
+                    icon: Icon(Icons.shopping_cart),
                     label: Text('Order Cart *(0)* || \$ 0.0')),
               ),
               SizedBox(

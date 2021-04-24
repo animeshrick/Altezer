@@ -54,3 +54,56 @@ Widget listView(int itemCount, Function() onTap, String imgName, Color color,
         );
       });
 }
+
+Widget checkoutListView(
+  int itemCount,
+  Function() onTap,
+  String imgName,
+  Color color,
+  String text1,
+  String text2,
+  String text3,
+  String text4,
+  String text5,
+  String text6,
+  String text7,
+) {
+  return ListView.separated(
+      separatorBuilder: (_, __) => SizedBox(
+            height: 20,
+          ),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: itemCount,
+      itemBuilder: (_, i) {
+        return InkWell(
+          onTap: onTap,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset(
+                imgName,
+                width: 0.4.sw,
+                height: 0.2.sh,
+              ),
+              Text(text1,
+                  style: TextStyle(fontSize: 20, color: Colors.blue[900])),
+              Text(text2,
+                  style: TextStyle(fontSize: 20, color: Colors.green[900])),
+              Text(text3,
+                  style: TextStyle(fontSize: 20, color: Colors.green[900])),
+              Text(text4, style: TextStyle(fontSize: 20, color: grey)),
+              Text(text5,
+                  style: TextStyle(fontSize: 20, color: Color(0xffFF0000))),
+              Text(text6,
+                  style: TextStyle(fontSize: 20, color: Color(0xffFF0000))),
+              Text(text7,
+                  style: TextStyle(fontSize: 20, color: Colors.blue[800])),
+              SizedBox(
+                height: 15,
+              )
+            ],
+          ),
+        );
+      });
+}
