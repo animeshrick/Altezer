@@ -1,11 +1,12 @@
 import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/auths/intro.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+
 import 'appController/appController.dart';
 
 void main() {
@@ -21,6 +22,7 @@ void main() {
   });
 }
 
+//
 class StartApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
