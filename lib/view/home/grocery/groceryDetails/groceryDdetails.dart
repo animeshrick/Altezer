@@ -36,8 +36,18 @@ class _GroceryDetailsState extends State<GroceryDetails> {
               SizedBox(
                   width: double.infinity,
                   child: button(() {}, 'Search', Color(0xffF0AD4E))),
-              listView(6, () {}, oilGrocery, red, 'Vagetable Oil',
-                  'JMD\$252.05 | USD\$1.72  | ', ' + Free Delivary'),
+              SizedBox(
+                height: 20,
+              ),
+              groceryListView(
+                  5,
+                  () {},
+                  groceryImg,
+                  'Envy Tomato',
+                  'Ketchup',
+                  'JMD \$250 | USD\$25.02',
+                  '/bottle in Stock',
+                  '+ FREE DELIVARY')
             ],
           ),
         ),

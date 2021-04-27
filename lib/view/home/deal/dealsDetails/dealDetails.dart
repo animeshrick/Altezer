@@ -346,13 +346,17 @@ class _DealsDetailsState extends State<DealsDetails> {
                     onPressed: () {
                       Get.to(CheckOut());
                     },
-                    icon: Icon(Icons.shopping_cart),
+                    icon: Icon(Icons.shopping_cart_outlined),
                     label: Text('Order Cart *(0)* || \$ 0.0')),
               ),
               SizedBox(
                 height: 15,
               ),
-              Text('Suggestion Items', style: TextStyle(fontSize: 18)),
+              Align(
+                  alignment: Alignment.topLeft,
+                  child: Text('Suggestion Items',
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w400))),
               SizedBox(
                 height: 15,
               ),

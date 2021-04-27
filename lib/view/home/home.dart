@@ -1,89 +1,134 @@
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/auths/intro.dart';
 import 'package:altezar/view/home/deal/deals.dart';
+import 'package:altezar/view/home/store/onTapStore.dart';
+import 'package:altezar/view/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'autoParts/autoParts.dart';
+import 'checkout/checkout.dart';
 import 'food/food.dart';
 import 'grocery/grocery.dart';
-import 'store/store.dart';
+import 'store/dashboard.dart';
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
-  List<Color> tabcolors = [
-    Color(0xffFFFFFF),
-    Color(0xff835A42),
-    Color(0xff9457B0),
-    Color(0xff2ECC71),
-    Color(0xffEC7063),
-  ];
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  var _controller;
+  bool isLogin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 5, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 5,
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(120.0),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FlatButton.icon(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      Get.to(Intro());
-                    },
-                    color: white,
-                    icon: Icon(Icons.person),
-                    label: Text('Sign In')),
-                Image.asset(
-                  appbarImg,
-                  height: 0.1.sh,
-                ),
-                Flexible(
-                  child: FlatButton.icon(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {},
-                      color: white,
-                      icon: Icon(Icons.shopping_cart_outlined),
-                      label: Text('0')),
-                ),
-              ],
+    return Scaffold(
+      drawer: Drawer(
+        child: Text('hello'),
+      ),
+      appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: isLogin,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (!isLogin)
+              FlatButton.icon(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Get.to(Intro());
+                  },
+                  color: white,
+                  icon: Icon(Icons.person),
+                  label: Text('Sign In')),
+            if (isLogin)
+              SizedBox(
+                width: 0.02.sw,
+              ),
+            Image.asset(
+              appbarImg,
+              height: 0.1.sh,
             ),
-            backgroundColor: appbarColor,
-            bottom: TabBar(
-              isScrollable: true,
-              tabs: [
-                Tab(
-                  text: 'Store',
-                ),
-                Tab(
-                  text: 'Deals',
-                ),
-                Tab(
-                  text: 'Grocery',
-                ),
-                Tab(
-                  text: 'Food',
-                ),
-                Tab(
-                  text: 'Auto Parts',
-                ),
-              ],
+            Flexible(
+              child: FlatButton.icon(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Get.to(CheckOut());
+                  },
+                  color: white,
+                  icon: Icon(Icons.shopping_cart_outlined),
+                  label: Text('0')),
+            ),
+          ],
+        ),
+        backgroundColor: appbarColor,
+        // bottom: TabBar(
+        //   controller: _controller,
+        //   isScrollable: true,
+        //   tabs: [
+        //     Tab(
+        //       child: customText("Store", white, 15),
+        //     ),
+        //     Tab(
+        //       // text: 'Deals',
+        //       child: customText("Deals", Color(0xffDC7633), 15),
+        //     ),
+        //     Tab(
+        //       // text: 'Grocery',
+        //       child: customText("Grocery", Color(0xff9457B0), 15),
+        //     ),
+        //     Tab(
+        //       // text: 'Food',
+        //       child: customText("Food", Color(0xff2ECC71), 15),
+        //     ),
+        //     Tab(
+        //       // text: 'Auto Parts',
+        //       child: customText("Auto Parts", Color(0xffEC7063), 15),
+        //     ),
+        //   ],
+        // ),
+      ),
+      // body: TabBarView(
+      //   controller: _controller,
+      //   children: [Store(), Deals(), Grocery(), Food(), AutoParts()],
+      // ),
+      body: Column(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              color: appbarColor,
+              child: Row(
+                children: [
+                  tabbarButton(() {
+                    Get.to(OnTapStore());
+                  }, 'Stores', white, 15.0),
+                  tabbarButton(() {
+                    Get.to(Deals());
+                  }, 'Deals', Color(0xffDC7633), 15.0),
+                  tabbarButton(() {
+                    Get.to(Grocery());
+                  }, 'Grocery', Color(0xff9457B0), 15.0),
+                  tabbarButton(() {
+                    Get.to(Food());
+                  }, 'Food', Color(0xff2ECC71), 15.0),
+                  tabbarButton(() {
+                    Get.to(AutoParts());
+                  }, 'Auto Parts', Color(0xffEC7063), 15.0),
+                ],
+              ),
             ),
           ),
-        ),
-        body: TabBarView(
-          children: [Store(), Deals(), Grocery(), Food(), AutoParts()],
-        ),
+          Expanded(child: DashBoard()),
+        ],
       ),
     );
   }

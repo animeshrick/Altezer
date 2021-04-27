@@ -9,13 +9,9 @@ TextStyle customizeTextStyle(fontWeight, fontSize, fontColor) => TextStyle(
     color: fontColor,
     fontSize: fontSize);
 
-Widget customText(
-  String text,
-  Color color,
-  double size,
-  {fontWeight}
-) {
-  return Text(text, style: TextStyle(fontSize: size, color: color,fontWeight: fontWeight));
+Widget customText(String text, Color color, double size, {fontWeight}) {
+  return Text(text,
+      style: TextStyle(fontSize: size, color: color, fontWeight: fontWeight));
 }
 
 /*-------------------------images-------------------------*/
@@ -31,6 +27,8 @@ final banner4 = 'assets/banner4.png';
 final banner5 = 'assets/banner5.png';
 final banner6 = 'assets/banner6.jpg';
 final banner7 = 'assets/banner7.jpg';
+final banner8 = 'assets/banner8.png';
+final retailSpl = 'assets/retailSpl.png';
 final foodDetails = 'assets/foodDetails.png';
 final groceryImg = 'assets/grocery.png';
 final oilGrocery = 'assets/oilGrocery.jpg';
@@ -61,7 +59,9 @@ final Color white = Colors.white;
 final Color black = Colors.black;
 final Color grey = Colors.grey;
 final Color red = Colors.red;
+final Color blue = Colors.blue;
 final Color buttonColor = Color(0xff337AB7);
+final Color searchBtnColor = Color(0xffEC971F);
 final Color green = Color.fromRGBO(92, 184, 98, 1);
 final Color appbarColor = new Color(0xff2C3E50);
 final Color priceTextColor = Color(0xffFF0000);
@@ -69,11 +69,12 @@ final Color greenColor = Color(0xff5CB85C);
 
 /*-------------------------apis-------------------------*/
 
-final String baseUrl =
-    'https://laravel.gowebbidemo.com/122282/public/api/v1/user';
+final String getallDropdownlist = 'https://demo20.gowebbi.us/ApiHandler/GetCountryList.ashx'; // get
+final String stateList = 'https://demo20.gowebbi.us/ApiHandler/GetStateList.ashx'; //post -- countryId
 
-final String goodsApi = '/get-goods';
 
+
+/* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 
 final String success = "success";

@@ -1,32 +1,30 @@
+import 'package:flutter/material.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class Store extends StatefulWidget {
+class Shopping extends StatefulWidget {
   @override
-  _StoreState createState() => _StoreState();
+  _ShoppingState createState() => _ShoppingState();
 }
 
-class _StoreState extends State<Store> {
+class _ShoppingState extends State<Shopping> {
   TextEditingController searchController = TextEditingController();
 
   final List<String> imgList = [slider1, slider2];
 
   ScrollController _scrollController = ScrollController();
 
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      // _scrollController.animateTo(10,
-      //   duration: Duration(seconds: 5), curve: Curves.easeOut);
       setState(() {
         _scrollController.jumpTo(20);
       });
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -199,6 +197,10 @@ class _StoreState extends State<Store> {
               height: 10,
             ),
             Image.asset(banner4),
+            SizedBox(
+              height: 10,
+            ),
+            Image.asset(banner8),
             SizedBox(
               height: 10,
             ),

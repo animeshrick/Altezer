@@ -11,3 +11,12 @@ Widget button(Function() onPressed, String text, Color color) {
     color: color,
   );
 }
+
+Widget tabbarButton(
+    Function() onPressed, String text, Color textColor, double textSize) {
+  return FlatButton(
+    onPressed: onPressed,
+    color: appbarColor,
+    child: customText(text, textColor, textSize),
+  );
+}

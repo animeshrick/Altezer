@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 
 class AutoPartsDetails extends StatelessWidget {
   TextEditingController searchController = TextEditingController();
+  final String? action;
+
+  AutoPartsDetails({Key? key, this.action}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
