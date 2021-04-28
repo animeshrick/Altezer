@@ -1,10 +1,9 @@
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
-import 'package:altezar/view/widgets/detailsPageAppBar.dart';
 import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:altezar/view/widgets/searchField.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class OnTapStore extends StatelessWidget {
@@ -59,9 +58,10 @@ class OnTapStore extends StatelessWidget {
                 height: 10,
               ),
               SizedBox(
-                  height: 0.07.sh,
-                  width: 1.sw,
-                  child: button(() {}, 'Search', searchBtnColor)),
+                height: 0.07.sh,
+                width: 1.sw,
+                child: button(() {}, 'Search', searchBtnColor, white),
+              ),
               SizedBox(
                 height: 20,
               ),

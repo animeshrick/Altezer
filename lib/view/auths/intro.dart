@@ -80,13 +80,12 @@ class _IntroState extends State<Intro> {
                 autofocus: false,
                 obscureText: isHidden,
                 validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Enter Valid password ";
-                    } else if (value.trim().isEmpty) {
-                      return "Enter Valid password";
-                    }
-                  },
-                
+                  if (value!.isEmpty) {
+                    return "Enter Valid password ";
+                  } else if (value.trim().isEmpty) {
+                    return "Enter Valid password";
+                  }
+                },
                 decoration: InputDecoration(
                   suffixIcon: InkWell(
                       onTap: () {
@@ -109,7 +108,7 @@ class _IntroState extends State<Intro> {
                 child: button(() {
                   print('f');
                   Get.to(Home());
-                }, "Sign In", Colors.blueAccent),
+                }, "Sign In", Colors.blueAccent, white),
               ),
               SizedBox(
                 height: 15,

@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../widgets/button.dart';
+import '../../addRegistry.dart';
 
 class DealsDetails extends StatefulWidget {
   @override
@@ -175,7 +176,7 @@ class _DealsDetailsState extends State<DealsDetails> {
                       pressed = !pressed;
                     });
                   }, pressed ? 'Order Placed' : 'Add to cart',
-                      Color(0xff5BC0DE))),
+                      Color(0xff5BC0DE), white)),
               SizedBox(
                 height: 15,
               ),
@@ -186,7 +187,9 @@ class _DealsDetailsState extends State<DealsDetails> {
                       top: 0.0, left: 6.0, right: 6.0, bottom: 6.0),
                   child: ExpansionTile(
                     backgroundColor: Color(0xff337AB7),
+                    //collapsedBackgroundColor: Colors.white,
                     trailing: SizedBox(),
+                    childrenPadding: EdgeInsets.zero,
                     textColor: black,
                     initiallyExpanded: false,
                     expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -251,18 +254,19 @@ class _DealsDetailsState extends State<DealsDetails> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Don\'t have a list? ',
+                                  'Don\'t have a list?',
                                   style: TextStyle(
                                       color: black,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 18),
                                 ),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.to(AddRegistry());
+                                  },
                                   child: Text(
-                                    'Click Here',
+                                    'Click here',
                                     style: TextStyle(
-                                        color: black,
                                         fontWeight: FontWeight.w400,
                                         fontSize: 18),
                                   ),
@@ -275,14 +279,16 @@ class _DealsDetailsState extends State<DealsDetails> {
                                 SizedBox(
                                     height: 0.05.sh,
                                     width: 0.3.sw,
-                                    child: button(() {}, 'Add item', grey)),
+                                    child: button(() {}, 'Add item',
+                                        Color(0xffE3EDF3), black)),
                                 SizedBox(
                                   width: 20,
                                 ),
                                 SizedBox(
                                     height: 0.05.sh,
                                     width: 0.3.sw,
-                                    child: button(() {}, 'Cancel', grey)),
+                                    child: button(() {}, 'Cancel',
+                                        Color(0xffE3EDF3), black)),
                               ],
                             ),
                             SizedBox(

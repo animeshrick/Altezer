@@ -32,7 +32,7 @@ class AutoPartsDetails extends StatelessWidget {
                   searchController, 'Search Product Name, Brand etc ...'),
               SizedBox(
                   width: double.infinity,
-                  child: button(() {}, 'Search', Color(0xffF0AD4E))),
+                  child: button(() {}, 'Search', Color(0xffF0AD4E), white)),
               listView(6, () {}, parts, red, 'Vagetable Oil',
                   'JMD\$252.05 | USD\$1.72  | ', 'Limited + Free Delivary'),
             ],

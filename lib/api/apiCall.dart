@@ -15,36 +15,7 @@ class Networkcall {
     return networkcall;
   }
 
-  ///------------------------------register---------------
-  // Future<bool> register(
-  //     {name, email, phoneNo, address, latitude, longitude, password}) async {
-  //   Map<String, dynamic> params = {
-  //     'name': name,
-  //     'email': email,
-  //     'phone_no': phoneNo,
-  //     'address': address,
-  //     'latitude': latitude,
-  //     'longitude': longitude,
-  //     'password': password
-  //   };
-  //   final response = await http.post(Uri.parse(registerUrl), body: params);
-  //   print(response.body);
-  //   if (response.statusCode == 200) {
-  //     final myjson = jsonDecode(response.body);
-  //     showToast(myjson['message'], Colors.red);
-  //     if (myjson['status'] == success) {
-  //       sharePrefereceInstance.saveUserDetail(myjson['data']);
-  //       return true;
-  //     } else {
-  //       showToast("msg err", red);
-  //       return false;
-  //     }
-  //   } else {
-  //     // showToast(response.body, Colors.red);
-  //     showToast('The provided credentials are incorrect.', red);
-  //     return false;
-  //   }
-  // }
+
 
   ///demoApi
   Future demo(name) async {
@@ -70,9 +41,11 @@ class Networkcall {
     print(getallDropdownlist);
     try {
       final response = await MyClient().get(Uri.parse(getallDropdownlist));
+      print(response);
       if (response.statusCode == 200) {
         final myjson = jsonDecode(response.body);
         print(myjson);
+        print(response.body);
       } else {
         print('have err');
         throw response.body;
@@ -83,27 +56,7 @@ class Networkcall {
     }
   }
 
-  // Future<List<CategoriesModelData>> getShopCategories() async {
-  //   print(categoriesUrl);
-  //   try {
-  //     final response = await MyClient().get(Uri.parse(categoriesUrl));
-  //     // print('getShopCategories response.body + ${response.body}');
-  //     if (response.statusCode == 200) {
-  //       final myJson = jsonDecode(response.body);
-  //       CategoriesModel model = CategoriesModel.fromJson(myJson);
-  //       if (model.status == success) {
-  //         return model.dataList;
-  //       } else
-  //         throw myJson;
-  //     } else {
-  //       print('have err');
-  //       throw response.body;
-  //     }
-  //   } on SocketException {
-  //     showToast(internetError, red);
-  //     throw internetError;
-  //   }
-  // }
+  
 }
 
 Networkcall networkcallService = new Networkcall();

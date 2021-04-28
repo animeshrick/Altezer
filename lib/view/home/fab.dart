@@ -2,8 +2,8 @@ import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/searchField.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class Fab extends StatelessWidget {
   TextEditingController nameController = TextEditingController();
@@ -77,7 +77,7 @@ class Fab extends StatelessWidget {
                   SizedBox(
                       width: 1.sw,
                       height: 0.07.sh,
-                      child: button(() {}, 'Submit', Color(0xff76B51B))),
+                      child: button(() {}, 'Submit', Color(0xff76B51B), white)),
                 ],
               ),
             ),

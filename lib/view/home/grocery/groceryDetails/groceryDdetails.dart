@@ -35,7 +35,7 @@ class _GroceryDetailsState extends State<GroceryDetails> {
                   searchController, 'Search Product Name, Brand etc ...'),
               SizedBox(
                   width: double.infinity,
-                  child: button(() {}, 'Search', Color(0xffF0AD4E))),
+                  child: button(() {}, 'Search', Color(0xffF0AD4E), white)),
               SizedBox(
                 height: 20,
               ),

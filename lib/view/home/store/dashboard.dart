@@ -2,7 +2,6 @@ import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/home/fab.dart';
 import 'package:altezar/view/home/store/retailSpl.dart';
 import 'package:altezar/view/home/store/shopping.dart';
-import 'package:altezar/view/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,18 +17,12 @@ class _DashBoardState extends State<DashBoard>
 
   final List<String> imgList = [slider1, slider2];
 
-  ScrollController _scrollController = ScrollController();
   var _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 2, vsync: this);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      setState(() {
-        _scrollController.jumpTo(20);
-      });
-    });
   }
 
   @override

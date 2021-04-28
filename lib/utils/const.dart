@@ -14,6 +14,27 @@ Widget customText(String text, Color color, double size, {fontWeight}) {
       style: TextStyle(fontSize: size, color: color, fontWeight: fontWeight));
 }
 
+Widget customInkWellText(
+    Function() onTap, String text, Color color, double size,
+    {fontWeight}) {
+  return InkWell(
+    onTap: onTap,
+    child: Text(text,
+        style: TextStyle(fontSize: size, color: color, fontWeight: fontWeight)),
+  );
+}
+
+Widget customUnderlineText(String text, Color color, double size,
+    {fontWeight}) {
+  return Text(text,
+      style: TextStyle(
+        decoration: TextDecoration.underline,
+        fontSize: size,
+        color: color,
+        fontWeight: fontWeight,
+      ));
+}
+
 /*-------------------------images-------------------------*/
 final logoImage = 'assets/logo.png';
 final altezerLogoImage = 'assets/AltezerLogo.png';
@@ -69,10 +90,10 @@ final Color greenColor = Color(0xff5CB85C);
 
 /*-------------------------apis-------------------------*/
 
-final String getallDropdownlist = 'https://demo20.gowebbi.us/ApiHandler/GetCountryList.ashx'; // get
-final String stateList = 'https://demo20.gowebbi.us/ApiHandler/GetStateList.ashx'; //post -- countryId
-
-
+final String getallDropdownlist =
+    'https://demo20.gowebbi.us/ApiHandler/GetCountryList.ashx'; // get
+final String stateList =
+    'https://demo20.gowebbi.us/ApiHandler/GetStateList.ashx'; //post -- countryId
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";

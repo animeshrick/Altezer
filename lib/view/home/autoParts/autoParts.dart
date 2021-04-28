@@ -1,5 +1,4 @@
 import 'package:altezar/utils/const.dart';
-import 'package:altezar/view/home/autoParts/autoPartsDetails/autoPartsDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:altezar/view/widgets/listView.dart';
@@ -65,7 +64,7 @@ class AutoParts extends StatelessWidget {
                   SizedBox(
                       height: 0.07.sh,
                       width: 1.sw,
-                      child: button(() {}, 'Search', Color(0xffEC971F))),
+                      child: button(() {}, 'Search', Color(0xffEC971F), white)),
                   SizedBox(
                     height: 10,
                   ),

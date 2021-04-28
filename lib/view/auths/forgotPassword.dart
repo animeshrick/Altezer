@@ -69,7 +69,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               SizedBox(
                 width: 1.sw,
                 height: 0.07.sh,
-                child: button(() {}, "Email Temp Password", green),
+                child: button(() {}, "Email Temp Password", green, white),
               ),
               SizedBox(
                 height: 15,

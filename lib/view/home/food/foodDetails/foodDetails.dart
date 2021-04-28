@@ -35,7 +35,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                   searchController, 'Search Product Name, Brand etc ...'),
               SizedBox(
                   width: double.infinity,
-                  child: button(() {}, 'Search', Color(0xffF0AD4E))),
+                  child: button(() {}, 'Search', Color(0xffF0AD4E), white)),
               listView(6, () {}, foodDetails, red, 'Liver or Kidney Large',
                   'JMD\$252.05 | USD\$1.72  | ', 'In stock + Free Delivary'),
             ],

@@ -111,7 +111,7 @@ class _ForgotEmailState extends State<ForgotEmail> {
               SizedBox(
                 width: 1.sw,
                 height: 0.07.sh,
-                child: button(() {}, "Retrive Email Address", green),
+                child: button(() {}, "Retrive Email Address", green, white),
               ),
               SizedBox(
                 height: 15,

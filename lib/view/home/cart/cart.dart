@@ -1,17 +1,16 @@
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/detailsPageAppBar.dart';
-import 'package:altezar/view/widgets/dropDown.dart';
-import 'package:altezar/view/widgets/listView.dart';
+import 'package:altezar/view/widgets/searchField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CheckOut extends StatefulWidget {
+class CartPage extends StatefulWidget {
   @override
-  _CheckOutState createState() => _CheckOutState();
+  _CartPageState createState() => _CartPageState();
 }
 
-class _CheckOutState extends State<CheckOut> {
+class _CartPageState extends State<CartPage> {
   TextEditingController cuponCode = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -24,11 +23,6 @@ class _CheckOutState extends State<CheckOut> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              customText('Delivary Options :', red, 20.0),
-              SizedBox(
-                height: 15,
-              ),
-              dropDownWidget('Delivary Options'),
               Container(
                 margin: const EdgeInsets.all(15.0),
                 padding: const EdgeInsets.all(3.0),
@@ -60,7 +54,8 @@ class _CheckOutState extends State<CheckOut> {
                     SizedBox(
                       height: 5,
                     ),
-                    customText('Subtotal for n items: JMD\$250.40', black, 18.0,
+                    customText(
+                        'Subtotal for 10 items: JMD\$250.40', black, 18.0,
                         fontWeight: FontWeight.w400),
                     SizedBox(
                       height: 5,
@@ -89,23 +84,24 @@ class _CheckOutState extends State<CheckOut> {
                     ),
                     customText('Total in USD: \$250.40', black, 18.0,
                         fontWeight: FontWeight.w400),
-                    // SizedBox(
-                    //   width: 0.1.sw,
-                    //   child: Row(
-                    //     children: [
-                    //       searchField(cuponCode, 'Enter Code'),
-                    //       button(() {}, 'Apply', grey)
-                    //     ],
-                    //   ),
-                    // ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                        width: 0.8.sw,
+                        child: searchField(cuponCode, 'Enter Code')),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                        height: 0.07.sh,
+                        width: 0.8.sw,
+                        child: button(() {}, 'Apply', grey, white)),
                     SizedBox(
                       height: 15,
                     ),
-                    // customText('Please select a delivary option before paying',
-                    //     Color(0xffFF0000), 18.0,
-                    //     fontWeight: FontWeight.w400),
-                    customText(
-                        'Choose payment options', Color(0xffFF0000), 18.0,
+                    customText('\$200.00 JMD Minimum Required To Pay With Card',
+                        Color(0xffFF0000), 18.0,
                         fontWeight: FontWeight.w400),
                     SizedBox(
                       height: 10,
@@ -165,42 +161,15 @@ class _CheckOutState extends State<CheckOut> {
                   ],
                 ),
               ),
+              SizedBox(
+                height: 25,
+              ),
               Center(
-                child: customText('Review ordered List', black, 30.0,
+                child: customText('Your cart is empty', red, 25.0,
                     fontWeight: FontWeight.w400),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  customText('Add note to seller', black, 20.0,
-                      fontWeight: FontWeight.w400),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text('Learn More',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.blue,
-                        )),
-                  ),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.all(15.0),
-                padding: const EdgeInsets.all(3.0),
-                decoration: BoxDecoration(border: Border.all(color: black)),
-                child: checkoutListView(
-                  1,
-                  () {},
-                  oilGrocery,
-                  red,
-                  'Oil 0.5 L',
-                  'JMD\$25.65',
-                  'Delivary Included services fee',
-                  'By: Altazar Fresh',
-                  'Quantity: 1  Price: JMD\$24.26',
-                  'Delete',
-                  'Add note to seller',
-                ),
+              SizedBox(
+                height: 25,
               ),
               customText(
                   '© 2021 - YeahJamaica.com a Product of CITS Jamaica Limited',

@@ -440,11 +440,11 @@ class _SignUpState extends State<SignUp> {
                   SizedBox(
                       width: 0.38.sw,
                       height: 0.065.sh,
-                      child: button(() {}, 'Clear', Colors.green)),
+                      child: button(() {}, 'Clear', Colors.green, white)),
                   SizedBox(
                       width: 0.38.sw,
                       height: 0.065.sh,
-                      child: button(() {}, 'Sign Up', Colors.green)),
+                      child: button(() {}, 'Sign Up', Colors.green, white)),
                 ],
               ),
               SizedBox(

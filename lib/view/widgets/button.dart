@@ -1,14 +1,15 @@
 import 'package:altezar/utils/const.dart';
 import 'package:flutter/material.dart';
 
-Widget button(Function() onPressed, String text, Color color) {
+Widget button(
+    Function() onPressed, String text, Color btnColor, Color textColor) {
   return RaisedButton(
     onPressed: onPressed,
     child: Text(
       text,
-      style: TextStyle(fontSize: 18, color: white),
+      style: TextStyle(fontSize: 18, color: textColor),
     ),
-    color: color,
+    color: btnColor,
   );
 }
 
