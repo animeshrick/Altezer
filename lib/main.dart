@@ -1,7 +1,5 @@
 import 'package:altezar/utils/sharedPref.dart';
-import 'package:altezar/view/auths/intro.dart';
 import 'package:altezar/view/home/home.dart';
-import 'package:altezar/view/home/store/onTapStore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +41,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var returnWidget1 = Home();
-  // var returnWidget1 = OnTapStore();
+  // var returnWidget1 = SignUp();
 
   var scafoldKey = GlobalKey<FormState>();
   var internetStatus = "Unknown";

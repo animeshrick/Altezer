@@ -249,6 +249,27 @@ class _AddRegistryState extends State<AddRegistry> {
                       SizedBox(
                         width: 0.3.sw,
                       ),
+                      /*Column(
+  mainAxisSize: MainAxisSize.min,
+  children: <Widget>[
+    Text(
+      "${selectedDate.toLocal()}".split(' ')[0],
+      style: TextStyle(fontSize: 55, fontWeight: FontWeight.bold),
+    ),
+    SizedBox(
+      height: 20.0,
+    ),
+    RaisedButton(
+      onPressed: () => _selectDate(context), // Refer step 3
+      child: Text(
+        'Select date',
+        style:
+            TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      ),
+      color: Colors.greenAccent,
+    ),
+  ],
+)*/
                       IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.calendar_today),

@@ -1,4 +1,3 @@
-import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/home/deal/deals.dart';
 import 'package:altezar/view/home/orders/orders.dart';
@@ -88,7 +87,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   padding: EdgeInsets.zero,
                   onPressed: () async {
                     // Get.to(Intro());
-                    await networkcallService.getAllDropdownValue();
                   },
                   color: white,
                   icon: Icon(Icons.person),
