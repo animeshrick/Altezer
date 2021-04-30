@@ -67,7 +67,7 @@ final checkout = 'assets/checkout.gif';
 showToast(msg, color) => Fluttertoast.showToast(
     msg: msg,
     toastLength: Toast.LENGTH_LONG,
-    gravity: ToastGravity.CENTER,
+    gravity: ToastGravity.SNACKBAR,
     timeInSecForIosWeb: 1,
     backgroundColor: color,
     textColor: white,
@@ -93,7 +93,9 @@ final Color greenColor = Color(0xff5CB85C);
 final String getallDropdownlist =
     'https://demo20.gowebbi.us/ApiHandler/GetCountryList.ashx'; // get
 final String stateList =
-    'https://demo20.gowebbi.us/ApiHandler/GetStateList.ashx'; //post -- countryId
+    'https://demo20.gowebbi.us/ApiHandler/GetStateList.ashx'; //post
+final String register =
+    'https://demo20.gowebbi.us/ApiHandler/createUser.ashx'; //poat
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";

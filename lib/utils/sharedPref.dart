@@ -1,4 +1,3 @@
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharePreferenceInstance {
@@ -29,18 +28,36 @@ class SharePreferenceInstance {
 
   //keys
   final isLoginKey = 'isLogin';
-  final userToken = 'user_token';
+  final firstNameUser = 'FirstName';
+  final lastNameUser = 'Lastname';
+  final emailUser = 'Email';
+  final phoneUser = 'PhoneNumber';
 
   //isLogin
   void setIsLogin(value) => prefs?.setBool(isLoginKey, value);
   bool? isLogin() => prefs?.getBool(isLoginKey);
 
-  //token
-  void setToken(token) => prefs?.setString(userToken, token);
-  String? getToken() => prefs?.getString(userToken);
+  //isLogin
+  void setFirstName(value) => prefs?.setString(firstNameUser, value);
+  String? getFirstName() => prefs?.getString(firstNameUser);
 
-  void saveUserDetails(jsonResponce) {
-    setToken(jsonResponce['data']['api_token']);
+  //isLogin
+  void setLastName(value) => prefs?.setString(lastNameUser, value);
+  String? getLastName() => prefs?.getString(lastNameUser);
+
+  //isLogin
+  void setUserEmail(value) => prefs?.setString(emailUser, value);
+  String? getUserEmail() => prefs?.getString(emailUser);
+
+  //isLogin
+  void setUserPhone(value) => prefs?.setString(phoneUser, value);
+  String? getUserPhone() => prefs?.getString(phoneUser);
+
+  void saveUserDetails(jsonResponse) {
+    setFirstName(jsonResponse);
+    setLastName(jsonResponse);
+    setUserEmail(jsonResponse);
+    setUserPhone(jsonResponse);
     setIsLogin(true);
   }
 }

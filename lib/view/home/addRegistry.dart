@@ -26,6 +26,19 @@ class _AddRegistryState extends State<AddRegistry> {
   TextEditingController benefitNameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
 
+  DateTime selectedDate = DateTime.now();
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,49 +80,6 @@ class _AddRegistryState extends State<AddRegistry> {
         ),
         backgroundColor: appbarColor,
       ),
-      // drawer: Drawer(
-      //   child: Padding(
-      //     padding: EdgeInsets.fromLTRB(15, 70, 0, 0),
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: [
-      //         customInkWellText(() {
-      //           Get.back();
-      //         }, 'Home', green, 22.0),
-      //         SizedBox(
-      //           height: 20,
-      //         ),
-      //         customInkWellText(() {
-      //           Get.to(CartPage());
-      //         }, 'View Cart', buttonColor, 22.0),
-      //         SizedBox(
-      //           height: 20,
-      //         ),
-      //         customInkWellText(() {
-      //           Get.to(Orders());
-      //         }, 'My Orders', buttonColor, 22.0),
-      //         SizedBox(
-      //           height: 20,
-      //         ),
-      //         customInkWellText(() {
-      //           Get.to(AddRegistry());
-      //         }, 'My List and Registry', buttonColor, 22.0),
-      //         SizedBox(
-      //           height: 20,
-      //         ),
-      //         customInkWellText(() {
-      //           Get.to(AddRegistry());
-      //         }, 'Create List or Registry', buttonColor, 22.0),
-      //         SizedBox(
-      //           height: 20,
-      //         ),
-      //         Flexible(
-      //             child: customInkWellText(
-      //                 () {}, 'Welcome USER || Sign-out', green, 22.0)),
-      //       ],
-      //     ),
-      //   ),
-      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -173,22 +143,19 @@ class _AddRegistryState extends State<AddRegistry> {
                   SizedBox(
                     height: 15,
                   ),
-                  SizedBox(
-                    height: 1.sh,
-                    child: registryListView(
-                      5,
-                      'Registry id : #578641',
-                      'Name : name',
-                      'Type : type',
-                      'Owner : owner',
-                      'Benefit : benefit',
-                      'Event Date : Date',
-                      'Shipping Address : address',
-                      'View List Items',
-                      () {
-                        Get.to(ViewListItems());
-                      },
-                    ),
+                  registryListView(
+                    5,
+                    'Registry id : #578641',
+                    'Name : name',
+                    'Type : type',
+                    'Owner : owner',
+                    'Benefit : benefit',
+                    'Event Date : Date',
+                    'Shipping Address : address',
+                    'View List Items',
+                    () {
+                      Get.to(ViewListItems());
+                    },
                   ),
                 ],
               ),
@@ -247,31 +214,11 @@ class _AddRegistryState extends State<AddRegistry> {
                     children: [
                       customText('Event Date :', black, 15.0),
                       SizedBox(
-                        width: 0.3.sw,
+                        width: 40,
                       ),
-                      /*Column(
-  mainAxisSize: MainAxisSize.min,
-  children: <Widget>[
-    Text(
-      "${selectedDate.toLocal()}".split(' ')[0],
-      style: TextStyle(fontSize: 55, fontWeight: FontWeight.bold),
-    ),
-    SizedBox(
-      height: 20.0,
-    ),
-    RaisedButton(
-      onPressed: () => _selectDate(context), // Refer step 3
-      child: Text(
-        'Select date',
-        style:
-            TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-      ),
-      color: Colors.greenAccent,
-    ),
-  ],
-)*/
+                      Text("${selectedDate.toLocal()}".split(' ')[0]),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () => _selectDate(context),
                         icon: Icon(Icons.calendar_today),
                       ),
                     ],

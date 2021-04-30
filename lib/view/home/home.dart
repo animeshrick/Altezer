@@ -1,15 +1,14 @@
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/view/auths/intro.dart';
 import 'package:altezar/view/home/deal/deals.dart';
-import 'package:altezar/view/home/orders/orders.dart';
 import 'package:altezar/view/home/store/onTapStore.dart';
 import 'package:altezar/view/widgets/button.dart';
+import 'package:altezar/view/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'addRegistry.dart';
 import 'autoParts/autoParts.dart';
-import 'cart/cart.dart';
 import 'checkout/checkout.dart';
 import 'food/food.dart';
 import 'grocery/grocery.dart';
@@ -22,7 +21,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   var _controller;
-  bool isLogin = true;
+  bool isLogin = false;
 
   @override
   void initState() {
@@ -33,49 +32,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(15, 70, 0, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              customInkWellText(() {
-                Get.back();
-              }, 'Home', green, 22.0),
-              SizedBox(
-                height: 20,
-              ),
-              customInkWellText(() {
-                Get.to(CartPage());
-              }, 'View Cart', buttonColor, 22.0),
-              SizedBox(
-                height: 20,
-              ),
-              customInkWellText(() {
-                Get.to(Orders());
-              }, 'My Orders', buttonColor, 22.0),
-              SizedBox(
-                height: 20,
-              ),
-              customInkWellText(() {
-                Get.to(AddRegistry());
-              }, 'My List and Registry', buttonColor, 22.0),
-              SizedBox(
-                height: 20,
-              ),
-              customInkWellText(() {
-                Get.to(AddRegistry());
-              }, 'Create List or Registry', buttonColor, 22.0),
-              SizedBox(
-                height: 20,
-              ),
-              Flexible(
-                  child: customInkWellText(
-                      () {}, 'Welcome USER || Sign-out', green, 22.0)),
-            ],
-          ),
-        ),
-      ),
+      drawer: customDrawer(),
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: isLogin,
@@ -86,7 +43,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               FlatButton.icon(
                   padding: EdgeInsets.zero,
                   onPressed: () async {
-                    // Get.to(Intro());
+                    Get.to(Intro());
                   },
                   color: white,
                   icon: Icon(Icons.person),

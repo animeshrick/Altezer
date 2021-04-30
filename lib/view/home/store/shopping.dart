@@ -1,8 +1,8 @@
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 
 class Shopping extends StatefulWidget {
   @override
@@ -153,7 +153,7 @@ class _ShoppingState extends State<Shopping> {
             SizedBox(
                 height: 0.07.sh,
                 width: 1.sw,
-                child: button(() {}, 'Search', Color(0xffEC971F),white)),
+                child: button(() {}, 'Search', Color(0xffEC971F), white)),
             SizedBox(
               height: 20,
             ),

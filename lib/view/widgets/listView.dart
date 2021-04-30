@@ -119,7 +119,7 @@ Widget groceryListView(int itemCount, Function() onTap, String imgName,
 
 Widget checkoutListView(
   int itemCount,
-  Function() onTap,
+  Function() delete,
   String imgName,
   Color color,
   String text1,
@@ -129,6 +129,7 @@ Widget checkoutListView(
   String text5,
   String text6,
   String text7,
+  Function() addNotes,
 ) {
   return ListView.separated(
       separatorBuilder: (_, __) => SizedBox(
@@ -138,34 +139,35 @@ Widget checkoutListView(
       physics: NeverScrollableScrollPhysics(),
       itemCount: itemCount,
       itemBuilder: (_, i) {
-        return InkWell(
-          onTap: onTap,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(
-                imgName,
-                width: 0.4.sw,
-                height: 0.2.sh,
-              ),
-              Text(text1,
-                  style: TextStyle(fontSize: 20, color: Colors.blue[900])),
-              Text(text2,
-                  style: TextStyle(fontSize: 20, color: Colors.green[900])),
-              Text(text3,
-                  style: TextStyle(fontSize: 20, color: Colors.green[900])),
-              Text(text4, style: TextStyle(fontSize: 20, color: grey)),
-              Text(text5,
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset(
+              imgName,
+              width: 0.4.sw,
+              height: 0.2.sh,
+            ),
+            Text(text1,
+                style: TextStyle(fontSize: 20, color: Colors.blue[900])),
+            Text(text2,
+                style: TextStyle(fontSize: 20, color: Colors.green[900])),
+            Text(text3,
+                style: TextStyle(fontSize: 20, color: Colors.green[900])),
+            Text(text4, style: TextStyle(fontSize: 20, color: grey)),
+            Text(text5,
+                style: TextStyle(fontSize: 20, color: Color(0xffFF0000))),
+            InkWell(
+              onTap: delete,
+              child: Text(text6,
                   style: TextStyle(fontSize: 20, color: Color(0xffFF0000))),
-              Text(text6,
-                  style: TextStyle(fontSize: 20, color: Color(0xffFF0000))),
-              Text(text7,
-                  style: TextStyle(fontSize: 20, color: Colors.blue[800])),
-              SizedBox(
-                height: 15,
-              )
-            ],
-          ),
+            ),
+            TextButton(onPressed: addNotes, child: customText(text7, blue, 20)),
+            // Text(text7,
+            //     style: TextStyle(fontSize: 20, color: Colors.blue[800])),
+            SizedBox(
+              height: 15,
+            )
+          ],
         );
       });
 }
@@ -189,23 +191,28 @@ Widget registryListView(
       height: 20,
     ),
     itemBuilder: (_, __) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          customText(text1, black, 18.0),
-          customText(text2, black, 18.0),
-          customText(text3, black, 18.0),
-          customText(text4, black, 18.0),
-          customText(text5, black, 18.0),
-          customText(text6, black, 18.0),
-          customText(text7, black, 18.0),
-          SizedBox(
-            height: 10,
+      return Card(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              customText(text1, black, 18.0),
+              customText(text2, black, 18.0),
+              customText(text3, black, 18.0),
+              customText(text4, black, 18.0),
+              customText(text5, black, 18.0),
+              customText(text6, black, 18.0),
+              customText(text7, black, 18.0),
+              SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                  onTap: textButtonTap,
+                  child: customText(text8, Color(0xff0000FF), 18.0)),
+            ],
           ),
-          InkWell(
-              onTap: textButtonTap,
-              child: customText(text8, Color(0xff0000FF), 18.0)),
-        ],
+        ),
       );
     },
   );

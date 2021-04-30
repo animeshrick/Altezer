@@ -7,6 +7,9 @@ import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+import 'intro.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -15,6 +18,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -27,6 +31,7 @@ class _SignUpState extends State<SignUp> {
       _monthNumberValue,
       _yearValue,
       _stateValue;
+  String? stateId, countryId, dateId, monthId, yearId, genderID;
 
   bool isChecked = false;
 
@@ -77,6 +82,7 @@ class _SignUpState extends State<SignUp> {
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
                         child: Text(
@@ -146,6 +152,8 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+
                         controller: emailController,
                         autofocus: false,
                         // obscureText: true,
@@ -171,11 +179,14 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       TextFormField(
-                        // initialValue: '+91 5346',
+                        keyboardType: TextInputType.number,
                         controller: mobileController,
+                        maxLength: 10,
                         autofocus: false,
                         obscureText: false,
                         decoration: InputDecoration(
+                          counterText: '',
+                          // helperText: '6',
                           hintText: 'Phone Number',
                           border: OutlineInputBorder(),
                         ),
@@ -221,13 +232,15 @@ class _SignUpState extends State<SignUp> {
                             setState(() {
                               _countryValue = newValue!;
                             });
-                            var id = _countryList
+                            countryId = _countryList
                                 .where((element) =>
                                     element.countryName == _countryValue)
                                 .toList()[0]
-                                .countryId;
+                                .countryId
+                                .toString();
+
                             _stateValue = null;
-                            _getState(id);
+                            _getState(countryId!);
                           },
                           items: _countryList.map((value) {
                             return DropdownMenuItem<String>(
@@ -276,6 +289,13 @@ class _SignUpState extends State<SignUp> {
                             setState(() {
                               _stateValue = newValue!;
                             });
+                            stateId = _stateList!
+                                .where((element) =>
+                                    element.stateName == _stateValue)
+                                .toList()
+                                .first
+                                .stateId
+                                .toString();
                           },
                           items: _stateList!
                               .map<DropdownMenuItem<String>>((value) {
@@ -323,6 +343,13 @@ class _SignUpState extends State<SignUp> {
                                 setState(() {
                                   _monthDayValue = newValue!;
                                 });
+                                dateId = _monthDayList
+                                    .where((element) =>
+                                        element.monthDay == _monthDayValue)
+                                    .toList()
+                                    .first
+                                    .monthDay
+                                    .toString();
                               },
                               items: _monthDayList.map((value) {
                                 return DropdownMenuItem<String>(
@@ -353,6 +380,14 @@ class _SignUpState extends State<SignUp> {
                                 setState(() {
                                   _monthNumberValue = newValue!;
                                 });
+                                monthId = _monthNumberList
+                                    .where((element) =>
+                                        element.monthNumber ==
+                                        _monthNumberValue)
+                                    .toList()
+                                    .first
+                                    .monthNumber
+                                    .toString();
                               },
                               items: _monthNumberList.map((value) {
                                 return DropdownMenuItem<String>(
@@ -383,6 +418,13 @@ class _SignUpState extends State<SignUp> {
                                 setState(() {
                                   _yearValue = newValue!;
                                 });
+                                yearId = _yearList
+                                    .where(
+                                        (element) => element.year == _yearValue)
+                                    .toList()
+                                    .first
+                                    .yearId
+                                    .toString();
                               },
                               items: _yearList.map((value) {
                                 return DropdownMenuItem<String>(
@@ -432,6 +474,13 @@ class _SignUpState extends State<SignUp> {
                             setState(() {
                               _genderValue = newValue!;
                             });
+                            genderID = _genderList
+                                .where(
+                                    (element) => element.gender == _genderValue)
+                                .toList()
+                                .first
+                                .genderId
+                                .toString();
                           },
                           items: _genderList.map((value) {
                             return DropdownMenuItem<String>(
@@ -456,7 +505,7 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       TextFormField(
-                        controller: passwordController,
+                        keyboardType: TextInputType.number,
                         autofocus: false,
                         obscureText: false,
                         decoration: InputDecoration(
@@ -466,9 +515,8 @@ class _SignUpState extends State<SignUp> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return "Enter your answer  ";
-                          } else if (value.trim().isEmpty) {
-                            return "Enter your answer  ";
-                          }
+                          } else if ((random1! + random2!) != int.parse(value))
+                            return 'Incorrect answer';
                         },
                       ),
                       SizedBox(
@@ -479,8 +527,11 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  SizedBox(
+                    width: 0.03.sw,
+                  ),
                   Checkbox(
                     value: isChecked,
                     onChanged: (value) {
@@ -489,6 +540,9 @@ class _SignUpState extends State<SignUp> {
                     activeColor: greenColor,
                     checkColor: Colors.white,
                     tristate: false,
+                  ),
+                  SizedBox(
+                    width: 0.06.sw,
                   ),
                   Text(
                     'Accept our Terms, Condition & Privacy',
@@ -504,7 +558,7 @@ class _SignUpState extends State<SignUp> {
                       height: 0.065.sh,
                       child: button(() {
                         clear();
-                      }, 'Clear', Colors.green, white)),
+                      }, 'Clear', green, white)),
                   SizedBox(
                       width: 0.38.sw,
                       height: 0.065.sh,
@@ -514,14 +568,37 @@ class _SignUpState extends State<SignUp> {
                             showToast('Please select Country', red);
                           else if (_stateValue == null)
                             showToast('Please select State', red);
-                          else if (_monthDayValue == null &&
-                              _monthNumberValue == null &&
+                          else if (_monthDayValue == null ||
+                              _monthNumberValue == null ||
                               _yearValue == null)
                             showToast('Please select DOB', red);
                           else if (_genderValue == null)
                             showToast('Please select Gender', red);
+                          else if (!isChecked)
+                            showToast(
+                                'Please accept terms and conditions', red);
+                          else {
+                            _newUserRegistration(
+                              firstNameController.text,
+                              lastNameController.text,
+                              mobileController.text,
+                              emailController.text,
+                              countryId!,
+                              stateId!,
+                              dateId!,
+                              monthId!,
+                              yearId!,
+                              genderID!,
+                              /* '669',
+                            '23',
+                            '1024',
+                            '1050',
+                            '1090',
+                            '1106',*/
+                            );
+                          }
                         }
-                      }, 'Sign Up', Colors.green, white)),
+                      }, 'Sign Up', green, white)),
                 ],
               ),
               SizedBox(
@@ -532,6 +609,48 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
+  }
+
+  void _newUserRegistration(
+      String firstName,
+      String lastName,
+      String phone,
+      String email,
+      String country,
+      String state,
+      String day,
+      String month,
+      String year,
+      String gender) async {
+    print('call');
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      bool result = await networkcallService.registerUser(
+          firstName: firstName,
+          lastName: lastName,
+          phone: phone,
+          email: email,
+          genderId: gender,
+          countryId: country,
+          stateId: state,
+          dayId: day,
+          monthId: month,
+          yearId: year);
+      setState(() {
+        isLoading = false;
+      });
+      if (result) {
+        showToast("Registation Done !", greenColor);
+        Get.offAll(Intro());
+      }
+    } catch (e) {
+      isLoading = false;
+      print(e);
+      setState(() {});
+      showToast(e, red);
+    }
   }
 
   void _getData() async {
@@ -546,9 +665,9 @@ class _SignUpState extends State<SignUp> {
     setState(() {});
   }
 
-  void _getState(int id) async {
+  void _getState(String id) async {
     showProgress(context);
-    _stateList = await networkcallService.getStateValue(id.toString());
+    _stateList = await networkcallService.getStateValue(id);
     hideProgress(context);
     setState(() {});
   }

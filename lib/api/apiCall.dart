@@ -68,6 +68,55 @@ class Networkcall {
       throw internetError;
     }
   }
+
+  /// -------------------- register ----------------------
+  Future<bool> registerUser({
+    String? firstName,
+    String? lastName,
+    String? phone,
+    String? email,
+    String? genderId,
+    String? countryId,
+    String? stateId,
+    String? dayId,
+    String? monthId,
+    String? yearId,
+  }) async {
+    try {
+      print('register $register');
+      Map<String, dynamic> data = {
+        'Firstname': firstName,
+        'Lastname': lastName,
+        'PhoneNumber': phone,
+        'Email': email,
+        'Gender': genderId,
+        'Day': dayId,
+        'Month': monthId,
+        'Year': yearId,
+        'Country': countryId,
+        'state': stateId
+      };
+      print(data);
+      final response = await MyClient().post(Uri.parse(register), body: data);
+      print(response);
+      if (response.statusCode == 200) {
+        final myjson = jsonDecode(response.body);
+        // showToast(myjson['message'], grey);
+        if (myjson['status'] == success) {
+          return true;
+        } else {
+          showToast(myjson['message'], red);
+          return false;
+        }
+      } else {
+        print('have err');
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
 }
 
 Networkcall networkcallService = new Networkcall();

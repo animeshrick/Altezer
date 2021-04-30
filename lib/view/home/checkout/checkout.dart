@@ -5,6 +5,7 @@ import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:altezar/view/widgets/listView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class CheckOut extends StatefulWidget {
   @override
@@ -148,7 +149,9 @@ class _CheckOutState extends State<CheckOut> {
                           () {}, 'Pay cash on delivary', Colors.green, white),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        learnMore();
+                      },
                       child: Text('Learn More',
                           style: TextStyle(
                             fontSize: 19,
@@ -175,7 +178,9 @@ class _CheckOutState extends State<CheckOut> {
                   customText('Add note to seller', black, 20.0,
                       fontWeight: FontWeight.w400),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      learnMore();
+                    },
                     child: Text('Learn More',
                         style: TextStyle(
                           fontSize: 18,
@@ -189,18 +194,19 @@ class _CheckOutState extends State<CheckOut> {
                 padding: const EdgeInsets.all(3.0),
                 decoration: BoxDecoration(border: Border.all(color: black)),
                 child: checkoutListView(
-                  1,
-                  () {},
-                  oilGrocery,
-                  red,
-                  'Oil 0.5 L',
-                  'JMD\$25.65',
-                  'Delivary Included services fee',
-                  'By: Altazar Fresh',
-                  'Quantity: 1  Price: JMD\$24.26',
-                  'Delete',
-                  'Add note to seller',
-                ),
+                    1,
+                    () {},
+                    oilGrocery,
+                    red,
+                    'Oil 0.5 L',
+                    'JMD\$25.65',
+                    'Delivary Included services fee',
+                    'By: Altazar Fresh',
+                    'Quantity: 1  Price: JMD\$24.26',
+                    'Delete',
+                    'Add note to seller', () {
+                  addNotes();
+                }),
               ),
               customText(
                   '© 2021 - YeahJamaica.com a Product of CITS Jamaica Limited',
@@ -211,6 +217,146 @@ class _CheckOutState extends State<CheckOut> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> addNotes() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          scrollable: true,
+          title: Text('Add a note to sellers  '),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                customText('Enter A Quick Note To The Seller About Your Order:',
+                    black, 20),
+                SizedBox(
+                  height: 15,
+                ),
+                TextField(
+                  decoration: new InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: black,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: grey),
+                    ),
+                    hintText: 'Add a note here ',
+                  ),
+                  // expands: true,
+                  keyboardType: TextInputType.multiline,
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                button(() {}, 'Save and Close', white, black),
+                SizedBox(
+                  height: 5,
+                ),
+                button(() {
+                  Get.back();
+                }, 'Close', white, black),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> learnMore() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Learn More About the \'Add Note To Seller\' feature'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                /* --------- Service Fee ---------*/
+                Center(child: customText("Service Fee", blue, 25)),
+                customText(
+                    "This is a fee that is charged on Grocery Items only and includes delivery. If the customer decided to pick-up their grocery in then the delivery fee will be waved from the service fee. ",
+                    black,
+                    15),
+                SizedBox(
+                  height: 15,
+                ),
+                /* --------- Shipping and Handling ---------*/
+                Center(child: customText("Shipping and Handling", blue, 25)),
+                customText(
+                    'This is the delivery fee for none grocery items. This fee is based on the weignt of the items and the amount of sellers you are buying from.',
+                    black,
+                    15),
+                SizedBox(
+                  height: 15,
+                ),
+                /* --------- Service Fee ---------*/
+                Center(
+                    child: customText(
+                        "How \"Pick-Up and Pay In-Store Or Cash On Delivery(C.O.D)\" Works",
+                        blue,
+                        25)),
+                customText(
+                    'The “Order and Pick-Up and Pay In-Store” is a feature of YeahJamaicaShop.com which allows you to order products or services form your favorite stores and pick-up and pay at the store. This allows you to save time, eliminate longline, save on delivery and reserve high demand products. The following are some example of how you can use the “Order and Pick-Up and Pay In-Store” feature:',
+                    black,
+                    15),
+                SizedBox(
+                  height: 5,
+                ),
+                customText(
+                    '❂	Save time walking around in-store and waiting in line to check out. Example: order grocery online, auto parts, home improvement and building material, food and restaurant to-go',
+                    black,
+                    15),
+                SizedBox(
+                  height: 5,
+                ),
+                customText(
+                    '❂	C.O.D means Cash On Delivery. This feature allows customers to order online and pay with cash an have their purchase delivered. NB: customers will have to pay for delivery as well',
+                    black,
+                    15),
+                SizedBox(
+                  height: 5,
+                ),
+                customText(
+                    '❂	Save on delivery cost by simply pick-up and pay for your purchase ',
+                    black,
+                    15),
+                SizedBox(
+                  height: 5,
+                ),
+                customText(
+                    '❂	Beat the holiday rush by ordering online ', black, 15),
+                SizedBox(
+                  height: 5,
+                ),
+                customText('❂	Reserve high demand items to avoid sold-out!',
+                    black, 15),
+                SizedBox(
+                  height: 5,
+                ),
+                customText('❂	Reserve that Hot Deals & Specials', black, 15),
+                SizedBox(
+                  height: 5,
+                ),
+                customText('❂	Add more', black, 15),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
