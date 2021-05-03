@@ -1,4 +1,5 @@
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/auths/intro.dart';
 import 'package:altezar/view/home/deal/deals.dart';
 import 'package:altezar/view/home/store/onTapStore.dart';
@@ -21,7 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   var _controller;
-  bool isLogin = false;
+  bool? isLogin = false;
 
   @override
   void initState() {
@@ -31,24 +32,28 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    isLogin = sp.isLogin();
+    print(isLogin);
     return Scaffold(
       drawer: customDrawer(),
       appBar: AppBar(
         elevation: 0,
-        automaticallyImplyLeading: isLogin,
+        automaticallyImplyLeading: isLogin!,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (!isLogin)
+            if (!isLogin!)
               FlatButton.icon(
                   padding: EdgeInsets.zero,
                   onPressed: () async {
-                    Get.to(Intro());
+                    Get.to(Intro(
+                      isChecked: false,
+                    ));
                   },
                   color: white,
                   icon: Icon(Icons.person),
                   label: Text('Sign In')),
-            if (isLogin)
+            if (isLogin!)
               SizedBox(
                 width: 0.02.sw,
               ),

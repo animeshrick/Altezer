@@ -36,7 +36,7 @@ class _DashBoardState extends State<DashBoard>
         backgroundColor: Colors.green,
       ),
       appBar: AppBar(
-        toolbarHeight: 0.11.sh,
+        toolbarHeight: 0.13.sh,
         backgroundColor: white,
         bottom: TabBar(
           // labelPadding: EdgeInsets.only(left: 15, right: 35, bottom: 15),
@@ -47,6 +47,7 @@ class _DashBoardState extends State<DashBoard>
           indicator: BoxDecoration(color: Colors.blue),
           tabs: [
             Tab(
+              iconMargin: EdgeInsets.zero,
               icon: CircleAvatar(
                   backgroundColor: Color(0xffACACAC),
                   child: Icon(
@@ -57,6 +58,7 @@ class _DashBoardState extends State<DashBoard>
               child: customText('Shopping', black, 18),
             ),
             Tab(
+              iconMargin: EdgeInsets.zero,
               icon: CircleAvatar(
                   backgroundColor: Color(0xffACACAC),
                   child: Icon(

@@ -14,8 +14,7 @@ class ApplicationStarterController extends GetxController {
 
   initializeApplicationState() {
     Future.delayed(const Duration(seconds: 0), () {
-      if (sharePrefereceInstance.isLogin() != null &&
-          sharePrefereceInstance.isLogin()!) {
+      if (sp.isLogin() != null && sp.isLogin()!) {
         state.value = ApplicationState.LoggedIn;
       } else
         state.value = ApplicationState.LoggedOut;

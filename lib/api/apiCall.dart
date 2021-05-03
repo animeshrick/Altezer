@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:altezar/models/getLists.dart';
 import 'package:altezar/models/getStateList.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/utils/sharedPref.dart';
 
 import 'MyClient.dart';
 
@@ -70,7 +71,7 @@ class Networkcall {
   }
 
   /// -------------------- register ----------------------
-  Future<bool> registerUser({
+  Future<String> registerUser({
     String? firstName,
     String? lastName,
     String? phone,
@@ -103,10 +104,10 @@ class Networkcall {
         final myjson = jsonDecode(response.body);
         // showToast(myjson['message'], grey);
         if (myjson['status'] == success) {
-          return true;
+          return myjson['message'];
         } else {
           showToast(myjson['message'], red);
-          return false;
+          return '';
         }
       } else {
         print('have err');
@@ -116,6 +117,44 @@ class Networkcall {
       showToast(internetError, red);
       throw internetError;
     }
+  }
+
+  Future loginAPICall(
+      {String? email,
+      bool? isChecked,
+      String? password,
+      String? confirmPassword}) async {
+    //try {
+    print(' login  $login');
+    Map<dynamic, dynamic> data = {
+      'Email': email,
+      'IsChecked': isChecked.toString(),
+      'password': password,
+      'confirmpassword': confirmPassword,
+    };
+    print(jsonEncode(data));
+    final response = await MyClient().post(Uri.parse(login), body: data);
+    print(response.body);
+    if (response.statusCode == 200) {
+      final myjson = jsonDecode(response.body);
+      // showToast(myjson['message'], grey);
+      if (myjson['status'] == success) {
+        if (isChecked!) {
+          sp.saveUserDetails(myjson['data']);
+        }
+        return myjson;
+      } else {
+        if (isChecked!) showToast(myjson['message'], red);
+        return myjson;
+      }
+    } else {
+      print('have err');
+      throw response.body;
+    }
+    /*} on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }*/
   }
 }
 

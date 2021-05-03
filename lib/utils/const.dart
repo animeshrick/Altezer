@@ -89,13 +89,11 @@ final Color priceTextColor = Color(0xffFF0000);
 final Color greenColor = Color(0xff5CB85C);
 
 /*-------------------------apis-------------------------*/
-
-final String getallDropdownlist =
-    'https://demo20.gowebbi.us/ApiHandler/GetCountryList.ashx'; // get
-final String stateList =
-    'https://demo20.gowebbi.us/ApiHandler/GetStateList.ashx'; //post
-final String register =
-    'https://demo20.gowebbi.us/ApiHandler/createUser.ashx'; //poat
+final String _baseUrl = 'https://demo20.gowebbi.us/ApiHandler';
+final String getallDropdownlist = '$_baseUrl/GetCountryList.ashx'; // get
+final String stateList = '$_baseUrl/GetStateList.ashx'; //post
+final String register = '$_baseUrl/createUser.ashx'; //poat
+final String login = '$_baseUrl/login.ashx'; //poat
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";

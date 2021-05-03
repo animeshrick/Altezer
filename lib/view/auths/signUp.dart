@@ -73,7 +73,7 @@ class _SignUpState extends State<SignUp> {
     random2 = Random().nextInt(10);
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(right: 15, left: 15, top: 35),
+        padding: const EdgeInsets.only(right: 30, left: 30, top: 35),
         child: Form(
           key: _formKey,
           child: Column(
@@ -529,9 +529,6 @@ class _SignUpState extends State<SignUp> {
               Row(
                 // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SizedBox(
-                    width: 0.03.sw,
-                  ),
                   Checkbox(
                     value: isChecked,
                     onChanged: (value) {
@@ -541,12 +538,11 @@ class _SignUpState extends State<SignUp> {
                     checkColor: Colors.white,
                     tristate: false,
                   ),
-                  SizedBox(
-                    width: 0.06.sw,
-                  ),
-                  Text(
-                    'Accept our Terms, Condition & Privacy',
-                    style: TextStyle(fontSize: 16, color: Colors.blue),
+                  Flexible(
+                    child: Text(
+                      'Accept our Terms,Condition & Privacy',
+                      style: TextStyle(fontSize: 16, color: Colors.blue),
+                    ),
                   ),
                 ],
               ),
@@ -627,7 +623,7 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         isLoading = true;
       });
-      bool result = await networkcallService.registerUser(
+      String result = await networkcallService.registerUser(
           firstName: firstName,
           lastName: lastName,
           phone: phone,
@@ -641,9 +637,10 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         isLoading = false;
       });
-      if (result) {
-        showToast("Registation Done !", greenColor);
-        Get.offAll(Intro());
+      if (result.isNotEmpty) {
+        // showToast("Registation Done !", greenColor);
+        // Get.offAll(Intro());
+        _showMyDialog(result);
       }
     } catch (e) {
       isLoading = false;
@@ -651,6 +648,31 @@ class _SignUpState extends State<SignUp> {
       setState(() {});
       showToast(e, red);
     }
+  }
+
+  void _showMyDialog(String result) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // title: customText('Registation done successfully !', green, 18.0),
+          content: Container(
+            child: customText(result, black, 20.0),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Get.offAll(Intro(
+                  isChecked: false,
+                ));
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _getData() async {

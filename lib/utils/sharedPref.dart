@@ -14,12 +14,7 @@ class SharePreferenceInstance {
 
   //shared pref initialize
   init() async {
-    SharedPreferences.getInstance()
-        .then((value) => prefs = value)
-        .catchError((e) {
-      print("Got error: ${e.error}"); // Finally, callback fires.
-      // Future completes with 42.
-    });
+    prefs = await SharedPreferences.getInstance();
   }
 
   void clear() {
@@ -28,14 +23,14 @@ class SharePreferenceInstance {
 
   //keys
   final isLoginKey = 'isLogin';
-  final firstNameUser = 'FirstName';
-  final lastNameUser = 'Lastname';
-  final emailUser = 'Email';
-  final phoneUser = 'PhoneNumber';
+  final firstNameUser = 'YJUserFirstname';
+  final lastNameUser = 'YJUserLastname';
+  final emailUser = 'YJUserEmail';
+  final userId = 'YJUserId';
 
   //isLogin
   void setIsLogin(value) => prefs?.setBool(isLoginKey, value);
-  bool? isLogin() => prefs?.getBool(isLoginKey);
+  bool? isLogin() => prefs?.getBool(isLoginKey) ?? false;
 
   //isLogin
   void setFirstName(value) => prefs?.setString(firstNameUser, value);
@@ -50,16 +45,18 @@ class SharePreferenceInstance {
   String? getUserEmail() => prefs?.getString(emailUser);
 
   //isLogin
-  void setUserPhone(value) => prefs?.setString(phoneUser, value);
-  String? getUserPhone() => prefs?.getString(phoneUser);
+  void setUserId(value) => prefs?.setInt(userId, value);
+  int? getUserId() => prefs?.getInt(userId);
 
-  void saveUserDetails(jsonResponse) {
-    setFirstName(jsonResponse);
-    setLastName(jsonResponse);
-    setUserEmail(jsonResponse);
-    setUserPhone(jsonResponse);
+  void saveUserDetails(userData) {
+    print('sp userdata - $userData');
+
+    setFirstName(userData['YJUserFirstname']);
+    setLastName(userData['YJUserLastname']);
+    setUserEmail(userData['YJUserEmail']);
+    setUserId(userData['YJUserId']);
     setIsLogin(true);
   }
 }
 
-SharePreferenceInstance sharePrefereceInstance = SharePreferenceInstance();
+SharePreferenceInstance sp = SharePreferenceInstance();

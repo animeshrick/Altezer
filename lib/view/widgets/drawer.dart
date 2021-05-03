@@ -1,4 +1,5 @@
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/home/addRegistry.dart';
 import 'package:altezar/view/home/cart/cart.dart';
 import 'package:altezar/view/home/orders/orders.dart';
@@ -44,7 +45,10 @@ Widget customDrawer() {
           ),
           Flexible(
               child: customInkWellText(
-                  () {}, 'Welcome USER || Sign-out', green, 22.0)),
+                  () {},
+                  'Welcome ${sp.getFirstName()} ${sp.getLastName()} \n Sign-out',
+                  green,
+                  22.0)),
         ],
       ),
     ),

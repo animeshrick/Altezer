@@ -15,7 +15,7 @@ void main() {
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((_) async {
     Provider.debugCheckInvalidValueType = null;
-    sharePrefereceInstance.init();
+    await sp.init();
     runApp(
       StartApp(),
     );
