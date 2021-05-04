@@ -1,8 +1,11 @@
+import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import 'intro.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override
@@ -10,9 +13,9 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-  var emailcontroller = TextEditingController();
-
-  final formKey = GlobalKey<FormState>();
+  var emailController = TextEditingController();
+  bool isLoading = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +58,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 height: 10,
               ),
               TextFormField(
-                controller: emailcontroller,
+                keyboardType: TextInputType.emailAddress,
+                controller: emailController,
                 autofocus: false,
-                obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'Email',
                   border: OutlineInputBorder(),
@@ -69,7 +72,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               SizedBox(
                 width: 1.sw,
                 height: 0.07.sh,
-                child: button(() {}, "Email Temp Password", green, white),
+                child: button(() {
+                  _forgotPassword(emailController.text);
+                }, "Email Temp Password", green, white),
               ),
               SizedBox(
                 height: 15,
@@ -103,6 +108,61 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           ),
         ),
       ),
+    );
+  }
+
+  _forgotPassword(String? email) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      showProgress(context);
+      var result = await networkcallService.forgotPasswordAPICall(email: email);
+      hideProgress(context);
+
+      if (result != null) {
+        var message = result['message'];
+        var password = result['data']['Password'];
+        _showForgotPassDialogue(message, password);
+      }
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _showForgotPassDialogue(String message, String data) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: customText('Email Temporary Password !', green, 18.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              customText(message, Colors.black, 20),
+              SizedBox(
+                height: 15,
+              ),
+              customText(
+                  'Your temporary password is - $data', Colors.black, 20),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Get.to(Intro(isChecked: false));
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

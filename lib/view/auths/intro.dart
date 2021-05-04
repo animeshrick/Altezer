@@ -31,7 +31,7 @@ class _IntroState extends State<Intro> {
   void initState() {
     super.initState();
     confpasswordcontroller = TextEditingController(text: "");
-    passwordcontroller = TextEditingController(text: "");
+    // passwordcontroller = TextEditingController(text: "");
   }
 
   @override
@@ -74,6 +74,14 @@ class _IntroState extends State<Intro> {
                   ),
                 ),
                 TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Enter Valid email ";
+                    } else if (value.trim().isEmpty) {
+                      return "Enter Valid email";
+                    }
+                  },
                   controller: emailcontroller,
                   autofocus: false,
                   decoration: InputDecoration(
@@ -91,7 +99,6 @@ class _IntroState extends State<Intro> {
                   ),
                 ),
                 TextFormField(
-                  keyboardType: TextInputType.number,
                   controller: passwordcontroller,
                   autofocus: false,
                   obscureText: isHidden,
@@ -167,12 +174,19 @@ class _IntroState extends State<Intro> {
                       child: Text('Forgot your password',
                           style: TextStyle(color: Colors.blue, fontSize: 18)),
                     ),
-                    InkWell(
-                      onTap: () {
-                        Get.to(ForgotEmail());
-                      },
-                      child: Text('Forgot your email',
-                          style: TextStyle(color: Colors.blue, fontSize: 18)),
+                    SizedBox(
+                      child: customText('|', black, 16,
+                          fontWeight: FontWeight.bold),
+                      width: 5,
+                    ),
+                    Flexible(
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(ForgotEmail());
+                        },
+                        child: Text('Forgot your email',
+                            style: TextStyle(color: Colors.blue, fontSize: 18)),
+                      ),
                     ),
                   ],
                 )
@@ -186,35 +200,40 @@ class _IntroState extends State<Intro> {
 
   _userLogin(String? email, String? password, String? confPassword,
       bool? isChecked) async {
-    //try {
-    setState(() {
-      isLoading = true;
-    });
-    var result = await networkcallService.loginAPICall(
-        email: email,
-        password: password,
-        isChecked: isChecked,
-        confirmPassword: confPassword);
-    setState(() {
-      isLoading = false;
-    });
-    print('res- $result');
-    if (result != null) {
-      var checked = result['data']['IsChecked'];
-      print('c- $checked');
-      if (checked != null) {
-        _showLoginDialog();
-      } else {
-        showToast("Login Successfully", greenColor);
-        Get.offAll(Home());
-      }
-    }
-    /*} catch (e) {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      showProgress(context);
+      var result = await networkcallService.loginAPICall(
+          email: email,
+          password: password,
+          isChecked: isChecked,
+          confirmPassword: confPassword);
+      hideProgress(context);
+
+      setState(() {
+        isLoading = false;
+      });
+      // print('res- $result');
+      if (result['data'] != null) {
+        var checked = result['data']['IsChecked'];
+        // print('c- $checked');
+        if (checked != null) {
+          _showLoginDialog();
+        } else {
+          showToast("Login Successfully", greenColor);
+          Get.offAll(Home());
+        }
+      } else
+        showToast(result['message'], red);
+    } catch (e) {
       // isLoading = false;
       print(e.toString());
       // setState(() {});
       // showToast(e, red);
-    }*/
+    }
   }
 
   void _showLoginDialog() async {

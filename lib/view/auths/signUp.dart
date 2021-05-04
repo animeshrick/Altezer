@@ -186,7 +186,6 @@ class _SignUpState extends State<SignUp> {
                         obscureText: false,
                         decoration: InputDecoration(
                           counterText: '',
-                          // helperText: '6',
                           hintText: 'Phone Number',
                           border: OutlineInputBorder(),
                         ),
