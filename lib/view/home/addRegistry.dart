@@ -20,6 +20,7 @@ class AddRegistry extends StatefulWidget {
 }
 
 class _AddRegistryState extends State<AddRegistry> {
+  bool valueFirst = false;
   bool isLogin = true;
   TextEditingController searchController = TextEditingController();
   TextEditingController listNameController = TextEditingController();
@@ -196,8 +197,12 @@ class _AddRegistryState extends State<AddRegistry> {
                         width: 0.23.sw,
                       ),
                       Checkbox(
-                        value: false,
-                        onChanged: (x) {},
+                        onChanged: (val) {
+                          setState(() {
+                            valueFirst = val!;
+                          });
+                        },
+                        value: valueFirst,
                       ),
                     ],
                   ),

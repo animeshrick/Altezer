@@ -140,9 +140,9 @@ class Networkcall {
         final myjson = jsonDecode(response.body);
         // showToast(myjson['message'], grey);
         if (myjson['status'] == success) {
-          if (isChecked!) {
-            sp.saveUserDetails(myjson['data']);
-          }
+          //if (isChecked!) {
+          sp.saveUserDetails(myjson['data']);
+          //}
           return myjson;
         } else {
           if (isChecked!) showToast(myjson['message'], red);

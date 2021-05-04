@@ -62,6 +62,8 @@ class _OrdersState extends State<Orders> with SingleTickerProviderStateMixin {
         toolbarHeight: 0.2.sh,
         backgroundColor: appbarColor,
         bottom: TabBar(
+          labelPadding: EdgeInsets.zero,
+          labelStyle: TextStyle(fontSize: 13),
           labelColor: black,
           controller: _controller,
           indicatorColor: Colors.blue,
@@ -69,6 +71,7 @@ class _OrdersState extends State<Orders> with SingleTickerProviderStateMixin {
           indicator: BoxDecoration(color: Colors.blue),
           tabs: [
             Tab(
+              iconMargin: EdgeInsets.zero,
               icon: CircleAvatar(
                   radius: 15,
                   backgroundColor: Color(0xffACACAC),
@@ -89,8 +92,8 @@ class _OrdersState extends State<Orders> with SingleTickerProviderStateMixin {
                     color: white,
                     size: 15,
                   )),
-              // text: 'Retail Specials',
-              child: customText('Online Order', black, 14),
+              text: 'Online Order',
+              // child: customText('Online Order', black, 14),
             ),
             Tab(
               icon: CircleAvatar(
@@ -101,8 +104,8 @@ class _OrdersState extends State<Orders> with SingleTickerProviderStateMixin {
                     color: white,
                     size: 15,
                   )),
-              // text: 'Retail Specials',
-              child: customText('Receipt', black, 14),
+              text: 'Receipt',
+              // child: customText('Receipt', black, 14),
             ),
           ],
         ),

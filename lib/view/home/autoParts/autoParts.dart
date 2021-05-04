@@ -80,7 +80,7 @@ class AutoParts extends StatelessWidget {
                     color: Color(0xff5BC0DE),
                     onPressed: () {},
                     icon: Icon(Icons.card_travel_rounded),
-                    label: Text('Order Cart *(0)* || \$ 0.0')),
+                    label: Text('Order Cart *(0)* || \$0.0')),
               ),
             ),
           ],

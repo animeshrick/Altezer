@@ -171,7 +171,7 @@ class _IntroState extends State<Intro> {
                       onTap: () {
                         Get.to(ForgotPassword());
                       },
-                      child: Text('Forgot your password',
+                      child: Text('Forgot password',
                           style: TextStyle(color: Colors.blue, fontSize: 18)),
                     ),
                     SizedBox(
@@ -184,7 +184,7 @@ class _IntroState extends State<Intro> {
                         onTap: () {
                           Get.to(ForgotEmail());
                         },
-                        child: Text('Forgot your email',
+                        child: Text('Forgot email',
                             style: TextStyle(color: Colors.blue, fontSize: 18)),
                       ),
                     ),
@@ -243,64 +243,66 @@ class _IntroState extends State<Intro> {
       builder: (BuildContext context) {
         return AlertDialog(
           // title: customText('Registation done successfully !', green, 18.0),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "New Password:",
-                style: TextStyle(
-                  fontSize: 18,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "New Password:",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: newpasswordcontroller,
-                autofocus: false,
-                obscureText: isHidden,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Enter password ";
-                  } else if (value.trim().isEmpty) {
-                    return "Enter password";
-                  }
-                },
-                decoration: InputDecoration(
-                  hintText: 'New Password',
-                  border: OutlineInputBorder(),
+                SizedBox(
+                  height: 5,
                 ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "Confirm Password:",
-                style: TextStyle(
-                  fontSize: 18,
+                TextFormField(
+                  controller: newpasswordcontroller,
+                  autofocus: false,
+                  obscureText: isHidden,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Enter password ";
+                    } else if (value.trim().isEmpty) {
+                      return "Enter password";
+                    }
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'New Password',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: confpasswordcontroller,
-                autofocus: false,
-                obscureText: isHidden,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Enter password ";
-                  } else if (value.trim().isEmpty) {
-                    return "Enter password";
-                  }
-                },
-                decoration: InputDecoration(
-                  hintText: 'Confirm Password',
-                  border: OutlineInputBorder(),
+                SizedBox(
+                  height: 15,
                 ),
-              ),
-            ],
+                Text(
+                  "Confirm Password:",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: confpasswordcontroller,
+                  autofocus: false,
+                  obscureText: isHidden,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Enter password ";
+                    } else if (value.trim().isEmpty) {
+                      return "Enter password";
+                    }
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Confirm Password',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(
