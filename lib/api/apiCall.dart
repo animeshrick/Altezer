@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:altezar/models/getCategories.dart';
 import 'package:altezar/models/getLists.dart';
 import 'package:altezar/models/getStateList.dart';
+import 'package:altezar/models/getSubCatList.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 
@@ -25,11 +27,9 @@ class Networkcall {
       final response = await MyClient().get(Uri.parse(getallDropdownlist));
       print(response);
       if (response.statusCode == 200) {
-        // final myjson = jsonDecode(response.body);
         final myResponse = GetLists.fromJson(jsonDecode(response.body));
         print(response.body);
         if (myResponse.status == success) {
-          // return myResponse.;
           return myResponse;
         } else {
           showToast('myResponse.message --- failed', red);
@@ -57,6 +57,54 @@ class Networkcall {
         print(response.body);
         if (myResponse.status == success) {
           return myResponse.stateList;
+        } else {
+          showToast('myResponse.message --- failed', red);
+        }
+      } else {
+        print('have err');
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// -------------- get categories ----------------
+  Future<List<CategoriesList>?> getCategoriesAPICall() async {
+    print('get categories --  $getCategories');
+    try {
+      final response = await MyClient().get(Uri.parse(getCategories));
+      if (response.statusCode == 200) {
+        print("response.body get categories ${response.body}");
+        final myResponse = GetCategories.fromJson(jsonDecode(response.body));
+        if (myResponse.status == success) {
+          return myResponse.catList;
+        } else {
+          showToast('myResponse.message --- failed', red);
+        }
+      } else {
+        print('have err');
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// --------------------- get sub cat  -----------------------
+  Future<List<GetSubCateProductsList>?> getSubCatAPICall(String catId) async {
+    print('get sub cat -  $getSubCategories');
+    try {
+      Map<String, dynamic> data = {'CatId': catId.toString()};
+      final response =
+          await MyClient().post(Uri.parse(getSubCategories), body: data);
+      if (response.statusCode == 200) {
+        print("response.body get sub cat ${response.body}");
+        final myResponse = GetSubCatList.fromJson(jsonDecode(response.body));
+        if (myResponse.status == success) {
+          return myResponse.dataList;
         } else {
           showToast('myResponse.message --- failed', red);
         }

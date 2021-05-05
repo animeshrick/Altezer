@@ -93,10 +93,12 @@ final String _baseUrl = 'https://demo20.gowebbi.us/ApiHandler';
 //
 final String getallDropdownlist = '$_baseUrl/GetCountryList.ashx'; // get
 final String stateList = '$_baseUrl/GetStateList.ashx'; //post
-final String register = '$_baseUrl/createUser.ashx'; //poat
-final String login = '$_baseUrl/login.ashx'; //poat
-final String forgotEmail = '$_baseUrl/ForgotEmail.ashx'; //poat
-final String forgotPassword = '$_baseUrl/ForgotPassword.ashx'; //poat
+final String register = '$_baseUrl/createUser.ashx'; //post
+final String login = '$_baseUrl/login.ashx'; //post
+final String forgotEmail = '$_baseUrl/ForgotEmail.ashx'; //post
+final String forgotPassword = '$_baseUrl/ForgotPassword.ashx'; //post
+final String getCategories = '$_baseUrl/getCategory.ashx'; //get
+final String getSubCategories = '$_baseUrl/getSubCategory.ashx'; //post
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
