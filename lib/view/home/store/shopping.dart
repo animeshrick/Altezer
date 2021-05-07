@@ -1,9 +1,13 @@
 import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/getCategories.dart';
+import 'package:altezar/models/getLatestDeals.dart';
+import 'package:altezar/models/getProductsData.dart';
+import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/models/getSubCatList.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
-import 'package:altezar/view/widgets/listView.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,16 +20,33 @@ class Shopping extends StatefulWidget {
 class _ShoppingState extends State<Shopping> {
   TextEditingController searchController = TextEditingController();
 
-  String? _categoriesName, _subCatName; //value
-  String? productId;
+  String? _categoriesName, _subCatName, _sortingValue; //value
+  String? _catId, _subCatId, _sortId;
   List<CategoriesList> _catList = [];
   List<GetSubCateProductsList> _subCatList = [];
+  List<GetSortByData> _sortingDataList = [];
+  List<ProductListData> list = [];
+
+  Future<List<ProductListData>?>? _prodFuture;
+  Future<List<LatestDealsList>?>? _latestDealsFuture;
+  final _listContr = ScrollController();
+  int _pageIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    _latestDealsFuture = networkcallService.getAllLatestDealsAPICall();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
+      _getSortData();
+    });
+
+    _listContr.addListener(() {
+      if (_listContr.position.atEdge) {
+        print('contr- ${_listContr.position.pixels}');
+        _pageIndex++;
+        _getProductData();
+      }
     });
   }
 
@@ -37,6 +58,7 @@ class _ShoppingState extends State<Shopping> {
         right: 10,
       ),
       child: SingleChildScrollView(
+        controller: _listContr,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -67,20 +89,20 @@ class _ShoppingState extends State<Shopping> {
                     );
                   }).toList(),
                   onChanged: (String? value) {
-                    print('value $value');
                     setState(() {
                       _categoriesName = value!;
                     });
 
-                    productId = _catList
+                    _catId = _catList
                         .where((element) => element.prdName == _categoriesName)
                         .toList()
                         .first
                         .prdId
                         .toString();
                     _subCatName = null;
-                    _getSubCat(productId!);
-                    print('productId - $productId');
+                    _getSubCat(_catId!);
+                    print('productId - $_catId');
+                    //_getProductData();
                   },
                 ),
               ),
@@ -115,6 +137,14 @@ class _ShoppingState extends State<Shopping> {
                     setState(() {
                       _subCatName = value!;
                     });
+                    _subCatId = _subCatList
+                        .where((element) => element.prdName == _subCatName)
+                        .toList()
+                        .first
+                        .prdCatSubId
+                        .toString();
+                    print('_subCatId  $_subCatId');
+                    _getProductData();
                   },
                 ),
               ),
@@ -124,7 +154,6 @@ class _ShoppingState extends State<Shopping> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButton<String>(
-                  value: 'Sort By',
                   elevation: 16,
                   icon: CircleAvatar(
                       radius: 15,
@@ -135,23 +164,30 @@ class _ShoppingState extends State<Shopping> {
                         size: 30,
                       )),
                   isExpanded: true,
-                  items: <String>[
-                    'Sort By',
-                    'Dept2',
-                    'Dept2',
-                    'Dept2',
-                    'Dept2',
-                  ].map((e) {
-                    return DropdownMenuItem(
-                      value: e,
+                  value: _sortingValue, //'Sort By',
+                  hint: Text('Choose a sorting option'),
+                  items: _sortingDataList.map((value) {
+                    return DropdownMenuItem<String>(
+                      value: value.sortName,
                       child: Text(
-                        e,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        value.sortName,
+                        style: TextStyle(fontSize: 18),
                       ),
                     );
                   }).toList(),
-                  onChanged: (value) {},
+                  onChanged: (String? value) {
+                    setState(() {
+                      _sortingValue = value!;
+                    });
+                    _sortId = _sortingDataList
+                        .where((element) => element.sortName == _sortingValue)
+                        .toList()
+                        .first
+                        .sortId
+                        .toString();
+                    print('_sortId  $_sortId');
+                    _getProductData();
+                  },
                 ),
               ),
             ),
@@ -177,7 +213,7 @@ class _ShoppingState extends State<Shopping> {
             SizedBox(
               height: 20,
             ),
-            if (productId == null)
+            if (_catId == null)
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,26 +222,52 @@ class _ShoppingState extends State<Shopping> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text('Lateest Deals/Cupons',
+                    Text('Latest Deals/Coupons',
                         style: TextStyle(
                             color: grey,
                             fontSize: 18,
                             fontWeight: FontWeight.bold)),
-                    Container(
-                      padding: EdgeInsets.only(top: 12),
-                      // width: 1.sw,
-                      height: 0.19.sh,
-                      child: Swiper(
-                          // controller: _scrollController,
-                          scrollDirection: Axis.horizontal,
-                          duration: 2000,
-                          itemCount: 10,
-                          autoplay: true,
-                          viewportFraction: 0.4,
-                          itemBuilder: (_, i) {
-                            return Container(child: Image.asset(slider2));
-                          }),
-                    ),
+                    FutureBuilder<List<LatestDealsList>?>(
+                        future: _latestDealsFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            List? list = snapshot.data!;
+
+                            return Container(
+                              padding: EdgeInsets.only(top: 12),
+                              // width: 1.sw,
+                              height: 0.19.sh,
+                              child: Swiper(
+                                  // controller: _scrollController,
+                                  scrollDirection: Axis.horizontal,
+                                  duration: 2000,
+                                  itemCount: list.length,
+                                  autoplay: true,
+                                  viewportFraction: 0.4,
+                                  itemBuilder: (_, i) {
+                                    return CachedNetworkImage(
+                                      imageUrl:
+                                          "$imgBaseUrl${list[i].latestprdImgUrl}",
+                                      height: 0.05.sh,
+                                      width: 0.05.sw,
+                                      placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Image.network(imageNotFound),
+                                    );
+                                  }),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child:
+                                    customText('${snapshot.error}', red, 20.0));
+                          } else
+                            return Center(
+                              child: CupertinoActivityIndicator(
+                                radius: 25,
+                              ),
+                            );
+                        }),
                     SizedBox(
                       height: 20,
                     ),
@@ -231,23 +293,91 @@ class _ShoppingState extends State<Shopping> {
             SizedBox(
               height: 10,
             ),
-            if (productId != null)
-              viewListedItemsListView2(
-                  3,
-                  oilGrocery,
-                  blue,
-                  'Harbal oil',
-                  blue,
-                  '500 ml',
-                  green,
-                  'JMD \$33.65',
-                  green,
-                  'USD \$45.03',
-                  red,
-                  'Out of stock',
-                  Colors.red,
-                  'View Details',
-                  'Add to cart'),
+            if (_catId != null)
+              FutureBuilder<List<ProductListData>?>(
+                  future: _prodFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      list.addAll(snapshot.data!);
+
+                      return ListView.separated(
+                          separatorBuilder: (_, __) => SizedBox(
+                                height: 20,
+                              ),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: list.length,
+                          itemBuilder: (_, i) {
+                            return Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: "$imgBaseUrl${list[i].prdImg}",
+                                      width: 0.3.sw,
+                                      height: 0.2.sh,
+                                      placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Image.network(imageNotFound),
+                                    ),
+                                    // Image.network(
+                                    //   // 'https://demo20.gowebbi.us//ProductImages/arg-sp-1020_basep_2.jpg',
+                                    //   '$imgBaseUrl${list[i].prdImg}',
+                                    //   width: 0.4.sw,
+                                    //   height: 0.2.sh,
+                                    // ),
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text('${list[i].prdFullName}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blue)),
+                                          Text('Price - ${list[i].price}',
+                                              style: TextStyle(
+                                                  fontSize: 14, color: green)),
+                                          Text(
+                                              'Size- ${list[i].size} |Seller- ${list[i].sellerName} ',
+                                              style: TextStyle(
+                                                  fontSize: 14, color: grey)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    button(() {}, 'View Details', green, white),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    button(() {}, 'Add to cart',
+                                        Color(0xffD9534F), white),
+                                  ],
+                                ),
+                              ],
+                            );
+                          });
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: customText('${snapshot.error}', red, 20.0));
+                    } else
+                      return Center(
+                        child: CupertinoActivityIndicator(
+                          radius: 25,
+                        ),
+                      );
+                  })
           ],
         ),
       ),
@@ -255,10 +385,10 @@ class _ShoppingState extends State<Shopping> {
   }
 
   void _getData() async {
-    final result = await networkcallService.getCategoriesAPICall();
-    if (result != null) {
+    final categoryResult = await networkcallService.getCategoriesAPICall();
+    if (categoryResult != null) {
       setState(() {
-        _catList = result;
+        _catList = categoryResult;
       });
     }
   }
@@ -267,6 +397,23 @@ class _ShoppingState extends State<Shopping> {
     showProgress(context);
     _subCatList = (await networkcallService.getSubCatAPICall(catId))!;
     hideProgress(context);
+    setState(() {});
+    _getProductData();
+  }
+
+  void _getSortData() async {
+    final sortResult = await networkcallService.getSortByDataAPICall();
+
+    if (sortResult != null) {
+      setState(() {
+        _sortingDataList = sortResult;
+      });
+    }
+  }
+
+  void _getProductData() {
+    _prodFuture = networkcallService.getProductsAPICall(
+        _catId!, '', _subCatId ?? '0', _sortId ?? '0', _pageIndex.toString());
     setState(() {});
   }
 }

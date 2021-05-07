@@ -1,13 +1,30 @@
+import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/getStoreList.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:altezar/view/widgets/searchField.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class OnTapStore extends StatelessWidget {
+class OnTapStore extends StatefulWidget {
+  @override
+  _OnTapStoreState createState() => _OnTapStoreState();
+}
+
+class _OnTapStoreState extends State<OnTapStore> {
   TextEditingController searchController = TextEditingController();
+
+  Future<StoreList>? _storefuture;
+  @override
+  void initState() {
+    super.initState();
+    _storefuture =
+        networkcallService.getStoreListAPICall('0', '') as Future<StoreList>?;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,28 +82,44 @@ class OnTapStore extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                height: 1.0.sh,
-                child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: 10,
-                    itemBuilder: (context, i) {
-                      return Card(
-                        color: grey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(strip),
-                            customText('Altezer Fresh', black, 18),
-                          ],
+              FutureBuilder<Object>(
+                  future: null,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      // List list = snapshot.hasData;
+                      return SizedBox(
+                        height: 1.0.sh,
+                        child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            itemCount: 10,
+                            itemBuilder: (context, i) {
+                              return Card(
+                                color: grey,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(strip),
+                                    customText('Altezer Fresh', black, 18),
+                                  ],
+                                ),
+                              );
+                            }),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: customText('${snapshot.error}', red, 20.0));
+                    } else
+                      return Center(
+                        child: CupertinoActivityIndicator(
+                          radius: 25,
                         ),
                       );
-                    }),
-              ),
+                  }),
             ],
           ),
         ),

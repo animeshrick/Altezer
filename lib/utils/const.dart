@@ -62,6 +62,8 @@ final card3 = 'assets/card3.png';
 final strip = 'assets/strip.png';
 final checkout = 'assets/checkout.gif';
 
+final imageNotFound =
+    'https://mea.nipponpaint-autorefinishes.com/wp-content/uploads/sites/18/2017/07/No-image-found-60x60.jpg';
 /*-------------------------Fluttertoast-------------------------*/
 
 showToast(msg, color) => Fluttertoast.showToast(
@@ -90,16 +92,23 @@ final Color greenColor = Color(0xff5CB85C);
 
 /*-------------------------apis-------------------------*/
 final String _baseUrl = 'https://demo20.gowebbi.us/ApiHandler';
+final String imgBaseUrl = 'https://demo20.gowebbi.us/';
 //
-final String getallDropdownlist = '$_baseUrl/GetCountryList.ashx'; // get
-final String stateList = '$_baseUrl/GetStateList.ashx'; //post
-final String register = '$_baseUrl/createUser.ashx'; //post
-final String login = '$_baseUrl/login.ashx'; //post
-final String forgotEmail = '$_baseUrl/ForgotEmail.ashx'; //post
-final String forgotPassword = '$_baseUrl/ForgotPassword.ashx'; //post
-final String getCategories = '$_baseUrl/getCategory.ashx'; //get
-final String getSubCategories = '$_baseUrl/getSubCategory.ashx'; //post
-
+final String getallDropdownlist = '$_baseUrl/GetCountryList.ashx';
+final String stateList = '$_baseUrl/GetStateList.ashx';
+final String register = '$_baseUrl/createUser.ashx';
+final String login = '$_baseUrl/login.ashx';
+final String forgotEmail = '$_baseUrl/ForgotEmail.ashx';
+final String forgotPassword = '$_baseUrl/ForgotPassword.ashx';
+final String getCategories = '$_baseUrl/getCategory.ashx';
+final String getSubCategories = '$_baseUrl/getSubCategory.ashx';
+final String getSortByData = '$_baseUrl/GetSortByData.ashx';
+final String getProducts = '$_baseUrl/GetProduct.ashx';
+final String getGroceryStoreList = '$_baseUrl/GetGroceryStoreList.ashx';
+final String getGroceryStateList = '$_baseUrl/GetGroceryStateList.ashx';
+final String getLatestDeals = '$_baseUrl/GetLatestDeals.ashx';
+final String getStoreList = '$_baseUrl/GetStoresList.ashx';
+final String getDeals = '$_baseUrl/GetDeals.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 
