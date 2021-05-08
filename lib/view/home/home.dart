@@ -33,7 +33,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     isLogin = sp.isLogin();
-    print(isLogin);
+    // print(isLogin);
 
     return Scaffold(
       drawer: customDrawer(),

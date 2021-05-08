@@ -109,6 +109,10 @@ final String getGroceryStateList = '$_baseUrl/GetGroceryStateList.ashx';
 final String getLatestDeals = '$_baseUrl/GetLatestDeals.ashx';
 final String getStoreList = '$_baseUrl/GetStoresList.ashx';
 final String getDeals = '$_baseUrl/GetDeals.ashx';
+final String getResType = '$_baseUrl/GetRestaurantTypeList.ashx';
+final String getResList = '$_baseUrl/GetRestaurantsList.ashx';
+final String getAutoCat = '$_baseUrl/GetAutoPartsCategory.ashx';
+final String getAutoSubCat = '$_baseUrl/GetAutoPartsSubcategory.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 

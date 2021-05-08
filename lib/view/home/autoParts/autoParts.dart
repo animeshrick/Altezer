@@ -1,3 +1,6 @@
+import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/getAutoPartsCat.dart';
+import 'package:altezar/models/getAutoPartsSubCat.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/dropDown.dart';
@@ -7,8 +10,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class AutoParts extends StatelessWidget {
+class AutoParts extends StatefulWidget {
+  @override
+  _AutoPartsState createState() => _AutoPartsState();
+}
+
+class _AutoPartsState extends State<AutoParts> {
   TextEditingController searchController = TextEditingController();
+
+  String? _autoCatVal, _autoSubCatVal;
+  String? _autoCatId, _autoSubCatId;
+
+  List<AutoPartsCategory>? _autoPartsCategoryList;
+  List<AutoPartsSubcategory>? _autoPartsSubCategoryList;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      _getData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,8 +73,91 @@ class AutoParts extends StatelessWidget {
               child: Column(
                 children: [
                   Image.asset(autoParts),
-                  dropDownWidget('Parts Category'),
-                  dropDownWidget('Parts sub category'),
+                  Card(
+                    color: Color(0xffEDEDED),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownButton<String>(
+                        elevation: 16,
+                        icon: CircleAvatar(
+                            radius: 15,
+                            backgroundColor: grey,
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                              color: white,
+                              size: 30,
+                            )),
+                        isExpanded: true,
+                        value: _autoCatVal,
+                        hint: Text('Parts Category'),
+                        items: _autoPartsCategoryList?.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value.name,
+                            child: Text(
+                              value.name,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _autoCatVal = value!;
+                          });
+                          _autoCatId = _autoPartsCategoryList!
+                              .where((element) => element.name == _autoCatVal)
+                              .toList()
+                              .first
+                              .productCategorySub1Id
+                              .toString();
+                          print('_autoCatId  $_autoCatId');
+                          _getSubAutoCat(_autoCatId!);
+                        },
+                      ),
+                    ),
+                  ),
+                  Card(
+                    color: Color(0xffEDEDED),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownButton<String>(
+                        elevation: 16,
+                        icon: CircleAvatar(
+                            radius: 15,
+                            backgroundColor: grey,
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                              color: white,
+                              size: 30,
+                            )),
+                        isExpanded: true,
+                        value: _autoSubCatVal,
+                        hint: Text('Parts Sub-Category'),
+                        items: _autoPartsSubCategoryList?.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value.subname,
+                            child: Text(
+                              value.subname,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _autoSubCatVal = value!;
+                          });
+                          _autoSubCatId = _autoPartsSubCategoryList!
+                              .where((element) =>
+                                  element.subname == _autoSubCatVal)
+                              .toList()
+                              .first
+                              .productCategorySub2Id
+                              .toString();
+                          print('_autoSubCatId  $_autoSubCatId');
+                          // _getSubAutoCat(_autoCatId!);
+                        },
+                      ),
+                    ),
+                  ),
                   dropDownWidget('Sort by'),
                   SizedBox(
                     height: 10,
@@ -87,5 +193,22 @@ class AutoParts extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _getData() async {
+    final autoCatResult = await networkcallService.getPartsCatAPICall();
+    if (autoCatResult != null) {
+      setState(() {
+        _autoPartsCategoryList = autoCatResult;
+      });
+    }
+  }
+
+  void _getSubAutoCat(String autoCatId) async {
+    showProgress(context);
+    _autoPartsSubCategoryList =
+        (await networkcallService.getPartsSubCatAPICall(autoCatId))!;
+    hideProgress(context);
+    setState(() {});
   }
 }

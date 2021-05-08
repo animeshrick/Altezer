@@ -4,6 +4,7 @@ import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:altezar/view/widgets/searchField.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,12 +18,11 @@ class OnTapStore extends StatefulWidget {
 class _OnTapStoreState extends State<OnTapStore> {
   TextEditingController searchController = TextEditingController();
 
-  Future<StoreList>? _storefuture;
+  Future<List<StoreList>?>? _storefuture;
   @override
   void initState() {
     super.initState();
-    _storefuture =
-        networkcallService.getStoreListAPICall('0', '') as Future<StoreList>?;
+    _storefuture = networkcallService.getStoreListAPICall('0', '');
   }
 
   @override
@@ -82,14 +82,16 @@ class _OnTapStoreState extends State<OnTapStore> {
               SizedBox(
                 height: 20,
               ),
-              FutureBuilder<Object>(
-                  future: null,
+              FutureBuilder<List<StoreList>?>(
+                  future: _storefuture,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      // List list = snapshot.hasData;
+                      var list = snapshot.data;
                       return SizedBox(
                         height: 1.0.sh,
                         child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
@@ -103,8 +105,18 @@ class _OnTapStoreState extends State<OnTapStore> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Image.asset(strip),
-                                    customText('Altezer Fresh', black, 18),
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          "$imgBaseUrl${list![i].clientLogoURL}",
+                                      height: 0.2.sh,
+                                      width: 0.3.sw,
+                                      placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Image.network(imageNotFound),
+                                    ),
+                                    customText(
+                                        '${list[i].clientName}', black, 18),
                                   ],
                                 ),
                               );

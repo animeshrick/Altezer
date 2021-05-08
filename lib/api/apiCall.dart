@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:altezar/models/getAutoPartsCat.dart';
+import 'package:altezar/models/getAutoPartsSubCat.dart';
 import 'package:altezar/models/getCategories.dart';
 import 'package:altezar/models/getLatestDeals.dart';
 import 'package:altezar/models/getLists.dart';
 import 'package:altezar/models/getProductsData.dart';
+import 'package:altezar/models/getResTypeList.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/models/getStateList.dart';
 import 'package:altezar/models/getStoreList.dart';
@@ -78,7 +81,7 @@ class Networkcall {
   Future<List<StoreList>?> getStoreListAPICall(
       String stateId, String searchVal) async {
     try {
-      print('get store list -- $getStoreList');
+      // print('get store list -- $getStoreList');
       Map<String, dynamic> data = {
         'StateId': stateId,
         'searchVal': searchVal,
@@ -86,7 +89,7 @@ class Networkcall {
       final response =
           await MyClient().post(Uri.parse(getStoreList), body: data);
       var resp = response.body;
-      print('store list body -- $resp');
+      // print('store list body -- $resp');
       if (response.statusCode == 200) {
         final myResponse = GetStoreList.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -105,14 +108,14 @@ class Networkcall {
   Future<List<DealsListData>?> getDealsAPICall(
       String catId, String pageIndex) async {
     try {
-      print('get deals list -- $getDeals');
+      // print('get deals list -- $getDeals');
       Map<String, dynamic> data = {
         'CatId': catId,
         'pageIndex': pageIndex,
       };
       final response = await MyClient().post(Uri.parse(getDeals), body: data);
       var resp = response.body;
-      print('store deals body -- $resp');
+      // print('store deals body -- $resp');
       if (response.statusCode == 200) {
         final myResponse = GetDealsList.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -127,17 +130,118 @@ class Networkcall {
     }
   }
 
+  /// ------------------- get rest type list ----------------------
+
+  Future<List<ResTypelist>?> getResTypeListAPICall() async {
+    try {
+      print(' res type list - $getResType');
+      final response = await MyClient().get(Uri.parse(getResType));
+      var resp = response.body;
+      print(' res type list - $resp');
+      if (response.statusCode == 200) {
+        final myResponse = GetResType.fromJson(jsonDecode(resp));
+        if (myResponse.status == success) {
+          return myResponse.resTypelist;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+/*
+  /// --------------------- get res list ----------------------
+  Future getResListAPICall(
+      String stateId, String searchVal, String resturantTypeId) async {
+    try {
+      print('get res list $getResList');
+      Map<String, dynamic> data = {
+        'StateId': stateId,
+        'searchVal': searchVal,
+        'resturantTypeId': resturantTypeId,
+      };
+      final response = await MyClient().post(Uri.parse(getResList), body: data);
+      var resp = response.body;
+      // if (response.statusCode == 200) {
+      //   final myResponse = GetAutoPartsCat.fromJson(jsonDecode(resp));
+      //   if (myResponse.status == success) {
+      //     return myResponse.autoPartsCategory;
+      //   } else {
+      //     return showToast(myResponse.message, red);
+      //   }
+      // } else {
+      //   throw response.body;
+      // }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+*/
+  /// ------------------ get auto part cat -------------
+
+  Future<List<AutoPartsCategory>?> getPartsCatAPICall() async {
+    try {
+      print('get auto parts - $getAutoCat');
+      final response = await MyClient().get(Uri.parse(getAutoCat));
+      var resp = response.body;
+      if (response.statusCode == 200) {
+        final myResponse = GetAutoPartsCat.fromJson(jsonDecode(resp));
+        if (myResponse.status == success) {
+          return myResponse.autoPartsCategory;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ------------------ get auto part sub cat -------------
+  Future<List<AutoPartsSubcategory>?> getPartsSubCatAPICall(
+      String catId) async {
+    try {
+      print('get auto parts - $getAutoSubCat');
+      Map<String, dynamic> data = {'CatId': catId};
+      final response =
+          await MyClient().post(Uri.parse(getAutoSubCat), body: data);
+      var resp = response.body;
+      print(resp);
+      if (response.statusCode == 200) {
+        final myResponse = GetAutoPartsSubCat.fromJson(jsonDecode(resp));
+        if (myResponse.status == success) {
+          return myResponse.autoPartsSubcategory;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
   /// ---------------- grocery store list -----------------
   Future<List<GetGroceryStoreList>?> getGroceryStoreListAPICall(
       String stateId, String searchVal) async {
-    print('grocery state $getGroceryStoreList');
+    // print('grocery state $getGroceryStoreList');
     try {
       Map<String, dynamic> data = {'StateId': stateId, 'searchVal': searchVal};
-      print('param- $data');
+      // print('param- $data');
       final response =
           await MyClient().post(Uri.parse(getGroceryStoreList), body: data);
       var resp = response.body;
-      print(' grocerybody - $resp');
+      // print(' grocerybody - $resp');
       if (response.statusCode == 200) {
         final myResponse = GetGroceryStore.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {

@@ -33,6 +33,8 @@ class _GroceryState extends State<Grocery> {
     //     _groceryStateId.toString(), '');
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
+      _isShow = true;
+      _gerGroceryStoreData();
     });
   }
 
@@ -116,7 +118,6 @@ class _GroceryState extends State<Grocery> {
                   onChanged: (String? value) {
                     setState(() {
                       _groceryStateValue = value!;
-                      _isShow = true;
                     });
                     // ------------- id ----------
                     _groceryStateId = _groceryStateList
@@ -126,8 +127,8 @@ class _GroceryState extends State<Grocery> {
                         .first
                         .groceryStateId
                         .toString();
-                    print('id- $_groceryStateId');
-                    _gerGroceryStoreData();
+                    // print('id- $_groceryStateId');
+                    // _gerGroceryStoreData();
                   },
                 ),
               ),
@@ -137,7 +138,14 @@ class _GroceryState extends State<Grocery> {
               SizedBox(
                 height: 0.07.sh,
                 width: 1.sw,
-                child: button(() {}, 'Search', Color(0xffEC971F), white),
+                child: button(() {
+                  print('id- $_groceryStateId');
+                  setState(() {
+                    _isShow = true;
+                  });
+
+                  _gerGroceryStoreData();
+                }, 'Search', Color(0xffEC971F), white),
               ),
               SizedBox(height: 20),
               if (_isShow)
@@ -178,30 +186,35 @@ class _GroceryState extends State<Grocery> {
                                               Image.network(imageNotFound),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 10.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text('${list[i].storeName}',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: Color(0xff0000FF))),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            customText('Online Ordering',
-                                                Color(0xff8C9093), 15.0),
-                                            Text('${list[i].storeLocation}',
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: Color(0xff8C9093))),
-                                            // Text('${list[i].storeName}',
-                                            //     style: TextStyle(
-                                            //         fontSize: 16, color: grey)),
-                                          ],
+                                      Flexible(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(right: 10.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text('${list[i].storeName}',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20,
+                                                      color:
+                                                          Color(0xff0000FF))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              customText('Online Ordering',
+                                                  Color(0xff8C9093), 15.0),
+                                              Text('${list[i].storeLocation}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color:
+                                                          Color(0xff8C9093))),
+                                              // Text('${list[i].storeName}',
+                                              //     style: TextStyle(
+                                              //         fontSize: 16, color: grey)),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],

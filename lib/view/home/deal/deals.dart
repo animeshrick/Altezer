@@ -90,23 +90,27 @@ class _DealsState extends State<Deals> {
                                     errorWidget: (context, url, error) =>
                                         Image.network(imageNotFound),
                                   ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text('${list[i].productName}',
-                                          style: TextStyle(
-                                              fontSize: 5,
-                                              color: Colors.blueAccent)),
-                                      Text('${list[i].price}',
-                                          style: TextStyle(
-                                              fontSize: 15, color: red)),
-                                      Text('${list[i].sellerName}',
-                                          style: TextStyle(
-                                              fontSize: 15, color: grey)),
-                                      Text('Shipping --- ${list[i].perks}',
-                                          style: TextStyle(
-                                              fontSize: 16, color: black)),
-                                    ],
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text('${list[i].productName}',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                                color: Colors.blueAccent)),
+                                        Text('${list[i].price}',
+                                            style: TextStyle(
+                                                fontSize: 15, color: red)),
+                                        Text('${list[i].sellerName}',
+                                            style: TextStyle(
+                                                fontSize: 15, color: grey)),
+                                        Text('Shipping --- ${list[i].perks}',
+                                            style: TextStyle(
+                                                fontSize: 16, color: black)),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
