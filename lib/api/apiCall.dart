@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:altezar/models/autoPartsListModel.dart';
 import 'package:altezar/models/getAutoPartsCat.dart';
 import 'package:altezar/models/getAutoPartsSubCat.dart';
 import 'package:altezar/models/getCategories.dart';
@@ -16,6 +17,7 @@ import 'package:altezar/models/getSubCatList.dart';
 import 'package:altezar/models/getdealsList.dart';
 import 'package:altezar/models/groceryStateList.dart';
 import 'package:altezar/models/groceryStoreList.dart';
+import 'package:altezar/models/productDetails.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 
@@ -28,6 +30,27 @@ class Networkcall {
 
   factory Networkcall() {
     return networkcall;
+  }
+
+  /// -------------------- get prd details ----------------
+  Future<GetRestList?>? getAllPrdDetails(String prdTypeId, String prdId) async {
+    print(' get all prd details $getProductDetails');
+    try {
+      Map<String, dynamic> data = {
+        'ProductTypeId': prdTypeId,
+        'ProductId': prdId
+      };
+      final response =
+          await MyClient().post(Uri.parse(getProductDetails), body: data);
+      var resp = response.body;
+      print(resp);
+      if (response.statusCode == 200) {
+        final myResponse = GetRestList.fromJson(jsonDecode(resp));
+        if (myResponse.status == success) {
+          return myResponse;
+        }
+      }
+    } on SocketException {}
   }
 
   /// -------------- get sort value ------------------
@@ -314,6 +337,43 @@ class Networkcall {
         }
       } else {
         // print('have err');
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// -------------- get auto part list ------------------
+  Future<List<AutoPartsList>?> getAutoPartList(
+    String textSearchVal,
+    String partsCatId,
+    String partsSubCatId,
+    String sortCode,
+    String pageIndex,
+  ) async {
+    try {
+      print('get auto part list -- $getAutoPartListApi');
+      Map<String, dynamic> data = {
+        'textSearchVal': textSearchVal,
+        'PartsCatID': partsCatId,
+        'PartsSubCatID': partsSubCatId,
+        'sortCode': sortCode,
+        'pageIndex': pageIndex,
+      };
+      final response =
+          await MyClient().post(Uri.parse(getAutoPartListApi), body: data);
+      var resp = response.body;
+      print('get auto part list body --- $resp');
+      if (response.statusCode == 200) {
+        final myresponse = GetAutoPartsList.fromJson(jsonDecode(resp));
+        if (myresponse.status == success) {
+          return myresponse.autoPartsList;
+        } else {
+          return showToast(myresponse.message, red);
+        }
+      } else {
         throw response.body;
       }
     } on SocketException {

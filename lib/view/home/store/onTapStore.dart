@@ -1,8 +1,9 @@
 import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/getStoreList.dart';
+import 'package:altezar/models/groceryStateList.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/view/home/store/storeDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
-import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:altezar/view/widgets/searchField.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,10 +20,18 @@ class _OnTapStoreState extends State<OnTapStore> {
   TextEditingController searchController = TextEditingController();
 
   Future<List<StoreList>?>? _storefuture;
+
+  String? _groceryStateValue;
+
+  List<GetGroceryStateList> _groceryStateList = [];
+
   @override
   void initState() {
     super.initState();
     _storefuture = networkcallService.getStoreListAPICall('0', '');
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      _getData();
+    });
   }
 
   @override
@@ -70,7 +79,37 @@ class _OnTapStoreState extends State<OnTapStore> {
               SizedBox(
                 height: 10,
               ),
-              dropDownWidget('Parish'),
+              Card(
+                color: Color(0xffEDEDED),
+                child: DropdownButton<String>(
+                  elevation: 16,
+                  icon: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: grey,
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        color: white,
+                        size: 30,
+                      )),
+                  isExpanded: true,
+                  hint: customText('Choose an option', black, 18.0),
+                  value: _groceryStateValue,
+                  items: _groceryStateList.map((value) {
+                    return DropdownMenuItem<String>(
+                      value: value.groceryStateName,
+                      child: Text(
+                        value.groceryStateName,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _groceryStateValue = value!;
+                    });
+                  },
+                ),
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -102,22 +141,25 @@ class _OnTapStoreState extends State<OnTapStore> {
                             itemBuilder: (context, i) {
                               return Card(
                                 color: grey,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CachedNetworkImage(
-                                      imageUrl:
-                                          "$imgBaseUrl${list![i].clientLogoURL}",
-                                      height: 0.2.sh,
-                                      width: 0.3.sw,
-                                      placeholder: (context, url) => Center(
-                                          child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) =>
-                                          Image.network(imageNotFound),
-                                    ),
-                                    customText(
-                                        '${list[i].clientName}', black, 18),
-                                  ],
+                                child: InkWell(
+                                  onTap: () => Get.to(StoreDetailsPage()),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl:
+                                            "$imgBaseUrl${list![i].clientLogoURL}",
+                                        height: 0.2.sh,
+                                        width: 0.3.sw,
+                                        placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) =>
+                                            Image.network(imageNotFound),
+                                      ),
+                                      customText(
+                                          '${list[i].clientName}', black, 18),
+                                    ],
+                                  ),
                                 ),
                               );
                             }),
@@ -137,5 +179,15 @@ class _OnTapStoreState extends State<OnTapStore> {
         ),
       ),
     );
+  }
+
+  void _getData() async {
+    final groceryStateResult =
+        await networkcallService.getGroceryStateListAPICall();
+    if (groceryStateResult != null) {
+      setState(() {
+        _groceryStateList = groceryStateResult;
+      });
+    }
   }
 }

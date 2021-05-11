@@ -63,7 +63,7 @@ final strip = 'assets/strip.png';
 final checkout = 'assets/checkout.gif';
 
 final imageNotFound =
-    'https://mea.nipponpaint-autorefinishes.com/wp-content/uploads/sites/18/2017/07/No-image-found-60x60.jpg';
+    'https://cdn.iconscout.com/icon/free/png-256/data-not-found-1965034-1662569.png';
 /*-------------------------Fluttertoast-------------------------*/
 
 showToast(msg, color) => Fluttertoast.showToast(
@@ -113,6 +113,8 @@ final String getResType = '$_baseUrl/GetRestaurantTypeList.ashx';
 final String getResList = '$_baseUrl/GetRestaurantsList.ashx';
 final String getAutoCat = '$_baseUrl/GetAutoPartsCategory.ashx';
 final String getAutoSubCat = '$_baseUrl/GetAutoPartsSubcategory.ashx';
+final String getAutoPartListApi = '$_baseUrl/GetAutoPartsList.ashx';
+final String getProductDetails = '$_baseUrl/GetProductDetails.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 

@@ -1,5 +1,6 @@
 import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/getResTypeList.dart';
+import 'package:altezar/models/groceryStateList.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/searchField.dart';
@@ -23,7 +24,9 @@ class _FoodState extends State<Food> {
   String? _resTypeValue;
   String? _resTypeId;
   List<ResTypelist> _resTypeList = [];
-  // Future<List<ResTypelist>?>? _resFuture;
+  String? _groceryStateValue;
+
+  List<GetGroceryStateList> _groceryStateList = [];
 
   @override
   void initState() {
@@ -126,39 +129,33 @@ class _FoodState extends State<Food> {
               ),
               Card(
                 color: Color(0xffEDEDED),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButton<String>(
-                    elevation: 16,
-                    icon: CircleAvatar(
-                        radius: 15,
-                        backgroundColor: grey,
-                        child: Icon(
-                          Icons.arrow_drop_down,
-                          color: white,
-                          size: 30,
-                        )),
-                    isExpanded: true,
-                    value: 'Parish',
-                    // hint: Text(''),
-                    items: <String>[
-                      'Parish',
-                      'Dept2',
-                      'Dept2',
-                      'Dept2',
-                      'Dept2',
-                    ].map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text(
-                          e,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {},
-                  ),
+                child: DropdownButton<String>(
+                  elevation: 16,
+                  icon: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: grey,
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        color: white,
+                        size: 30,
+                      )),
+                  isExpanded: true,
+                  hint: customText('Choose an option', black, 18.0),
+                  value: _groceryStateValue,
+                  items: _groceryStateList.map((value) {
+                    return DropdownMenuItem<String>(
+                      value: value.groceryStateName,
+                      child: Text(
+                        value.groceryStateName,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _groceryStateValue = value!;
+                    });
+                  },
                 ),
               ),
               SizedBox(
@@ -219,10 +216,11 @@ class _FoodState extends State<Food> {
   }
 
   void _getData() async {
-    final resTypeResult = await networkcallService.getResTypeListAPICall();
-    if (resTypeResult != null) {
+    final groceryStateResult =
+        await networkcallService.getGroceryStateListAPICall();
+    if (groceryStateResult != null) {
       setState(() {
-        _resTypeList = resTypeResult;
+        _groceryStateList = groceryStateResult;
       });
     }
   }

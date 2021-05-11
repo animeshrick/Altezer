@@ -1,7 +1,7 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/getCategories.dart';
 import 'package:altezar/models/getdealsList.dart';
 import 'package:altezar/utils/const.dart';
-import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +19,17 @@ class _DealsState extends State<Deals> {
   @override
   Future<List<DealsListData>?>? _dealsFuture;
 
+  String? _categoriesName; //value
+  String? _catId;
+  List<CategoriesList> _catList = [];
+  List<CategoriesList> _dealList = [];
+
   void initState() {
     super.initState();
     _dealsFuture = networkcallService.getDealsAPICall('0', '0');
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      _getData();
+    });
   }
 
   @override
@@ -61,12 +69,57 @@ class _DealsState extends State<Deals> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              dropDownWidget('Sort By'),
+              Card(
+                color: Color(0xffEDEDED),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<String>(
+                    elevation: 16,
+                    icon: CircleAvatar(
+                        radius: 15,
+                        backgroundColor: grey,
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          color: white,
+                          size: 30,
+                        )),
+                    isExpanded: true,
+                    value: _categoriesName, //'Shoping Category',
+                    hint: Text('Select Category'),
+                    items: _catList.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.prdName,
+                        child: Text(
+                          value.prdName,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _categoriesName = value!;
+                      });
+
+                      _catId = _catList
+                          .where(
+                              (element) => element.prdName == _categoriesName)
+                          .toList()
+                          .first
+                          .prdId
+                          .toString();
+                      print('_catId $_catId');
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
               FutureBuilder<List<DealsListData>?>(
                   future: _dealsFuture,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      List? list = snapshot.data!;
+                      List<DealsListData>? list = snapshot.data!;
                       return ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -74,7 +127,10 @@ class _DealsState extends State<Deals> {
                           itemBuilder: (_, i) {
                             return InkWell(
                               onTap: () {
-                                Get.to(DealsDetails());
+                                Get.to(DealsDetails(
+                                  prdTypeId: '1',
+                                  prdId: '${list[i].yJProductID}',
+                                ));
                               },
                               child: Row(
                                 mainAxisAlignment:
@@ -132,4 +188,22 @@ class _DealsState extends State<Deals> {
       ),
     );
   }
+
+  void _getData() async {
+    final categoryResult = await networkcallService.getCategoriesAPICall();
+    if (categoryResult != null) {
+      setState(() {
+        _catList = categoryResult;
+      });
+    }
+  }
+
+  // void _getDealList(String catId, String pageIndex) async {
+  //   final dealRes = await networkcallService.getDealsAPICall(_catId.toString(),pageIndex);
+  //   if (_catId != null) {
+  //     setState(() {
+  //       _dealList = dealRes;
+  //     });
+  //   }
+  // }
 }

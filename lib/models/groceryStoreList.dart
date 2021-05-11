@@ -18,7 +18,7 @@ class GetGroceryStore {
 }
 
 class GetGroceryStoreList {
-  final String storeName, storeLogoUrl, storeWebsite, website, storeLocation;
+  final String? storeName, storeLogoUrl, storeWebsite, website, storeLocation;
   final int cId;
 
   GetGroceryStoreList(

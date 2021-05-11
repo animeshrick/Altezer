@@ -20,6 +20,7 @@ class Shopping extends StatefulWidget {
 class _ShoppingState extends State<Shopping> {
   TextEditingController searchController = TextEditingController();
 
+  var _swiperController = SwiperController();
   String? _categoriesName, _subCatName, _sortingValue; //value
   String? _catId, _subCatId, _sortId;
   List<CategoriesList> _catList = [];
@@ -33,6 +34,15 @@ class _ShoppingState extends State<Shopping> {
   int _pageIndex = 0;
 
   @override
+  void dispose() {
+    print('dispose');
+    super.dispose();
+    _swiperController.dispose();
+    searchController.dispose();
+    _listContr.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _latestDealsFuture = networkcallService.getAllLatestDealsAPICall();
@@ -42,7 +52,7 @@ class _ShoppingState extends State<Shopping> {
     });
 
     _listContr.addListener(() {
-      if (_listContr.position.atEdge) {
+      if (_listContr.position.atEdge && _catId != null) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
         _getProductData();
@@ -100,7 +110,7 @@ class _ShoppingState extends State<Shopping> {
                         .prdId
                         .toString();
                     _subCatName = null;
-                    _getSubCat(_catId!);
+                    _getSubCat();
                     print('productId - $_catId');
                     //_getProductData();
                   },
@@ -238,7 +248,7 @@ class _ShoppingState extends State<Shopping> {
                               // width: 1.sw,
                               height: 0.19.sh,
                               child: Swiper(
-                                  // controller: _scrollController,
+                                  controller: _swiperController,
                                   scrollDirection: Axis.horizontal,
                                   duration: 2000,
                                   itemCount: list.length,
@@ -246,6 +256,7 @@ class _ShoppingState extends State<Shopping> {
                                   viewportFraction: 0.4,
                                   itemBuilder: (_, i) {
                                     return CachedNetworkImage(
+                                      
                                       imageUrl:
                                           "$imgBaseUrl${list[i].latestprdImgUrl}",
                                       height: 0.05.sh,
@@ -393,9 +404,9 @@ class _ShoppingState extends State<Shopping> {
     }
   }
 
-  void _getSubCat(String catId) async {
+  void _getSubCat() async {
     showProgress(context);
-    _subCatList = (await networkcallService.getSubCatAPICall(catId))!;
+    _subCatList = (await networkcallService.getSubCatAPICall(_catId!))!;
     hideProgress(context);
     setState(() {});
     _getProductData();

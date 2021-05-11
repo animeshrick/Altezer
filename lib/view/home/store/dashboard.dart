@@ -26,6 +26,12 @@ class _DashBoardState extends State<DashBoard>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    print('mydispose');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(

@@ -29,6 +29,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
     _controller = TabController(length: 5, vsync: this);
   }
+  @override
+  void dispose() {
+    super.dispose();
+    print('first dispose');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +125,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     Get.to(Deals());
                   }, 'Deals', Color(0xffDC7633), 15.0),
                   tabbarButton(() {
-                    Get.to(Grocery());
+                    Get.to(()=>Grocery());
                   }, 'Grocery', Color(0xff9457B0), 15.0),
                   tabbarButton(() {
                     Get.to(Food());
