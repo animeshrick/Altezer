@@ -207,7 +207,6 @@ class _ShoppingState extends State<Shopping> {
             TextFormField(
               controller: searchController,
               autofocus: false,
-              obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Search here ......',
                 border: OutlineInputBorder(),
@@ -256,7 +255,6 @@ class _ShoppingState extends State<Shopping> {
                                   viewportFraction: 0.4,
                                   itemBuilder: (_, i) {
                                     return CachedNetworkImage(
-                                      
                                       imageUrl:
                                           "$imgBaseUrl${list[i].latestprdImgUrl}",
                                       height: 0.05.sh,

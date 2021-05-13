@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'dealsDetails/dealDetails.dart';
+import '../productDetails.dart';
 
 class Deals extends StatefulWidget {
   @override
@@ -127,10 +127,9 @@ class _DealsState extends State<Deals> {
                           itemBuilder: (_, i) {
                             return InkWell(
                               onTap: () {
-                                Get.to(DealsDetails(
-                                  prdTypeId: '1',
-                                  prdId: '${list[i].yJProductID}',
-                                ));
+                                Get.to(() => ProductDetailsPage(
+                                    prdTypeId: '1',
+                                    prdId: '${list[i].yJProductID}'));
                               },
                               child: Row(
                                 mainAxisAlignment:

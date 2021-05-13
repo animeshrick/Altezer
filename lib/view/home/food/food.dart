@@ -1,9 +1,12 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/getResList.dart';
 import 'package:altezar/models/getResTypeList.dart';
 import 'package:altezar/models/groceryStateList.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/searchField.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,20 +24,21 @@ class _FoodState extends State<Food> {
 
   var controller = ScrollController();
 
-  String? _resTypeValue;
-  String? _resTypeId;
+  String? _resTypeValue, _stateValue;
+  String? _resTypeId, _groceryStateId;
   List<ResTypelist> _resTypeList = [];
-  String? _groceryStateValue;
 
   List<GetGroceryStateList> _groceryStateList = [];
+
+  List<RestShopList> _shopList = [];
+  Future<List<RestShopList>>? _shopFuture;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      setState(() {
-        _getData();
-      });
+      _getData();
+      _resType();
     });
   }
 
@@ -122,7 +126,7 @@ class _FoodState extends State<Food> {
                           .codeId
                           .toString();
                       print('_resTypeId  $_resTypeId');
-                      // _getProductData();
+                      _getShopData();
                     },
                   ),
                 ),
@@ -141,7 +145,7 @@ class _FoodState extends State<Food> {
                       )),
                   isExpanded: true,
                   hint: customText('Choose an option', black, 18.0),
-                  value: _groceryStateValue,
+                  value: _stateValue,
                   items: _groceryStateList.map((value) {
                     return DropdownMenuItem<String>(
                       value: value.groceryStateName,
@@ -153,8 +157,17 @@ class _FoodState extends State<Food> {
                   }).toList(),
                   onChanged: (String? value) {
                     setState(() {
-                      _groceryStateValue = value!;
+                      _stateValue = value!;
                     });
+                    _groceryStateId = _groceryStateList
+                        .where((element) =>
+                            element.groceryStateName == _stateValue)
+                        .toList()
+                        .first
+                        .groceryStateId
+                        .toString();
+                    print('_stateId- $_groceryStateId');
+                    _getShopData();
                   },
                 ),
               ),
@@ -164,48 +177,73 @@ class _FoodState extends State<Food> {
               SizedBox(
                   height: 0.07.sh,
                   width: 1.sw,
-                  child: button(() {}, 'Search', Color(0xffEC971F), white)),
+                  child: button(() {
+                    _getShopData();
+                  }, 'Search', Color(0xffEC971F), white)),
               Container(
                 padding: EdgeInsets.only(right: 15, top: 15),
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: 2,
-                    itemBuilder: (_, i) {
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Get.to(FoodDetails());
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Image.asset(
-                                  foodImg,
-                                  width: 0.4.sw,
-                                  height: 0.2.sh,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text('Alterz Fresh',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.blueAccent)),
-                                    Text('Online Ordering',
-                                        style: TextStyle(
-                                            fontSize: 16, color: red)),
-                                    Text('Kingstone,Kingstone',
-                                        style: TextStyle(
-                                            fontSize: 16, color: grey)),
-                                  ],
-                                ),
-                              ],
-                            ),
+                child: FutureBuilder<List<RestShopList>>(
+                    future: _shopFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var list = snapshot.data;
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: 2,
+                            itemBuilder: (_, i) {
+                              return Column(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(FoodDetails());
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl:
+                                              "$imgBaseUrl${list![i].logoImageFile}",
+                                          height: 0.05.sh,
+                                          width: 0.05.sw,
+                                          placeholder: (context, url) => Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                              Image.network(imageNotFound),
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text('${list[i].restaurantName}',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.blueAccent)),
+                                            Text('${list[i].restaurantEthnic}',
+                                                style: TextStyle(
+                                                    fontSize: 16, color: red)),
+                                            Text('${list[i].deliveryInfo}',
+                                                style: TextStyle(
+                                                    fontSize: 16, color: grey)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            });
+                      } else if (snapshot.hasError) {
+                        return Center(
+                            child: customText('${snapshot.error}', red, 20.0));
+                      } else
+                        return Center(
+                          child: CupertinoActivityIndicator(
+                            radius: 25,
                           ),
-                        ],
-                      );
+                        );
                     }),
               ),
             ],
@@ -223,5 +261,20 @@ class _FoodState extends State<Food> {
         _groceryStateList = groceryStateResult;
       });
     }
+  }
+
+  void _resType() async {
+    final resType = await networkcallService.getResTypeListAPICall();
+    setState(() {
+      _resTypeList = resType;
+    });
+  }
+
+  void _getShopData() async {
+    final shopResult = await networkcallService.getResListAPICall(
+        _resTypeId.toString(), '', _groceryStateId.toString());
+    setState(() {
+      _shopList = shopResult;
+    });
   }
 }

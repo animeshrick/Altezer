@@ -23,6 +23,8 @@ class _OnTapStoreState extends State<OnTapStore> {
 
   String? _groceryStateValue;
 
+  List<StoreList>? list;
+
   List<GetGroceryStateList> _groceryStateList = [];
 
   @override
@@ -125,7 +127,7 @@ class _OnTapStoreState extends State<OnTapStore> {
                   future: _storefuture,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      var list = snapshot.data;
+                      list = snapshot.data;
                       return SizedBox(
                         height: 1.0.sh,
                         child: GridView.builder(
@@ -142,7 +144,9 @@ class _OnTapStoreState extends State<OnTapStore> {
                               return Card(
                                 color: grey,
                                 child: InkWell(
-                                  onTap: () => Get.to(StoreDetailsPage()),
+                                  onTap: () => Get.to(StoreDetailsPage(
+                                    storeId: list![i].clientId,
+                                  )),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -157,7 +161,7 @@ class _OnTapStoreState extends State<OnTapStore> {
                                             Image.network(imageNotFound),
                                       ),
                                       customText(
-                                          '${list[i].clientName}', black, 18),
+                                          '${list![i].clientName}', black, 18),
                                     ],
                                   ),
                                 ),

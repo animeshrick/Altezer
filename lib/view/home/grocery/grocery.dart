@@ -24,8 +24,6 @@ class _GroceryState extends State<Grocery> {
   List<GetGroceryStateList> _groceryStateList = [];
   bool _isShow = false;
 
-  List<GetGroceryStoreList>? list;
-
   Future<List<GetGroceryStoreList>?>? _groceryStoreFuture;
 
   @override
@@ -140,7 +138,7 @@ class _GroceryState extends State<Grocery> {
                 height: 0.07.sh,
                 width: 1.sw,
                 child: button(() {
-                  print('id- $_groceryStateId');
+                  // print('id- $_groceryStateId');
                   setState(() {
                     _isShow = true;
                   });
@@ -154,20 +152,22 @@ class _GroceryState extends State<Grocery> {
                     future: _groceryStoreFuture,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        list = snapshot.data!;
+                        var list = snapshot.data!;
                         return ListView.separated(
                             separatorBuilder: (_, __) => SizedBox(
                                   height: 15,
                                 ),
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemCount: list!.length,
+                            itemCount: list.length,
                             itemBuilder: (_, i) {
                               return ColoredBox(
                                 color: Color(0xffE8E8E8),
                                 child: InkWell(
                                   onTap: () {
-                                    Get.to(GroceryDetails());
+                                    Get.to(() => GroceryDetailsPage(
+                                          storeId: list[i].cId,
+                                        ));
                                   },
                                   child: Row(
                                     mainAxisAlignment:
@@ -177,7 +177,7 @@ class _GroceryState extends State<Grocery> {
                                         padding: EdgeInsets.only(left: 10.0),
                                         child: CachedNetworkImage(
                                           imageUrl:
-                                              "$imgBaseUrl${list![i].storeLogoUrl}",
+                                              "$imgBaseUrl${list[i].storeLogoUrl}",
                                           width: 0.3.sw,
                                           height: 0.2.sh,
                                           placeholder: (context, url) => Center(
@@ -194,7 +194,7 @@ class _GroceryState extends State<Grocery> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
                                             children: [
-                                              Text('${list![i].storeName}',
+                                              Text('${list[i].storeName}',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -206,7 +206,7 @@ class _GroceryState extends State<Grocery> {
                                               ),
                                               customText('Online Ordering',
                                                   Color(0xff8C9093), 15.0),
-                                              Text('${list![i].storeLocation}',
+                                              Text('${list[i].storeLocation}',
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       color:
@@ -252,15 +252,8 @@ class _GroceryState extends State<Grocery> {
 
   void _gerGroceryStoreData() async {
     _groceryStoreFuture = networkcallService.getGroceryStoreListAPICall(
-        _groceryStateId ?? '0', '');
+        _groceryStateId ?? '0', searchController.text);
 
     setState(() {});
-    if (list != null && searchController.text.isNotEmpty) {
-      list = list!
-          .where((element) => element.storeName!
-              .toLowerCase()
-              .contains(searchController.text.toLowerCase()))
-          .toList();
-    }
   }
 }

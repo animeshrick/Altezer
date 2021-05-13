@@ -4,9 +4,8 @@ import 'package:altezar/models/getAutoPartsCat.dart';
 import 'package:altezar/models/getAutoPartsSubCat.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/view/home/productDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
-import 'package:altezar/view/widgets/dropDown.dart';
-import 'package:altezar/view/widgets/listView.dart';
 import 'package:altezar/view/widgets/searchField.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -242,7 +241,7 @@ class _AutoPartsState extends State<AutoParts> {
                       future: _autoPartsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          List? list = snapshot.data;
+                          var list = snapshot.data;
 
                           return ListView.separated(
                               separatorBuilder: (_, __) => SizedBox(
@@ -303,7 +302,11 @@ class _AutoPartsState extends State<AutoParts> {
                                             MainAxisAlignment.center,
                                         children: [
                                           button(() {
-                                            // Get.to(Details());
+                                            Get.to(() => ProductDetailsPage(
+                                                  prdTypeId: '1',
+                                                  prdId:
+                                                      '${list[i].yjProductId}',
+                                                ));
                                           }, 'View Details', greenColor, white),
                                           SizedBox(
                                             width: 20,

@@ -63,7 +63,7 @@ final strip = 'assets/strip.png';
 final checkout = 'assets/checkout.gif';
 
 final imageNotFound =
-    'https://cdn.iconscout.com/icon/free/png-256/data-not-found-1965034-1662569.png';
+    'https://t4.ftcdn.net/jpg/03/61/23/65/360_F_361236586_29nm8jXiVCGD2uJ4zB7q2tVNunZCKeiC.jpg';
 /*-------------------------Fluttertoast-------------------------*/
 
 showToast(msg, color) => Fluttertoast.showToast(
@@ -115,6 +115,7 @@ final String getAutoCat = '$_baseUrl/GetAutoPartsCategory.ashx';
 final String getAutoSubCat = '$_baseUrl/GetAutoPartsSubcategory.ashx';
 final String getAutoPartListApi = '$_baseUrl/GetAutoPartsList.ashx';
 final String getProductDetails = '$_baseUrl/GetProductDetails.ashx';
+final String getDetailsOfPages = '$_baseUrl/GetProduct.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 

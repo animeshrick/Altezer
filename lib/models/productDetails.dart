@@ -87,11 +87,11 @@ class Detail {
   final int productCategorySub2Id;
   final int productTypeId;
   final int inStock;
-  final String shippingInfo;
-  final String productColorStyleType;
+  final String? shippingInfo;
+  final String? productColorStyleType;
   final String size;
   final bool isMadeToOrder;
-  final String madeToOrderInformation;
+  final String? madeToOrderInformation;
   final String? youTubeVideoId;
 
   factory Detail.fromJson(Map<String, dynamic> json) => Detail(
