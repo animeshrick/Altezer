@@ -19,7 +19,7 @@ import 'package:altezar/models/getdealsList.dart';
 import 'package:altezar/models/groceryStateList.dart';
 import 'package:altezar/models/groceryStoreList.dart';
 import 'package:altezar/models/pageDetailsModel.dart';
-import 'package:altezar/models/productDetails.dart';
+import 'package:altezar/models/productDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 
@@ -76,7 +76,8 @@ class Networkcall {
   }
 
   /// -------------------- get prd details ----------------
-  Future<GetRestList?> getAllPrdDetails(String prdTypeId, String prdId) async {
+  Future<ProdDetailModel?>? getAllPrdDetails(
+      String prdTypeId, String prdId) async {
     // print(' get all prd details $getProductDetails');
     try {
       Map<String, dynamic> data = {
@@ -89,11 +90,12 @@ class Networkcall {
       var resp = response.body;
       // print(resp);
       if (response.statusCode == 200) {
-        final myResponse = GetRestList.fromJson(jsonDecode(resp));
+        final myResponse = ProdDetailModel.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
           return myResponse;
         } else {
           showToast('myResponse.message', red);
+          return null;
         }
       } else {
         // print('have err');
@@ -205,14 +207,14 @@ class Networkcall {
     }
   }
 
-  /// ------------------- get rest type list ---------------------- post hobay
+  /// ------------------- get rest type list ----------------------
 
   Future<List<ResTypelist>> getResTypeListAPICall() async {
     try {
-      print(' res type list - $getResType');
+      // print(' res type list - $getResType');
       final response = await MyClient().get(Uri.parse(getResType));
       var resp = response.body;
-      print(' res type list - $resp');
+      // print(' res type list - $resp');
       if (response.statusCode == 200) {
         final myResponse = GetResType.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -230,7 +232,7 @@ class Networkcall {
   }
 
   /// --------------------- get res list ----------------------
-  Future<List<RestShopList>> getResListAPICall(
+  Future<List<RestShopList>>? getResListAPICall(
       String stateId, String searchVal, String resturantTypeId) async {
     try {
       print('get res list $getResList');
@@ -239,8 +241,10 @@ class Networkcall {
         'searchVal': searchVal,
         'resturantTypeId': resturantTypeId,
       };
+      print('data $data');
       final response = await MyClient().post(Uri.parse(getResList), body: data);
       var resp = response.body;
+      print('body -- $resp');
       if (response.statusCode == 200) {
         final myResponse = GetRestShopList.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {

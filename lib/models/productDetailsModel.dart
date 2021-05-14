@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-GetRestList getRestListFromJson(String str) =>
-    GetRestList.fromJson(json.decode(str));
+ProdDetailModel getRestListFromJson(String str) =>
+    ProdDetailModel.fromJson(json.decode(str));
 
-class GetRestList {
-  GetRestList({
+class ProdDetailModel {
+  ProdDetailModel({
     required this.message,
     required this.status,
     required this.details,
@@ -18,7 +18,8 @@ class GetRestList {
   final List<ProductReview> productReview;
   final List<RelatedProductlist> relatedProductlist;
 
-  factory GetRestList.fromJson(Map<String, dynamic> json) => GetRestList(
+  factory ProdDetailModel.fromJson(Map<String, dynamic> json) =>
+      ProdDetailModel(
         message: json["message"],
         status: json["status"],
         details:
@@ -123,7 +124,8 @@ class Detail {
         size: json["Size"],
         isMadeToOrder: json["Is_Made_To_Order"],
         madeToOrderInformation: json["Made_To_Order_Information"],
-        youTubeVideoId: json["YouTube_Video_Id"],
+        youTubeVideoId:
+            json["YouTube_Video_Id"] == null ? '' : json["YouTube_Video_Id"],
       );
 }
 

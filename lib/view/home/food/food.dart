@@ -40,6 +40,7 @@ class _FoodState extends State<Food> {
       _getData();
       _resType();
     });
+    _getShopData();
   }
 
   @override
@@ -187,54 +188,66 @@ class _FoodState extends State<Food> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         var list = snapshot.data;
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 2,
-                            itemBuilder: (_, i) {
-                              return Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(FoodDetails());
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl:
-                                              "$imgBaseUrl${list![i].logoImageFile}",
-                                          height: 0.05.sh,
-                                          width: 0.05.sw,
-                                          placeholder: (context, url) => Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              Image.network(imageNotFound),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
+                        return list!.length != 0
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: 2, //list.length,
+                                itemBuilder: (_, i) {
+                                  return Column(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          Get.to(() => FoodDetails(
+                                              storeId: list[i].clientId));
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text('${list[i].restaurantName}',
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.blueAccent)),
-                                            Text('${list[i].restaurantEthnic}',
-                                                style: TextStyle(
-                                                    fontSize: 16, color: red)),
-                                            Text('${list[i].deliveryInfo}',
-                                                style: TextStyle(
-                                                    fontSize: 16, color: grey)),
+                                            CachedNetworkImage(
+                                              imageUrl:
+                                                  "$imgBaseUrl${list[i].logoImageFile}",
+                                              height: 0.2.sh,
+                                              width: 0.3.sw,
+                                              placeholder: (context, url) => Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                              errorWidget: (context, url,
+                                                      error) =>
+                                                  Image.network(imageNotFound),
+                                            ),
+                                            Flexible(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                      '${list[i].restaurantName}',
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors
+                                                              .blueAccent)),
+                                                  Text(
+                                                      '${list[i].restaurantEthnic}',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: red)),
+                                                  Text(
+                                                      '${list[i].deliveryInfo}',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: grey)),
+                                                ],
+                                              ),
+                                            ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              );
-                            });
+                                      ),
+                                    ],
+                                  );
+                                })
+                            : Text('Data not available now');
                       } else if (snapshot.hasError) {
                         return Center(
                             child: customText('${snapshot.error}', red, 20.0));
@@ -271,10 +284,8 @@ class _FoodState extends State<Food> {
   }
 
   void _getShopData() async {
-    final shopResult = await networkcallService.getResListAPICall(
-        _resTypeId.toString(), '', _groceryStateId.toString());
-    setState(() {
-      _shopList = shopResult;
-    });
+    _shopFuture = networkcallService.getResListAPICall(
+        _resTypeId ?? '0', '', _groceryStateId ?? '0');
+    setState(() {});
   }
 }

@@ -2,15 +2,23 @@ import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/getCategories.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/models/getSubCatList.dart';
+import 'package:altezar/models/pageDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/detailsPageAppBar.dart';
 import 'package:altezar/view/widgets/searchField.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+import '../../productDetails.dart';
 
 class FoodDetails extends StatefulWidget {
+  final int storeId;
+
+  const FoodDetails({Key? key, required this.storeId}) : super(key: key);
   @override
   _FoodDetailsState createState() => _FoodDetailsState();
 }
@@ -23,6 +31,9 @@ class _FoodDetailsState extends State<FoodDetails> {
   List<GetSubCateProductsList> _subCatList = [];
   List<GetSortByData> _sortingDataList = [];
 
+  var _prdList = <Productlist>[].obs;
+  int _pageIndex = 0;
+  final _listContr = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -30,6 +41,16 @@ class _FoodDetailsState extends State<FoodDetails> {
       _getData();
       _getSortData();
     });
+
+    _listContr.addListener(() {
+      if (_listContr.position.atEdge && _catId != null) {
+        print('contr- ${_listContr.position.pixels}');
+        _pageIndex++;
+        _getPrdData();
+      }
+    });
+
+    _getPrdData();
   }
 
   @override
@@ -38,6 +59,7 @@ class _FoodDetailsState extends State<FoodDetails> {
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(50.0), child: detailsPageAppBar()),
       body: SingleChildScrollView(
+        controller: _listContr,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -182,62 +204,89 @@ class _FoodDetailsState extends State<FoodDetails> {
               SizedBox(
                   width: double.infinity,
                   child: button(() {}, 'Search', Color(0xffF0AD4E), white)),
-              ListView.separated(
-                  separatorBuilder: (_, __) => SizedBox(
-                        height: 20,
+              Obx(
+                () => _prdList.length != 0
+                    ? ListView.separated(
+                        separatorBuilder: (_, __) => SizedBox(
+                              height: 20,
+                            ),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: _prdList.length,
+                        itemBuilder: (_, i) {
+                          return InkWell(
+                            onTap: () {},
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          "$imgBaseUrl${_prdList[i].productImageUrl}",
+                                      height: 0.3.sh,
+                                      width: 0.3.sw,
+                                      placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Image.network(imageNotFound),
+                                    ),
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text('${_prdList[i].productName}',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.blue)),
+                                          Text('${_prdList[i].price}',
+                                              style: TextStyle(
+                                                  fontSize: 16, color: green)),
+                                          Text('${_prdList[i].sellerName}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: greenColor)),
+                                          Text('${_prdList[i].productName}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: greenColor)),
+                                          Text(
+                                              '${_prdList[i].size} ${_prdList[i].perks}',
+                                              style: TextStyle(
+                                                  fontSize: 16, color: grey)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    button(() {
+                                      Get.to(() => ProductDetailsPage(
+                                          prdTypeId: '1',
+                                          prdId: '${_prdList[i].yjProductId}'));
+                                    }, 'View Details', greenColor, white),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    button(() {}, 'Add to Cart', priceTextColor,
+                                        white),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        })
+                    : CupertinoActivityIndicator(
+                        radius: 25,
                       ),
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 2,
-                  itemBuilder: (_, i) {
-                    return InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                oilGrocery,
-                                width: 0.4.sw,
-                                height: 0.2.sh,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text('text1',
-                                      style: TextStyle(
-                                          fontSize: 20, color: Colors.blue)),
-                                  Text('text2',
-                                      style: TextStyle(
-                                          fontSize: 16, color: priceTextColor)),
-                                  Text('text3',
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.green)),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              button(() {
-                                // Get.to(Details());
-                              }, 'View Details', greenColor, white),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              button(
-                                  () {}, 'Add to Cart', priceTextColor, white),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  })
+              )
             ],
           ),
         ),
@@ -268,6 +317,19 @@ class _FoodDetailsState extends State<FoodDetails> {
       setState(() {
         _sortingDataList = sortResult;
       });
+    }
+  }
+
+  void _getPrdData() async {
+    final data = await networkcallService.getprdDetails(
+        _catId ?? '0',
+        '',
+        _subCatId ?? '0',
+        _sortId ?? '0',
+        _pageIndex.toString(),
+        widget.storeId.toString());
+    if (data != null) {
+      _prdList(data);
     }
   }
 }
