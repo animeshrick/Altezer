@@ -116,6 +116,7 @@ final String getAutoSubCat = '$_baseUrl/GetAutoPartsSubcategory.ashx';
 final String getAutoPartListApi = '$_baseUrl/GetAutoPartsList.ashx';
 final String getProductDetails = '$_baseUrl/GetProductDetails.ashx';
 final String getDetailsOfPages = '$_baseUrl/GetProduct.ashx';
+final String addtoCart = '$_baseUrl/AddToCart.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 

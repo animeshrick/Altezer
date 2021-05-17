@@ -1,6 +1,7 @@
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/auths/intro.dart';
+import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/deal/deals.dart';
 import 'package:altezar/view/home/store/onTapStore.dart';
 import 'package:altezar/view/widgets/button.dart';
@@ -29,6 +30,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
     _controller = TabController(length: 5, vsync: this);
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -67,16 +69,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               appbarImg,
               height: 0.1.sh,
             ),
-            Flexible(
-              child: FlatButton.icon(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    Get.to(CheckOut());
-                  },
-                  color: white,
-                  icon: Icon(Icons.shopping_cart_outlined),
-                  label: Text('0')),
-            ),
+            sp.isLogin() == true
+                ? Flexible(
+                    child: FlatButton.icon(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          Get.to(() => CheckOut());
+                        },
+                        color: white,
+                        icon: Icon(Icons.shopping_cart_outlined),
+                        label: Text('0')),
+                  )
+                : Flexible(
+                    child: FlatButton.icon(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          Get.to(() => SignUp());
+                        },
+                        color: white,
+                        icon: Icon(Icons.shopping_cart_outlined),
+                        label: Text('0')),
+                  ),
           ],
         ),
         backgroundColor: appbarColor,
@@ -125,7 +138,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     Get.to(Deals());
                   }, 'Deals', Color(0xffDC7633), 15.0),
                   tabbarButton(() {
-                    Get.to(()=>Grocery());
+                    Get.to(() => Grocery());
                   }, 'Grocery', Color(0xff9457B0), 15.0),
                   tabbarButton(() {
                     Get.to(Food());

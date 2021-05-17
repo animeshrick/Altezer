@@ -20,15 +20,26 @@ class _DealsState extends State<Deals> {
   Future<List<DealsListData>?>? _dealsFuture;
 
   String? _categoriesName; //value
-  String? _catId;
+  String _catId = '0';
   List<CategoriesList> _catList = [];
   List<CategoriesList> _dealList = [];
+  int _pageIndex = 0;
+  final _listContr = ScrollController();
 
   void initState() {
     super.initState();
-    _dealsFuture = networkcallService.getDealsAPICall('0', '0');
+    _dealsFuture =
+        networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
+    });
+    _getDealList();
+    _listContr.addListener(() {
+      if (_listContr.position.atEdge && _catId != null) {
+        print('contr- ${_listContr.position.pixels}');
+        _pageIndex++;
+        // _getProductData();
+      }
     });
   }
 
@@ -40,22 +51,24 @@ class _DealsState extends State<Deals> {
         backgroundColor: appbarColor,
         title: Row(
           children: [
-            FlatButton.icon(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  Get.back();
-                },
-                color: white,
-                icon: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: grey,
-                    child: Icon(
-                      Icons.home,
-                      color: white,
-                    )),
-                label: customText("Home", black, 15.0)),
+            IconButton(
+                onPressed: () => Get.back(), icon: Icon(Icons.arrow_back)),
+            // FlatButton.icon(
+            //     padding: EdgeInsets.zero,
+            //     onPressed: () {
+            //       Get.back();
+            //     },
+            //     color: white,
+            //     icon: CircleAvatar(
+            //         radius: 15,
+            //         backgroundColor: grey,
+            //         child: Icon(
+            //           Icons.home,
+            //           color: white,
+            //         )),
+            //     label: customText("Home", black, 15.0)),
             SizedBox(
-              width: 0.15.sw,
+              width: 0.2.sw,
             ),
             Image.asset(
               appbarImg,
@@ -67,6 +80,7 @@ class _DealsState extends State<Deals> {
       body: Container(
         padding: EdgeInsets.only(left: 10, right: 10, top: 10),
         child: SingleChildScrollView(
+          controller: _listContr,
           child: Column(
             children: [
               Card(
@@ -108,6 +122,7 @@ class _DealsState extends State<Deals> {
                           .prdId
                           .toString();
                       print('_catId $_catId');
+                      _getDealList();
                     },
                   ),
                 ),
@@ -197,12 +212,11 @@ class _DealsState extends State<Deals> {
     }
   }
 
-  // void _getDealList(String catId, String pageIndex) async {
-  //   final dealRes = await networkcallService.getDealsAPICall(_catId.toString(),pageIndex);
-  //   if (_catId != null) {
-  //     setState(() {
-  //       _dealList = dealRes;
-  //     });
-  //   }
-  // }
+  void _getDealList() async {
+    final dealRes =
+        await networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
+    setState(() {
+      _dealList = dealRes!.cast<CategoriesList>();
+    });
+  }
 }

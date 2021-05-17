@@ -51,22 +51,24 @@ class _FoodState extends State<Food> {
         backgroundColor: appbarColor,
         title: Row(
           children: [
-            FlatButton.icon(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  Get.back();
-                },
-                color: white,
-                icon: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: grey,
-                    child: Icon(
-                      Icons.home,
-                      color: white,
-                    )),
-                label: customText("Home", black, 15.0)),
+            IconButton(
+                onPressed: () => Get.back(), icon: Icon(Icons.arrow_back)),
+            // FlatButton.icon(
+            //     padding: EdgeInsets.zero,
+            //     onPressed: () {
+            //       Get.back();
+            //     },
+            //     color: white,
+            //     icon: CircleAvatar(
+            //         radius: 15,
+            //         backgroundColor: grey,
+            //         child: Icon(
+            //           Icons.home,
+            //           color: white,
+            //         )),
+            //     label: customText("Home", black, 15.0)),
             SizedBox(
-              width: 0.15.sw,
+              width: 0.2.sw,
             ),
             Image.asset(
               appbarImg,

@@ -34,6 +34,53 @@ class Networkcall {
     return networkcall;
   }
 
+  /// ----------------------- add to cart --------------------------
+  Future<bool?> addToCartAPICall(
+      String productId,
+      String clientId,
+      String orderType,
+      String selectedStyle,
+      String mtoInfo,
+      String qty,
+      String mtoDelivaryDate,
+      String mtoImgPath,
+      String userId) async {
+    print(' add to cart  $addtoCart');
+    try {
+      Map<String, dynamic> data = {
+        'product_id': productId,
+        'Client_id': clientId,
+        'order_Type': orderType,
+        'Selected_Size_Color_Style': selectedStyle,
+        'MTO_Information': mtoInfo,
+        'Qty': qty,
+        'MTO_DeliveryDate': mtoDelivaryDate,
+        'MTO_Image_Path': mtoImgPath,
+        'user_id': userId,
+      };
+      print(data);
+      final response = await MyClient().post(Uri.parse(addtoCart), body: data);
+      final resp = response.body;
+      print('response $resp');
+      final jsonResponse = jsonDecode(resp);
+      if (response.statusCode == 200) {
+        if (jsonResponse['status'] == success) {
+          showToast(jsonResponse['message'], blue);
+          return true;
+        } else {
+          showToast(jsonResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
   /// ----------------- get all prd details ---------------------
   Future<List<Productlist>?> getprdDetails(
       String catID,
@@ -42,7 +89,7 @@ class Networkcall {
       String sortCode,
       String pageIndex,
       String storeId) async {
-    // print('get all prd details $getDetailsOfPages');
+    print('get all prd details $getDetailsOfPages');
     try {
       Map<String, dynamic> data = {
         'catId': catID.toString(),
@@ -52,11 +99,11 @@ class Networkcall {
         'pageIndex': pageIndex.toString(),
         'retailClientId': storeId,
       };
-      // print('data $data');
+      print('data $data');
       final response =
           await MyClient().post(Uri.parse(getDetailsOfPages), body: data);
       final resp = response.body;
-      // print('get all prd details $resp');
+      print('get all prd details $resp');
       final myResponse = ProductDetails.fromJson(jsonDecode(resp));
 
       if (response.statusCode == 200) {
@@ -78,17 +125,17 @@ class Networkcall {
   /// -------------------- get prd details ----------------
   Future<ProdDetailModel?>? getAllPrdDetails(
       String prdTypeId, String prdId) async {
-    // print(' get all prd details $getProductDetails');
+    print(' get all prd details $getProductDetails');
     try {
       Map<String, dynamic> data = {
         'ProductTypeId': prdTypeId,
         'ProductId': prdId
       };
-      // print(data);
+      print(data);
       final response =
           await MyClient().post(Uri.parse(getProductDetails), body: data);
       var resp = response.body;
-      // print(resp);
+      print(resp);
       if (response.statusCode == 200) {
         final myResponse = ProdDetailModel.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -190,9 +237,10 @@ class Networkcall {
         'CatId': catId,
         'pageIndex': pageIndex,
       };
+      print(data);
       final response = await MyClient().post(Uri.parse(getDeals), body: data);
       var resp = response.body;
-      // print('store deals body -- $resp');
+      print('store deals body -- $resp');
       if (response.statusCode == 200) {
         final myResponse = GetDealsList.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {

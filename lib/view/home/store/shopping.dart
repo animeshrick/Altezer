@@ -5,12 +5,14 @@ import 'package:altezar/models/getProductsData.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/models/getSubCatList.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/view/home/grocery/grocery.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class Shopping extends StatefulWidget {
   @override
@@ -110,8 +112,10 @@ class _ShoppingState extends State<Shopping> {
                         .prdId
                         .toString();
                     _subCatName = null;
-                    _getSubCat();
-                    print('productId - $_catId');
+                    _catId == 22.toString()
+                        ? Get.to(() => Grocery())
+                        : _getSubCat();
+                    print('_catId - $_catId');
                     //_getProductData();
                   },
                 ),
@@ -218,7 +222,9 @@ class _ShoppingState extends State<Shopping> {
             SizedBox(
                 height: 0.07.sh,
                 width: 1.sw,
-                child: button(() {}, 'Search', Color(0xffEC971F), white)),
+                child: button(() {
+                  _getProductData();
+                }, 'Search', Color(0xffEC971F), white)),
             SizedBox(
               height: 20,
             ),
@@ -236,47 +242,51 @@ class _ShoppingState extends State<Shopping> {
                             color: grey,
                             fontSize: 18,
                             fontWeight: FontWeight.bold)),
-                    FutureBuilder<List<LatestDealsList>?>(
-                        future: _latestDealsFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            List? list = snapshot.data!;
+                    SizedBox(
+                      height: 0.1.sh,
+                      width: 1.sw,
+                      child: FutureBuilder<List<LatestDealsList>?>(
+                          future: _latestDealsFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              List? list = snapshot.data!;
 
-                            return Container(
-                              padding: EdgeInsets.only(top: 12),
-                              // width: 1.sw,
-                              height: 0.19.sh,
-                              child: Swiper(
-                                  controller: _swiperController,
-                                  scrollDirection: Axis.horizontal,
-                                  duration: 2000,
-                                  itemCount: list.length,
-                                  autoplay: true,
-                                  viewportFraction: 0.4,
-                                  itemBuilder: (_, i) {
-                                    return CachedNetworkImage(
-                                      imageUrl:
-                                          "$imgBaseUrl${list[i].latestprdImgUrl}",
-                                      height: 0.05.sh,
-                                      width: 0.05.sw,
-                                      placeholder: (context, url) => Center(
-                                          child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) =>
-                                          Image.network(imageNotFound),
-                                    );
-                                  }),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Center(
-                                child:
-                                    customText('${snapshot.error}', red, 20.0));
-                          } else
-                            return Center(
-                              child: CupertinoActivityIndicator(
-                                radius: 25,
-                              ),
-                            );
-                        }),
+                              return Container(
+                                padding: EdgeInsets.only(top: 12),
+                                // width: 1.sw,
+                                height: 0.19.sh,
+                                child: Swiper(
+                                    controller: _swiperController,
+                                    scrollDirection: Axis.horizontal,
+                                    duration: 2000,
+                                    itemCount: list.length,
+                                    autoplay: true,
+                                    viewportFraction: 0.4,
+                                    itemBuilder: (_, i) {
+                                      return CachedNetworkImage(
+                                        imageUrl:
+                                            "$imgBaseUrl${list[i].latestprdImgUrl}",
+                                        // height: 0.01.sh,
+                                        // width: 0.01.sw,
+                                        placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) =>
+                                            Image.network(imageNotFound),
+                                      );
+                                    }),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: customText(
+                                      '${snapshot.error}', red, 20.0));
+                            } else
+                              return Center(
+                                child: CupertinoActivityIndicator(
+                                  radius: 25,
+                                ),
+                              );
+                          }),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
@@ -422,7 +432,11 @@ class _ShoppingState extends State<Shopping> {
 
   void _getProductData() {
     _prodFuture = networkcallService.getProductsAPICall(
-        _catId!, '', _subCatId ?? '0', _sortId ?? '0', _pageIndex.toString());
+        _catId!,
+        searchController.text,
+        _subCatId ?? '0',
+        _sortId ?? '0',
+        _pageIndex.toString());
     setState(() {});
   }
 }

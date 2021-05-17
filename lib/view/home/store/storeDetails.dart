@@ -4,6 +4,8 @@ import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/models/getSubCatList.dart';
 import 'package:altezar/models/pageDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/utils/sharedPref.dart';
+import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/productDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/detailsPageAppBar.dart';
@@ -109,7 +111,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                       _subCatName = null;
                       _getSubCat();
                       print('productId - $_catId');
-                      //_getProductData();
+                      _getPrdData();
                     },
                   ),
                 ),
@@ -282,8 +284,25 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                     SizedBox(
                                       width: 20,
                                     ),
-                                    button(() {}, 'Add to Cart', priceTextColor,
-                                        white),
+                                    sp.isLogin() == true
+                                        ? button(() {
+                                            _addToCart(
+                                                '${_prdList[i].yjProductId}',
+                                                '${_prdList[i].clientId}',
+                                                'Products',
+                                                '',
+                                                '',
+                                                1.toString(),
+                                                '',
+                                                '',
+                                                sp.getUserId().toString());
+                                          }, 'Add to Cart', priceTextColor,
+                                            white)
+                                        : button(
+                                            () => Get.to(() => SignUp()),
+                                            'Add to Cart',
+                                            priceTextColor,
+                                            white),
                                   ],
                                 ),
                               ],
@@ -339,5 +358,27 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
     if (data != null) {
       _prdList(data);
     }
+  }
+
+  void _addToCart(
+      String prdID,
+      String clientId,
+      String orderType,
+      String selectedStyle,
+      String mtoInfo,
+      String qty,
+      String mtoDelivaryDate,
+      String mtoImgPath,
+      String userId) async {
+    final data = await networkcallService.addToCartAPICall(
+        prdID,
+        clientId,
+        orderType,
+        selectedStyle,
+        mtoInfo,
+        qty,
+        mtoDelivaryDate,
+        mtoImgPath,
+        userId);
   }
 }
