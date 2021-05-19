@@ -75,7 +75,7 @@ class _OnTapStoreState extends State<OnTapStore> {
           padding: const EdgeInsets.only(left: 8.0, right: 15, top: 15),
           child: Column(
             children: [
-              Image.asset(banner6),
+              Image.asset(banner1),
               SizedBox(
                 height: 10,
               ),
@@ -85,33 +85,38 @@ class _OnTapStoreState extends State<OnTapStore> {
               ),
               Card(
                 color: Color(0xffEDEDED),
-                child: DropdownButton<String>(
-                  elevation: 16,
-                  icon: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: grey,
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: white,
-                        size: 30,
-                      )),
-                  isExpanded: true,
-                  hint: customText('Choose an option', black, 18.0),
-                  value: _groceryStateValue,
-                  items: _groceryStateList.map((value) {
-                    return DropdownMenuItem<String>(
-                      value: value.groceryStateName,
-                      child: Text(
-                        value.groceryStateName,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _groceryStateValue = value!;
-                    });
-                  },
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    elevation: 16,
+                    icon: CircleAvatar(
+                        radius: 15,
+                        backgroundColor: grey,
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          color: white,
+                          size: 30,
+                        )),
+                    isExpanded: true,
+                    hint: Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: customText('Parish', black, 18.0),
+                    ),
+                    value: _groceryStateValue,
+                    items: _groceryStateList.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.groceryStateName,
+                        child: Text(
+                          value.groceryStateName,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _groceryStateValue = value!;
+                      });
+                    },
+                  ),
                 ),
               ),
               SizedBox(
@@ -146,9 +151,9 @@ class _OnTapStoreState extends State<OnTapStore> {
                               return Card(
                                 color: grey,
                                 child: InkWell(
-                                  onTap: () => Get.to(StoreDetailsPage(
-                                    storeId: list![i].clientId,
-                                  )),
+                                  onTap: () => Get.to(() => StoreDetailsPage(
+                                        storeId: list![i].clientId,
+                                      )),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [

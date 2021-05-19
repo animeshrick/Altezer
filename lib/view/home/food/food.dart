@@ -95,83 +95,90 @@ class _FoodState extends State<Food> {
                 color: Color(0xffEDEDED),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: DropdownButton<String>(
-                    elevation: 16,
-                    icon: CircleAvatar(
-                        radius: 15,
-                        backgroundColor: grey,
-                        child: Icon(
-                          Icons.arrow_drop_down,
-                          color: white,
-                          size: 30,
-                        )),
-                    isExpanded: true,
-                    value: _resTypeValue,
-                    hint: Text('Resturant Type'),
-                    items: _resTypeList.map((value) {
-                      return DropdownMenuItem<String>(
-                        value: value.restTypeName,
-                        child: Text(
-                          value.restTypeName,
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        _resTypeValue = value!;
-                      });
-                      _resTypeId = _resTypeList
-                          .where((element) =>
-                              element.restTypeName == _resTypeValue)
-                          .toList()
-                          .first
-                          .codeId
-                          .toString();
-                      print('_resTypeId  $_resTypeId');
-                      _getShopData();
-                    },
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      elevation: 16,
+                      icon: CircleAvatar(
+                          radius: 15,
+                          backgroundColor: grey,
+                          child: Icon(
+                            Icons.arrow_drop_down,
+                            color: white,
+                            size: 30,
+                          )),
+                      isExpanded: true,
+                      value: _resTypeValue,
+                      hint: Text('Resturant Type'),
+                      items: _resTypeList.map((value) {
+                        return DropdownMenuItem<String>(
+                          value: value.restTypeName,
+                          child: Text(
+                            value.restTypeName,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _resTypeValue = value!;
+                        });
+                        _resTypeId = _resTypeList
+                            .where((element) =>
+                                element.restTypeName == _resTypeValue)
+                            .toList()
+                            .first
+                            .codeId
+                            .toString();
+                        print('_resTypeId  $_resTypeId');
+                        _getShopData();
+                      },
+                    ),
                   ),
                 ),
               ),
               Card(
                 color: Color(0xffEDEDED),
-                child: DropdownButton<String>(
-                  elevation: 16,
-                  icon: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: grey,
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: white,
-                        size: 30,
-                      )),
-                  isExpanded: true,
-                  hint: customText('Choose an option', black, 18.0),
-                  value: _stateValue,
-                  items: _groceryStateList.map((value) {
-                    return DropdownMenuItem<String>(
-                      value: value.groceryStateName,
-                      child: Text(
-                        value.groceryStateName,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _stateValue = value!;
-                    });
-                    _groceryStateId = _groceryStateList
-                        .where((element) =>
-                            element.groceryStateName == _stateValue)
-                        .toList()
-                        .first
-                        .groceryStateId
-                        .toString();
-                    print('_stateId- $_groceryStateId');
-                    _getShopData();
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      elevation: 16,
+                      icon: CircleAvatar(
+                          radius: 15,
+                          backgroundColor: grey,
+                          child: Icon(
+                            Icons.arrow_drop_down,
+                            color: white,
+                            size: 30,
+                          )),
+                      isExpanded: true,
+                      hint: Text('Choose Parish/Providence/State'),
+                      value: _stateValue,
+                      items: _groceryStateList.map((value) {
+                        return DropdownMenuItem<String>(
+                          value: value.groceryStateName,
+                          child: Text(
+                            value.groceryStateName,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _stateValue = value!;
+                        });
+                        _groceryStateId = _groceryStateList
+                            .where((element) =>
+                                element.groceryStateName == _stateValue)
+                            .toList()
+                            .first
+                            .groceryStateId
+                            .toString();
+                        print('_stateId- $_groceryStateId');
+                        _getShopData();
+                      },
+                    ),
+                  ),
                 ),
               ),
               SizedBox(
@@ -287,7 +294,7 @@ class _FoodState extends State<Food> {
 
   void _getShopData() async {
     _shopFuture = networkcallService.getResListAPICall(
-        _resTypeId ?? '0', '', _groceryStateId ?? '0');
+        _resTypeId ?? '0', searchController.text, _groceryStateId ?? '0');
     setState(() {});
   }
 }

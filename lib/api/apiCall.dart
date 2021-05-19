@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:altezar/models/autoPartsListModel.dart';
 import 'package:altezar/models/getAutoPartsCat.dart';
 import 'package:altezar/models/getAutoPartsSubCat.dart';
+import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getCategories.dart';
+import 'package:altezar/models/getGategoryForStores.dart';
 import 'package:altezar/models/getLatestDeals.dart';
 import 'package:altezar/models/getLists.dart';
 import 'package:altezar/models/getProductsData.dart';
@@ -32,6 +34,57 @@ class Networkcall {
 
   factory Networkcall() {
     return networkcall;
+  }
+
+  /// ---------------- get cart box -----------------------------
+  Future<List<CartBoxData>?> getCartBoxAPICall(String userId) async {
+    print('getCartBox $getCartBox');
+    Map<String, dynamic> data = {'UserId': userId};
+    final response = await MyClient().post(Uri.parse(getCartBox), body: data);
+    var resp = response.body;
+    print(resp);
+    final myResponse = CartBox.fromJson(jsonDecode(resp));
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse.cartBoxData;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------------- GetCategoryForStore --------------------
+  Future<List<StoreCatListElement>?> getCategoryForStoreAPICall(
+      String storeId) async {
+    print('GetCategoryForStore --- $getCategoryForStore');
+    try {
+      Map<String, dynamic> data = {'StoreId': storeId};
+      print(data);
+      final response =
+          await MyClient().post(Uri.parse(getCategoryForStore), body: data);
+      var resp = response.body;
+      print('GetCategoryForStore body -- $resp');
+      final myResponse = StoreCatList.fromJson(jsonDecode(resp));
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse.storeCatList;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
   }
 
   /// ----------------------- add to cart --------------------------
@@ -65,7 +118,7 @@ class Networkcall {
       final jsonResponse = jsonDecode(resp);
       if (response.statusCode == 200) {
         if (jsonResponse['status'] == success) {
-          showToast(jsonResponse['message'], blue);
+          showToast(jsonResponse['message'], greenColor);
           return true;
         } else {
           showToast(jsonResponse['message'], red);
@@ -180,11 +233,11 @@ class Networkcall {
 
   /// ----------------------- grocery state list -------------------------
   Future<List<GetGroceryStateList>?> getGroceryStateListAPICall() async {
-    // print('grocery state $getGroceryStateList');
+    print('grocery state $getGroceryStateList');
     try {
       final response = await MyClient().get(Uri.parse(getGroceryStateList));
       var resp = response.body;
-      // print(' body - $resp');
+      print(' body - $resp');
       if (response.statusCode == 200) {
         final myResponse = GetGroceryState.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -205,7 +258,7 @@ class Networkcall {
   Future<List<StoreList>?> getStoreListAPICall(
       String stateId, String searchVal) async {
     try {
-      // print('get store list -- $getStoreList');
+      print('get store list -- $getStoreList');
       Map<String, dynamic> data = {
         'StateId': stateId,
         'searchVal': searchVal,
@@ -213,7 +266,7 @@ class Networkcall {
       final response =
           await MyClient().post(Uri.parse(getStoreList), body: data);
       var resp = response.body;
-      // print('store list body -- $resp');
+      print('store list body -- $resp');
       if (response.statusCode == 200) {
         final myResponse = GetStoreList.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -400,21 +453,22 @@ class Networkcall {
       'pageIndex': pageIndex.toString(),
     };
     try {
-      // print('param $data');
+      print('getProducts $getProducts');
+      print('param $data');
       final response =
           await MyClient().post(Uri.parse(getProducts), body: data);
       var resp = response.body;
-      // print('get products resp -- $resp');
+      print('get products resp -- $resp');
       if (response.statusCode == 200) {
         final myResponse = GetProducts.fromJson(jsonDecode((resp)));
         if (myResponse.status == success) {
           return myResponse.prdListData;
         } else {
           showToast(myResponse.message, red);
-          throw myResponse.message;
+          return [];
         }
       } else {
-        // print('have err');
+        print('have err');
         throw response.body;
       }
     } on SocketException {
@@ -458,7 +512,7 @@ class Networkcall {
     String pageIndex,
   ) async {
     try {
-      // print('get auto part list -- $getAutoPartListApi');
+      print('get auto part list -- $getAutoPartListApi');
       Map<String, dynamic> data = {
         'textSearchVal': textSearchVal,
         'PartsCatID': partsCatId,
@@ -466,10 +520,11 @@ class Networkcall {
         'sortCode': sortCode,
         'pageIndex': pageIndex,
       };
+      print(data);
       final response =
           await MyClient().post(Uri.parse(getAutoPartListApi), body: data);
       var resp = response.body;
-      // print('get auto part list body --- $resp');
+      print('get auto part list body --- $resp');
       if (response.statusCode == 200) {
         final myresponse = GetAutoPartsList.fromJson(jsonDecode(resp));
         if (myresponse.status == success) {

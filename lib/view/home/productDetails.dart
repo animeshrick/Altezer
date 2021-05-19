@@ -1,6 +1,9 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/productDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/utils/sharedPref.dart';
+import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/checkout/checkout.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/detailsPageAppBar.dart';
@@ -27,12 +30,16 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool pressed = false;
   TextEditingController quantityController = TextEditingController();
+  var _cartData = <CartBoxData>[].obs;
 
   Future<ProdDetailModel?>? _dealDetailFuture;
   void initState() {
     super.initState();
     _dealDetailFuture =
         networkcallService.getAllPrdDetails(widget.prdTypeId, widget.prdId);
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      _cartBox();
+    });
   }
 
   @override
@@ -75,11 +82,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             height: 10,
                           ),
                           Align(
-                            alignment: Alignment.topLeft,
+                            alignment: Alignment.topCenter,
                             child: customText(
                                 'Rating of the Product :', black, 18.0),
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               RatingBarIndicator(
                                 rating: rating.averageRating.toDouble(),
@@ -152,145 +160,181 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 15,
                           ),
-                          SizedBox(
-                              width: 0.95.sw,
-                              height: 0.08.sh,
-                              child: button(() {
-                                // Get.to(CheckOut());
-                                setState(() {
-                                  pressed = !pressed;
-                                });
-                              }, pressed ? 'Order Placed' : 'Add to cart',
-                                  Color(0xff5BC0DE), white)),
+                          sp.isLogin() == true
+                              ? SizedBox(
+                                  width: 0.95.sw,
+                                  height: 0.08.sh,
+                                  child: button(() {
+                                    // Get.to(CheckOut());
+                                    setState(() {
+                                      pressed = !pressed;
+                                    });
+                                  }, pressed ? 'Order Placed' : 'Add to cart',
+                                      Color(0xff5BC0DE), white))
+                              : SizedBox(
+                                  width: 0.95.sw,
+                                  height: 0.08.sh,
+                                  child: button(() {
+                                    Get.to(() => SignUp());
+                                  }, 'Add to cart', Color(0xff5BC0DE), white)),
                           SizedBox(
                             height: 15,
                           ),
-                          Card(
-                            color: Color(0xff337AB7),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: 0.0, left: 6.0, right: 6.0, bottom: 6.0),
-                              child: ExpansionTile(
-                                backgroundColor: Color(0xff337AB7),
-                                //collapsedBackgroundColor: Colors.white,
-                                trailing: SizedBox(),
-                                childrenPadding: EdgeInsets.zero,
-                                textColor: black,
-                                initiallyExpanded: false,
-                                expandedCrossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                title: Container(
-                                  height: 0.06.sh,
-                                  width: double.infinity,
+                          sp.isLogin() == true
+                              ? Card(
                                   color: Color(0xff337AB7),
-                                  child: Center(
-                                    child: Text(
-                                      '+ Add to List Or Registry',
-                                      style: TextStyle(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 0.0,
+                                        left: 6.0,
+                                        right: 6.0,
+                                        bottom: 6.0),
+                                    child: ExpansionTile(
+                                      backgroundColor: Color(0xff337AB7),
+                                      //collapsedBackgroundColor: Colors.white,
+                                      trailing: SizedBox(),
+                                      childrenPadding: EdgeInsets.zero,
+                                      textColor: black,
+                                      initiallyExpanded: false,
+                                      expandedCrossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      title: Container(
+                                        height: 0.06.sh,
+                                        width: double.infinity,
+                                        color: Color(0xff337AB7),
+                                        child: Center(
+                                          child: Text(
+                                            '+ Add to List Or Registry',
+                                            style: TextStyle(
+                                                color: white,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 18),
+                                          ),
+                                        ),
+                                      ),
+                                      children: <Widget>[
+                                        ColoredBox(
                                           color: white,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                                children: <Widget>[
-                                  ColoredBox(
-                                    color: white,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Select List or Regitry and click add item',
-                                          style: TextStyle(
-                                              color: black,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 18),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          'Select List :',
-                                          style: TextStyle(
-                                              color: black,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 18),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        dropDownWidget(
-                                            'Select Your List or Regitry'),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          'Quantity :',
-                                          style: TextStyle(
-                                              color: black,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 18),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        searchField(quantityController,
-                                            'Enter Quantity'),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Don\'t have a list?',
-                                              style: TextStyle(
-                                                  color: black,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 18),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Get.to(AddRegistry());
-                                              },
-                                              child: Text(
-                                                'Click here',
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'Select List or Regitry and click add item',
                                                 style: TextStyle(
+                                                    color: black,
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 18),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(
-                                                height: 0.05.sh,
-                                                width: 0.3.sw,
-                                                child: button(() {}, 'Add item',
-                                                    Color(0xffE3EDF3), black)),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            SizedBox(
-                                                height: 0.05.sh,
-                                                width: 0.3.sw,
-                                                child: button(() {}, 'Cancel',
-                                                    Color(0xffE3EDF3), black)),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 15,
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                'Select List :',
+                                                style: TextStyle(
+                                                    color: black,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 18),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              dropDownWidget(
+                                                  'Select Your List or Regitry'),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                'Quantity :',
+                                                style: TextStyle(
+                                                    color: black,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 18),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              searchField(quantityController,
+                                                  'Enter Quantity'),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Don\'t have a list?',
+                                                    style: TextStyle(
+                                                        color: black,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 18),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Get.to(AddRegistry());
+                                                    },
+                                                    child: Text(
+                                                      'Click here',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 18),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                      height: 0.05.sh,
+                                                      width: 0.3.sw,
+                                                      child: button(
+                                                          () {},
+                                                          'Add item',
+                                                          Color(0xffE3EDF3),
+                                                          black)),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  SizedBox(
+                                                      height: 0.05.sh,
+                                                      width: 0.3.sw,
+                                                      child: button(
+                                                          () {},
+                                                          'Cancel',
+                                                          Color(0xffE3EDF3),
+                                                          black)),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                )
+                              : InkWell(
+                                  onTap: () => Get.to(() => SignUp()),
+                                  child: Container(
+                                    height: 0.09.sh,
+                                    width: double.infinity,
+                                    color: Color(0xff337AB7),
+                                    child: Center(
+                                      child: Text(
+                                        '+ Add to List Or Registry',
+                                        style: TextStyle(
+                                            color: white,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 18),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                           SizedBox(
                             height: 15,
                           ),
@@ -332,17 +376,39 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 15,
                           ),
-                          SizedBox(
-                            width: 0.95.sw,
-                            height: 0.08.sh,
-                            child: RaisedButton.icon(
-                                color: Color(0xff5BC0DE),
-                                onPressed: () {
-                                  Get.to(CheckOut());
-                                },
-                                icon: Icon(Icons.shopping_cart_outlined),
-                                label: Text('Order Cart *(0)* || \$ 0.0')),
-                          ),
+                          sp.isLogin() == true
+                              ? Obx(() {
+                                  if (_cartData.length > 0) {
+                                    var data = _cartData.first;
+                                    return SizedBox(
+                                        height: 0.08.sh,
+                                        width: 1.sw,
+                                        child: RaisedButton.icon(
+                                          color: Color(0xff5BC0DE),
+                                          onPressed: () {
+                                            Get.to(() => CheckOut());
+                                          },
+                                          icon: Icon(Icons.shopping_cart_outlined),
+                                          label: Text(
+                                              'Order Cart *(${data.orderCartCount})* || \$${data.totalCostUSD}'),
+                                        )
+                                        // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
+                                        );
+                                  }
+                                  return Container();
+                                })
+                              : SizedBox(
+                                  width: 0.95.sw,
+                                  height: 0.08.sh,
+                                  child: RaisedButton.icon(
+                                      color: Color(0xff5BC0DE),
+                                      onPressed: () {
+                                        Get.to(() => SignUp());
+                                      },
+                                      icon: Icon(Icons.shopping_cart_outlined),
+                                      label:
+                                          Text('Order Cart *(0)* || \$ 0.0')),
+                                ),
                           SizedBox(
                             height: 15,
                           ),
@@ -431,5 +497,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ),
       ),
     );
+  }
+
+  void _cartBox() async {
+    _cartData.value = (await networkcallService
+        .getCartBoxAPICall(sp.getUserId().toString()))!;
+    print('l ${_cartData.length}');
   }
 }

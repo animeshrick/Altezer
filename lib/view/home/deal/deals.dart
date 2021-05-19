@@ -22,18 +22,15 @@ class _DealsState extends State<Deals> {
   String? _categoriesName; //value
   String _catId = '0';
   List<CategoriesList> _catList = [];
-  List<CategoriesList> _dealList = [];
   int _pageIndex = 0;
   final _listContr = ScrollController();
 
   void initState() {
     super.initState();
-    _dealsFuture =
-        networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
     });
-    _getDealList();
+    _getDealList(_catId);
     _listContr.addListener(() {
       if (_listContr.position.atEdge && _catId != null) {
         print('contr- ${_listContr.position.pixels}');
@@ -85,8 +82,7 @@ class _DealsState extends State<Deals> {
             children: [
               Card(
                 color: Color(0xffEDEDED),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     elevation: 16,
                     icon: CircleAvatar(
@@ -99,7 +95,10 @@ class _DealsState extends State<Deals> {
                         )),
                     isExpanded: true,
                     value: _categoriesName, //'Shoping Category',
-                    hint: Text('Select Category'),
+                    hint: Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Text('Select Category'),
+                    ),
                     items: _catList.map((value) {
                       return DropdownMenuItem<String>(
                         value: value.prdName,
@@ -122,7 +121,7 @@ class _DealsState extends State<Deals> {
                           .prdId
                           .toString();
                       print('_catId $_catId');
-                      _getDealList();
+                      _getDealList(_catId);
                     },
                   ),
                 ),
@@ -212,11 +211,9 @@ class _DealsState extends State<Deals> {
     }
   }
 
-  void _getDealList() async {
-    final dealRes =
-        await networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
-    setState(() {
-      _dealList = dealRes!.cast<CategoriesList>();
-    });
+  void _getDealList(catId) async {
+    _dealsFuture =
+        networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
+    setState(() {});
   }
 }

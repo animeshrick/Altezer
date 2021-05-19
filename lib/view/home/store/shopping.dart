@@ -5,7 +5,10 @@ import 'package:altezar/models/getProductsData.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/models/getSubCatList.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/utils/sharedPref.dart';
+import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/grocery/grocery.dart';
+import 'package:altezar/view/home/productDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,6 +63,8 @@ class _ShoppingState extends State<Shopping> {
         _getProductData();
       }
     });
+
+    // _getProductData();
   }
 
   @override
@@ -78,46 +83,49 @@ class _ShoppingState extends State<Shopping> {
               color: Color(0xffEDEDED),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropdownButton<String>(
-                  elevation: 16,
-                  icon: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: grey,
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: white,
-                        size: 30,
-                      )),
-                  isExpanded: true,
-                  value: _categoriesName, //'Shoping Category',
-                  hint: Text('Select Category'),
-                  items: _catList.map((value) {
-                    return DropdownMenuItem<String>(
-                      value: value.prdName,
-                      child: Text(
-                        value.prdName,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _categoriesName = value!;
-                    });
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    elevation: 16,
+                    icon: CircleAvatar(
+                        radius: 15,
+                        backgroundColor: grey,
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          color: white,
+                          size: 30,
+                        )),
+                    isExpanded: true,
+                    value: _categoriesName, //'Shoping Category',
+                    hint: Text('All Category'),
+                    items: _catList.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.prdName,
+                        child: Text(
+                          value.prdName,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _categoriesName = value!;
+                      });
 
-                    _catId = _catList
-                        .where((element) => element.prdName == _categoriesName)
-                        .toList()
-                        .first
-                        .prdId
-                        .toString();
-                    _subCatName = null;
-                    _catId == 22.toString()
-                        ? Get.to(() => Grocery())
-                        : _getSubCat();
-                    print('_catId - $_catId');
-                    //_getProductData();
-                  },
+                      _catId = _catList
+                          .where(
+                              (element) => element.prdName == _categoriesName)
+                          .toList()
+                          .first
+                          .prdId
+                          .toString();
+                      _subCatName = null;
+                      _catId == 22.toString()
+                          ? Get.to(() => Grocery())
+                          : _getSubCat();
+                      print('_catId - $_catId');
+                      //_getProductData();
+                    },
+                  ),
                 ),
               ),
             ),
@@ -125,41 +133,43 @@ class _ShoppingState extends State<Shopping> {
               color: Color(0xffEDEDED),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropdownButton<String>(
-                  elevation: 16,
-                  icon: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: grey,
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: white,
-                        size: 30,
-                      )),
-                  isExpanded: true,
-                  value: _subCatName, //'Sub Category',
-                  hint: Text('Select Sub Category'),
-                  items: _subCatList.map((value) {
-                    return DropdownMenuItem<String>(
-                      value: value.prdName,
-                      child: Text(
-                        value.prdName,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _subCatName = value!;
-                    });
-                    _subCatId = _subCatList
-                        .where((element) => element.prdName == _subCatName)
-                        .toList()
-                        .first
-                        .prdCatSubId
-                        .toString();
-                    print('_subCatId  $_subCatId');
-                    _getProductData();
-                  },
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    elevation: 16,
+                    icon: CircleAvatar(
+                        radius: 15,
+                        backgroundColor: grey,
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          color: white,
+                          size: 30,
+                        )),
+                    isExpanded: true,
+                    value: _subCatName, //'Sub Category',
+                    hint: Text('Sub Category'),
+                    items: _subCatList.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.prdName,
+                        child: Text(
+                          value.prdName,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _subCatName = value!;
+                      });
+                      _subCatId = _subCatList
+                          .where((element) => element.prdName == _subCatName)
+                          .toList()
+                          .first
+                          .prdCatSubId
+                          .toString();
+                      print('_subCatId  $_subCatId');
+                      _getProductData();
+                    },
+                  ),
                 ),
               ),
             ),
@@ -167,41 +177,43 @@ class _ShoppingState extends State<Shopping> {
               color: Color(0xffEDEDED),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropdownButton<String>(
-                  elevation: 16,
-                  icon: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: grey,
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: white,
-                        size: 30,
-                      )),
-                  isExpanded: true,
-                  value: _sortingValue, //'Sort By',
-                  hint: Text('Choose a sorting option'),
-                  items: _sortingDataList.map((value) {
-                    return DropdownMenuItem<String>(
-                      value: value.sortName,
-                      child: Text(
-                        value.sortName,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _sortingValue = value!;
-                    });
-                    _sortId = _sortingDataList
-                        .where((element) => element.sortName == _sortingValue)
-                        .toList()
-                        .first
-                        .sortId
-                        .toString();
-                    print('_sortId  $_sortId');
-                    _getProductData();
-                  },
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    elevation: 16,
+                    icon: CircleAvatar(
+                        radius: 15,
+                        backgroundColor: grey,
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          color: white,
+                          size: 30,
+                        )),
+                    isExpanded: true,
+                    value: _sortingValue, //'Sort By',
+                    hint: Text('Sort By'),
+                    items: _sortingDataList.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.sortName,
+                        child: Text(
+                          value.sortName,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _sortingValue = value!;
+                      });
+                      _sortId = _sortingDataList
+                          .where((element) => element.sortName == _sortingValue)
+                          .toList()
+                          .first
+                          .sortId
+                          .toString();
+                      print('_sortId  $_sortId');
+                      _getProductData();
+                    },
+                  ),
                 ),
               ),
             ),
@@ -212,7 +224,7 @@ class _ShoppingState extends State<Shopping> {
               controller: searchController,
               autofocus: false,
               decoration: InputDecoration(
-                hintText: 'Search here ......',
+                hintText: 'Search by Product name,brnad, etc ......',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -222,13 +234,16 @@ class _ShoppingState extends State<Shopping> {
             SizedBox(
                 height: 0.07.sh,
                 width: 1.sw,
-                child: button(() {
-                  _getProductData();
+                child: button(() async {
+                  list.clear();
+                  showProgress(context);
+                  await _getProductData();
+                  hideProgress(context);
                 }, 'Search', Color(0xffEC971F), white)),
             SizedBox(
               height: 20,
             ),
-            if (_catId == null)
+            if (_catId == null && searchController.text == '')
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,7 +276,7 @@ class _ShoppingState extends State<Shopping> {
                                     duration: 2000,
                                     itemCount: list.length,
                                     autoplay: true,
-                                    viewportFraction: 0.4,
+                                    viewportFraction: 0.2,
                                     itemBuilder: (_, i) {
                                       return CachedNetworkImage(
                                         imageUrl:
@@ -312,7 +327,7 @@ class _ShoppingState extends State<Shopping> {
             SizedBox(
               height: 10,
             ),
-            if (_catId != null)
+            if (_catId != null || searchController.text != '')
               FutureBuilder<List<ProductListData>?>(
                   future: _prodFuture,
                   builder: (context, snapshot) {
@@ -376,12 +391,32 @@ class _ShoppingState extends State<Shopping> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    button(() {}, 'View Details', green, white),
+                                    button(() {
+                                      Get.to(() => ProductDetailsPage(
+                                          prdTypeId: '1',
+                                          prdId: '${list[i].yjprdId}'));
+                                    }, 'Details', green, white),
                                     SizedBox(
                                       width: 20,
                                     ),
-                                    button(() {}, 'Add to cart',
-                                        Color(0xffD9534F), white),
+                                    sp.isLogin() == true
+                                        ? cartButton(() {
+                                            _addToCart(
+                                                '${list[i].yjprdId}',
+                                                '${list[i].clientId}',
+                                                'Products',
+                                                '',
+                                                '',
+                                                1.toString(),
+                                                '',
+                                                '',
+                                                sp.getUserId().toString());
+                                          }, 'Add', priceTextColor, white)
+                                        : cartButton(
+                                            () => Get.to(() => SignUp()),
+                                            'Add',
+                                            priceTextColor,
+                                            white),
                                   ],
                                 ),
                               ],
@@ -416,7 +451,7 @@ class _ShoppingState extends State<Shopping> {
     showProgress(context);
     _subCatList = (await networkcallService.getSubCatAPICall(_catId!))!;
     hideProgress(context);
-    setState(() {});
+    // setState(() {});
     _getProductData();
   }
 
@@ -430,13 +465,35 @@ class _ShoppingState extends State<Shopping> {
     }
   }
 
-  void _getProductData() {
+  Future _getProductData() async {
     _prodFuture = networkcallService.getProductsAPICall(
-        _catId!,
+        _catId ?? '0',
         searchController.text,
         _subCatId ?? '0',
         _sortId ?? '0',
         _pageIndex.toString());
     setState(() {});
+  }
+
+  void _addToCart(
+      String prdID,
+      String clientId,
+      String orderType,
+      String selectedStyle,
+      String mtoInfo,
+      String qty,
+      String mtoDelivaryDate,
+      String mtoImgPath,
+      String userId) async {
+    final data = await networkcallService.addToCartAPICall(
+        prdID,
+        clientId,
+        orderType,
+        selectedStyle,
+        mtoInfo,
+        qty,
+        mtoDelivaryDate,
+        mtoImgPath,
+        userId);
   }
 }

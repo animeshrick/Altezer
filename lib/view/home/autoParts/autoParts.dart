@@ -2,8 +2,11 @@ import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/autoPartsListModel.dart';
 import 'package:altezar/models/getAutoPartsCat.dart';
 import 'package:altezar/models/getAutoPartsSubCat.dart';
+import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/utils/sharedPref.dart';
+import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/productDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/searchField.dart';
@@ -26,6 +29,7 @@ class _AutoPartsState extends State<AutoParts> {
 
   List<AutoPartsCategory>? _autoPartsCategoryList;
   List<AutoPartsSubcategory>? _autoPartsSubCategoryList;
+  var _cartData = <CartBoxData>[].obs;
 
   List<GetSortByData> _sortingDataList = [];
   final _listContr = ScrollController();
@@ -36,18 +40,21 @@ class _AutoPartsState extends State<AutoParts> {
   @override
   void initState() {
     super.initState();
-    _autoPartsFuture =
-        networkcallService.getAutoPartList('', '0', '0', '0', '0');
+    // _autoPartsFuture =
+    //     networkcallService.getAutoPartList('', '0', '0', '0', '0');
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
+      _cartBox();
     });
+
+    _getProductData();
 
     _listContr.addListener(() {
       if (_listContr.position.atEdge && _autoCatId != null) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
-        // _getProductData();
+        _getProductData();
       }
     });
   }
@@ -100,41 +107,43 @@ class _AutoPartsState extends State<AutoParts> {
                     color: Color(0xffEDEDED),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        elevation: 16,
-                        icon: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: grey,
-                            child: Icon(
-                              Icons.arrow_drop_down,
-                              color: white,
-                              size: 30,
-                            )),
-                        isExpanded: true,
-                        value: _autoCatVal,
-                        hint: Text('Parts Category'),
-                        items: _autoPartsCategoryList?.map((value) {
-                          return DropdownMenuItem<String>(
-                            value: value.name,
-                            child: Text(
-                              value.name,
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            _autoCatVal = value!;
-                          });
-                          _autoCatId = _autoPartsCategoryList!
-                              .where((element) => element.name == _autoCatVal)
-                              .toList()
-                              .first
-                              .productCategorySub1Id
-                              .toString();
-                          print('_autoCatId  $_autoCatId');
-                          _getSubAutoCat(_autoCatId!);
-                        },
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          elevation: 16,
+                          icon: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: grey,
+                              child: Icon(
+                                Icons.arrow_drop_down,
+                                color: white,
+                                size: 30,
+                              )),
+                          isExpanded: true,
+                          value: _autoCatVal,
+                          hint: Text('Parts Category'),
+                          items: _autoPartsCategoryList?.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.name,
+                              child: Text(
+                                value.name,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _autoCatVal = value!;
+                            });
+                            _autoCatId = _autoPartsCategoryList!
+                                .where((element) => element.name == _autoCatVal)
+                                .toList()
+                                .first
+                                .productCategorySub1Id
+                                .toString();
+                            print('_autoCatId  $_autoCatId');
+                            _getSubAutoCat(_autoCatId!);
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -142,42 +151,44 @@ class _AutoPartsState extends State<AutoParts> {
                     color: Color(0xffEDEDED),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        elevation: 16,
-                        icon: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: grey,
-                            child: Icon(
-                              Icons.arrow_drop_down,
-                              color: white,
-                              size: 30,
-                            )),
-                        isExpanded: true,
-                        value: _autoSubCatVal,
-                        hint: Text('Parts Sub-Category'),
-                        items: _autoPartsSubCategoryList?.map((value) {
-                          return DropdownMenuItem<String>(
-                            value: value.subname,
-                            child: Text(
-                              value.subname,
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            _autoSubCatVal = value!;
-                          });
-                          _autoSubCatId = _autoPartsSubCategoryList!
-                              .where((element) =>
-                                  element.subname == _autoSubCatVal)
-                              .toList()
-                              .first
-                              .productCategorySub2Id
-                              .toString();
-                          print('_autoSubCatId  $_autoSubCatId');
-                          _getSubAutoCat(_autoCatId!);
-                        },
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          elevation: 16,
+                          icon: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: grey,
+                              child: Icon(
+                                Icons.arrow_drop_down,
+                                color: white,
+                                size: 30,
+                              )),
+                          isExpanded: true,
+                          value: _autoSubCatVal,
+                          hint: Text('Parts Sub-Category'),
+                          items: _autoPartsSubCategoryList?.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.subname,
+                              child: Text(
+                                value.subname,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _autoSubCatVal = value!;
+                            });
+                            _autoSubCatId = _autoPartsSubCategoryList!
+                                .where((element) =>
+                                    element.subname == _autoSubCatVal)
+                                .toList()
+                                .first
+                                .productCategorySub2Id
+                                .toString();
+                            print('_autoSubCatId  $_autoSubCatId');
+                            _getProductData();
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -185,42 +196,44 @@ class _AutoPartsState extends State<AutoParts> {
                     color: Color(0xffEDEDED),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        elevation: 16,
-                        icon: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: grey,
-                            child: Icon(
-                              Icons.arrow_drop_down,
-                              color: white,
-                              size: 30,
-                            )),
-                        isExpanded: true,
-                        value: _sortingValue, //'Sort By',
-                        hint: Text('Choose a sorting option'),
-                        items: _sortingDataList.map((value) {
-                          return DropdownMenuItem<String>(
-                            value: value.sortName,
-                            child: Text(
-                              value.sortName,
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            _sortingValue = value!;
-                          });
-                          _sortId = _sortingDataList
-                              .where((element) =>
-                                  element.sortName == _sortingValue)
-                              .toList()
-                              .first
-                              .sortId
-                              .toString();
-                          print('_sortId  $_sortId');
-                          // _getProductData();
-                        },
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          elevation: 16,
+                          icon: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: grey,
+                              child: Icon(
+                                Icons.arrow_drop_down,
+                                color: white,
+                                size: 30,
+                              )),
+                          isExpanded: true,
+                          value: _sortingValue, //'Sort By',
+                          hint: Text('Choose a sorting option'),
+                          items: _sortingDataList.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.sortName,
+                              child: Text(
+                                value.sortName,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _sortingValue = value!;
+                            });
+                            _sortId = _sortingDataList
+                                .where((element) =>
+                                    element.sortName == _sortingValue)
+                                .toList()
+                                .first
+                                .sortId
+                                .toString();
+                            print('_sortId  $_sortId');
+                            _getProductData();
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -235,7 +248,9 @@ class _AutoPartsState extends State<AutoParts> {
                   SizedBox(
                       height: 0.07.sh,
                       width: 1.sw,
-                      child: button(() {}, 'Search', Color(0xffEC971F), white)),
+                      child: button(() {
+                        _getProductData();
+                      }, 'Search', Color(0xffEC971F), white)),
                   SizedBox(
                     height: 10,
                   ),
@@ -309,12 +324,30 @@ class _AutoPartsState extends State<AutoParts> {
                                                   prdId:
                                                       '${list[i].yjProductId}',
                                                 ));
-                                          }, 'View Details', greenColor, white),
+                                          }, 'Details', greenColor, white),
                                           SizedBox(
                                             width: 20,
                                           ),
-                                          button(() {}, 'Add to Cart',
-                                              priceTextColor, white),
+                                          sp.isLogin() == true
+                                              ? cartButton(() {
+                                                  _addToCart(
+                                                      '${list[i].yjProductId}',
+                                                      '${list[i].clientId}',
+                                                      'AutoParts',
+                                                      '',
+                                                      '',
+                                                      1.toString(),
+                                                      '',
+                                                      '',
+                                                      sp
+                                                          .getUserId()
+                                                          .toString());
+                                                }, 'Add', priceTextColor, white)
+                                              : cartButton(
+                                                  () => Get.to(() => SignUp()),
+                                                  'Add',
+                                                  priceTextColor,
+                                                  white),
                                         ],
                                       ),
                                     ],
@@ -335,16 +368,23 @@ class _AutoPartsState extends State<AutoParts> {
                 ],
               ),
             )),
-            Material(
-              child: SizedBox(
-                height: 0.06.sh,
-                child: RaisedButton.icon(
-                    color: Color(0xff5BC0DE),
-                    onPressed: () {},
-                    icon: Icon(Icons.card_travel_rounded),
-                    label: Text('Order Cart *(0)* || \$0.0')),
-              ),
-            ),
+            Obx(() {
+              if (_cartData.length > 0) {
+                var data = _cartData.first;
+                return SizedBox(
+                    height: 0.06.sh,
+                    child: RaisedButton.icon(
+                      color: Color(0xff5BC0DE),
+                      onPressed: () {},
+                      icon: Icon(Icons.shopping_cart_outlined),
+                      label: Text(
+                          'Order Cart *(${data.orderCartCount})* || \$${data.totalCostUSD}'),
+                    )
+                    // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
+                    );
+              }
+              return Container();
+            })
           ],
         ),
       ),
@@ -376,5 +416,43 @@ class _AutoPartsState extends State<AutoParts> {
       });
     }
     setState(() {});
+  }
+
+  void _getProductData() async {
+    _autoPartsFuture = networkcallService.getAutoPartList(
+        searchController.text,
+        _autoCatId ?? '0',
+        _autoSubCatId ?? '0',
+        _sortId ?? '0',
+        _pageIndex.toString());
+    setState(() {});
+  }
+
+  void _addToCart(
+      String prdID,
+      String clientId,
+      String orderType,
+      String selectedStyle,
+      String mtoInfo,
+      String qty,
+      String mtoDelivaryDate,
+      String mtoImgPath,
+      String userId) async {
+    final data = await networkcallService.addToCartAPICall(
+        prdID,
+        clientId,
+        orderType,
+        selectedStyle,
+        mtoInfo,
+        qty,
+        mtoDelivaryDate,
+        mtoImgPath,
+        userId);
+  }
+
+  void _cartBox() async {
+    _cartData.value = (await networkcallService
+        .getCartBoxAPICall(sp.getUserId().toString()))!;
+    print('l ${_cartData.length}');
   }
 }

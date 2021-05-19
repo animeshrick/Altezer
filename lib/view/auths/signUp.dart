@@ -209,49 +209,51 @@ class _SignUpState extends State<SignUp> {
                       ),
                       Card(
                         color: Colors.grey[300],
-                        child: DropdownButtonFormField<String>(
-                          validator: (value) =>
-                              value == null ? 'Enter your Country' : null,
-                          value: _countryValue,
-                          hint: Padding(
-                            padding: EdgeInsets.only(left: 15.0),
-                            child: Text('Choose your Country-'),
-                          ),
-                          isExpanded: true,
-                          icon: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: grey,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: white,
-                                )),
-                          ),
-                          style: const TextStyle(color: Colors.black),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _countryValue = newValue!;
-                            });
-                            countryId = _countryList
-                                .where((element) =>
-                                    element.countryName == _countryValue)
-                                .toList()[0]
-                                .countryId
-                                .toString();
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            validator: (value) =>
+                                value == null ? 'Enter your Country' : null,
+                            value: _countryValue,
+                            hint: Padding(
+                              padding: EdgeInsets.only(left: 15.0),
+                              child: Text('Choose your Country-'),
+                            ),
+                            isExpanded: true,
+                            icon: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: white,
+                                  )),
+                            ),
+                            style: const TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _countryValue = newValue!;
+                              });
+                              countryId = _countryList
+                                  .where((element) =>
+                                      element.countryName == _countryValue)
+                                  .toList()[0]
+                                  .countryId
+                                  .toString();
 
-                            _stateValue = null;
-                            _getState(countryId!);
-                          },
-                          items: _countryList.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.countryName,
-                              child: Text(
-                                value.countryName,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
+                              _stateValue = null;
+                              _getState(countryId!);
+                            },
+                            items: _countryList.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value.countryName,
+                                child: Text(
+                                  value.countryName,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -266,50 +268,52 @@ class _SignUpState extends State<SignUp> {
                       ),
                       Card(
                         color: Colors.grey[300],
-                        child: DropdownButtonFormField<String>(
-                          validator: (value) =>
-                              value == null ? 'Enter your State' : null,
-                          value: _stateValue,
-                          isExpanded: true,
-                          hint: Padding(
-                            padding: EdgeInsets.only(
-                              left: 15.0,
-                            ),
-                            child: Text('Choose your State'),
-                          ),
-                          icon: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: grey,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: white,
-                                )),
-                          ),
-                          style: const TextStyle(color: Colors.black),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _stateValue = newValue!;
-                            });
-                            stateId = _stateList!
-                                .where((element) =>
-                                    element.stateName == _stateValue)
-                                .toList()
-                                .first
-                                .stateId
-                                .toString();
-                          },
-                          items: _stateList!
-                              .map<DropdownMenuItem<String>>((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.stateName,
-                              child: Text(
-                                value.stateName,
-                                style: TextStyle(fontSize: 18),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            validator: (value) =>
+                                value == null ? 'Enter your State' : null,
+                            value: _stateValue,
+                            isExpanded: true,
+                            hint: Padding(
+                              padding: EdgeInsets.only(
+                                left: 15.0,
                               ),
-                            );
-                          }).toList(),
+                              child: Text('Choose your State'),
+                            ),
+                            icon: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: white,
+                                  )),
+                            ),
+                            style: const TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _stateValue = newValue!;
+                              });
+                              stateId = _stateList!
+                                  .where((element) =>
+                                      element.stateName == _stateValue)
+                                  .toList()
+                                  .first
+                                  .stateId
+                                  .toString();
+                            },
+                            items: _stateList!
+                                .map<DropdownMenuItem<String>>((value) {
+                              return DropdownMenuItem<String>(
+                                value: value.stateName,
+                                child: Text(
+                                  value.stateName,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -324,44 +328,50 @@ class _SignUpState extends State<SignUp> {
                       ),
                       Card(
                         color: Colors.grey[300],
-                        child: DropdownButtonFormField<String>(
-                          validator: (value) =>
-                              value == null ? 'Enter your Date of birth' : null,
-                          // isExpanded: true,
-                          hint: Text('Date'),
-                          value: _monthDayValue,
-                          icon: Padding(
-                            padding: EdgeInsets.only(left: 8.0),
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: grey,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: white,
-                                )),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            validator: (value) => value == null
+                                ? 'Enter your Date of birth'
+                                : null,
+                            // isExpanded: true,
+                            hint: Padding(
+                              padding: EdgeInsets.only(left: 15.0),
+                              child: Text('Date'),
+                            ),
+                            value: _monthDayValue,
+                            icon: Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: white,
+                                  )),
+                            ),
+                            style: const TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _monthDayValue = newValue!;
+                              });
+                              dateId = _monthDayList
+                                  .where((element) =>
+                                      element.monthDay == _monthDayValue)
+                                  .toList()
+                                  .first
+                                  .monthDay
+                                  .toString();
+                            },
+                            items: _monthDayList.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value.monthDay,
+                                child: Text(
+                                  value.monthDay,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                          style: const TextStyle(color: Colors.black),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _monthDayValue = newValue!;
-                            });
-                            dateId = _monthDayList
-                                .where((element) =>
-                                    element.monthDay == _monthDayValue)
-                                .toList()
-                                .first
-                                .monthDay
-                                .toString();
-                          },
-                          items: _monthDayList.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.monthDay,
-                              child: Text(
-                                value.monthDay,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
                         ),
                       ),
                       SizedBox(
@@ -369,45 +379,50 @@ class _SignUpState extends State<SignUp> {
                       ),
                       Card(
                         color: Colors.grey[300],
-                        child: DropdownButtonFormField<String>(
-                          validator: (value) => value == null
-                              ? 'Enter your month of birth'
-                              : null,
-                          // isExpanded: true,
-                          value: _monthNumberValue,
-                          hint: Text('Month'),
-                          icon: Padding(
-                            padding: EdgeInsets.only(left: 8.0),
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: grey,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: white,
-                                )),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            validator: (value) => value == null
+                                ? 'Enter your month of birth'
+                                : null,
+                            // isExpanded: true,
+                            value: _monthNumberValue,
+                            hint: Padding(
+                              padding: EdgeInsets.only(left: 15.0),
+                              child: Text('Month'),
+                            ),
+                            icon: Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: white,
+                                  )),
+                            ),
+                            style: const TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _monthNumberValue = newValue!;
+                              });
+                              monthId = _monthNumberList
+                                  .where((element) =>
+                                      element.monthNumber == _monthNumberValue)
+                                  .toList()
+                                  .first
+                                  .monthNumber
+                                  .toString();
+                            },
+                            items: _monthNumberList.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value.monthNumber,
+                                child: Text(
+                                  value.monthNumber,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                          style: const TextStyle(color: Colors.black),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _monthNumberValue = newValue!;
-                            });
-                            monthId = _monthNumberList
-                                .where((element) =>
-                                    element.monthNumber == _monthNumberValue)
-                                .toList()
-                                .first
-                                .monthNumber
-                                .toString();
-                          },
-                          items: _monthNumberList.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.monthNumber,
-                              child: Text(
-                                value.monthNumber,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
                         ),
                       ),
                       SizedBox(
@@ -415,43 +430,50 @@ class _SignUpState extends State<SignUp> {
                       ),
                       Card(
                         color: Colors.grey[300],
-                        child: DropdownButtonFormField<String>(
-                          validator: (value) =>
-                              value == null ? 'Enter your year of birth' : null,
-                          // isExpanded: true,
-                          value: _yearValue,
-                          hint: Text('Year'),
-                          icon: Padding(
-                            padding: EdgeInsets.only(left: 8.0),
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: grey,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: white,
-                                )),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            validator: (value) => value == null
+                                ? 'Enter your year of birth'
+                                : null,
+                            // isExpanded: true,
+                            value: _yearValue,
+                            hint: Padding(
+                              padding: EdgeInsets.only(left: 15.0),
+                              child: Text('Year'),
+                            ),
+                            icon: Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: white,
+                                  )),
+                            ),
+                            style: const TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _yearValue = newValue!;
+                              });
+                              yearId = _yearList
+                                  .where(
+                                      (element) => element.year == _yearValue)
+                                  .toList()
+                                  .first
+                                  .yearId
+                                  .toString();
+                            },
+                            items: _yearList.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value.year,
+                                child: Text(
+                                  value.year,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                          style: const TextStyle(color: Colors.black),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _yearValue = newValue!;
-                            });
-                            yearId = _yearList
-                                .where((element) => element.year == _yearValue)
-                                .toList()
-                                .first
-                                .yearId
-                                .toString();
-                          },
-                          items: _yearList.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.year,
-                              child: Text(
-                                value.year,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
                         ),
                       ),
 
@@ -467,48 +489,50 @@ class _SignUpState extends State<SignUp> {
                       ),
                       Card(
                         color: Colors.grey[300],
-                        child: DropdownButtonFormField<String>(
-                          // isExpanded: true,
-                          validator: (value) =>
-                              value == null ? 'Enter your Gender' : null,
-                          hint: Padding(
-                            padding: EdgeInsets.only(left: 20.0),
-                            child: Text('Pick your Gender'),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            // isExpanded: true,
+                            validator: (value) =>
+                                value == null ? 'Enter your Gender' : null,
+                            hint: Padding(
+                              padding: EdgeInsets.only(left: 20.0),
+                              child: Text('Pick your Gender'),
+                            ),
+                            value: _genderValue,
+                            icon: Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: white,
+                                  )),
+                            ),
+                            iconSize: 15,
+                            style: const TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _genderValue = newValue!;
+                              });
+                              genderID = _genderList
+                                  .where((element) =>
+                                      element.gender == _genderValue)
+                                  .toList()
+                                  .first
+                                  .genderId
+                                  .toString();
+                            },
+                            items: _genderList.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value.gender,
+                                child: Text(
+                                  value.gender,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                          value: _genderValue,
-                          icon: Padding(
-                            padding: EdgeInsets.only(right: 8.0),
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: grey,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: white,
-                                )),
-                          ),
-                          iconSize: 15,
-                          style: const TextStyle(color: Colors.black),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _genderValue = newValue!;
-                            });
-                            genderID = _genderList
-                                .where(
-                                    (element) => element.gender == _genderValue)
-                                .toList()
-                                .first
-                                .genderId
-                                .toString();
-                          },
-                          items: _genderList.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.gender,
-                              child: Text(
-                                value.gender,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
                         ),
                       ),
                       SizedBox(
@@ -676,7 +700,19 @@ class _SignUpState extends State<SignUp> {
         return AlertDialog(
           // title: customText('Registation done successfully !', green, 18.0),
           content: Container(
-            child: customText(result, black, 20.0),
+            height: 0.4.sh,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+                customText(result, black, 20.0),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(

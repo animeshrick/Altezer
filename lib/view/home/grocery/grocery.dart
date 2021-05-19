@@ -34,7 +34,7 @@ class _GroceryState extends State<Grocery> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _isShow = true;
-      _gerGroceryStoreData();
+      _getGroceryStoreData();
     });
   }
 
@@ -85,7 +85,7 @@ class _GroceryState extends State<Grocery> {
                 controller: searchController,
                 autofocus: false,
                 decoration: InputDecoration(
-                  hintText: 'Search here ......',
+                  hintText: 'Enter a store name to search',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -94,43 +94,51 @@ class _GroceryState extends State<Grocery> {
               ),
               Card(
                 color: Color(0xffEDEDED),
-                child: DropdownButton<String>(
-                  elevation: 16,
-                  icon: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: grey,
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: white,
-                        size: 30,
-                      )),
-                  isExpanded: true,
-                  hint: customText('Choose an option', black, 18.0),
-                  value: _groceryStateValue,
-                  items: _groceryStateList.map((value) {
-                    return DropdownMenuItem<String>(
-                      value: value.groceryStateName,
-                      child: Text(
-                        value.groceryStateName,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _groceryStateValue = value!;
-                    });
-                    // ------------- id ----------
-                    _groceryStateId = _groceryStateList
-                        .where((element) =>
-                            element.groceryStateName == _groceryStateValue)
-                        .toList()
-                        .first
-                        .groceryStateId
-                        .toString();
-                    // print('id- $_groceryStateId');
-                    // _gerGroceryStoreData();
-                  },
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    elevation: 16,
+                    icon: CircleAvatar(
+                        radius: 15,
+                        backgroundColor: grey,
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          color: white,
+                          size: 30,
+                        )),
+                    isExpanded: true,
+                    hint: Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: customText('Choose an option', black, 18.0),
+                    ),
+                    value: _groceryStateValue,
+                    items: _groceryStateList.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.groceryStateName,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0),
+                          child: Text(
+                            value.groceryStateName,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _groceryStateValue = value!;
+                      });
+                      // ------------- id ----------
+                      _groceryStateId = _groceryStateList
+                          .where((element) =>
+                              element.groceryStateName == _groceryStateValue)
+                          .toList()
+                          .first
+                          .groceryStateId
+                          .toString();
+                      print('id- $_groceryStateId');
+                      _getGroceryStoreData();
+                    },
+                  ),
                 ),
               ),
               SizedBox(
@@ -145,7 +153,7 @@ class _GroceryState extends State<Grocery> {
                     _isShow = true;
                   });
 
-                  _gerGroceryStoreData();
+                  _getGroceryStoreData();
                 }, 'Search', Color(0xffEC971F), white),
               ),
               SizedBox(height: 20),
@@ -252,7 +260,7 @@ class _GroceryState extends State<Grocery> {
     }
   }
 
-  void _gerGroceryStoreData() async {
+  void _getGroceryStoreData() async {
     _groceryStoreFuture = networkcallService.getGroceryStoreListAPICall(
         _groceryStateId ?? '0', searchController.text);
 

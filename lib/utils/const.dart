@@ -63,7 +63,7 @@ final strip = 'assets/strip.png';
 final checkout = 'assets/checkout.gif';
 
 final imageNotFound =
-    'https://t4.ftcdn.net/jpg/03/61/23/65/360_F_361236586_29nm8jXiVCGD2uJ4zB7q2tVNunZCKeiC.jpg';
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYvNmVokcDTJaBNpgbqxtIMKTyaJaU77G-0w&usqp=CAU';
 /*-------------------------Fluttertoast-------------------------*/
 
 showToast(msg, color) => Fluttertoast.showToast(
@@ -117,6 +117,8 @@ final String getAutoPartListApi = '$_baseUrl/GetAutoPartsList.ashx';
 final String getProductDetails = '$_baseUrl/GetProductDetails.ashx';
 final String getDetailsOfPages = '$_baseUrl/GetProduct.ashx';
 final String addtoCart = '$_baseUrl/AddToCart.ashx';
+final String getCategoryForStore = '$_baseUrl/GetCategoryForStore.ashx';
+final String getCartBox = '$_baseUrl/GetCartBoxa.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 
