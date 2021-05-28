@@ -39,6 +39,8 @@ class Productlist {
     required this.perks,
     required this.isMadeToOrder,
     required this.size,
+    required this.avaRating,
+    required this.ratingCount,
   });
 
   final String productTypeId;
@@ -59,7 +61,7 @@ class Productlist {
   final String allowOnlineOrder;
   final String displayPriceFlag;
   final String perks;
-  final int isMadeToOrder;
+  final int isMadeToOrder, avaRating, ratingCount;
   final String size;
 
   factory Productlist.fromJson(Map<String, dynamic> json) => Productlist(
@@ -83,5 +85,7 @@ class Productlist {
         perks: json["Perks"],
         isMadeToOrder: json["is_Made_To_Order"],
         size: json["Size"],
+        avaRating: json['AverageRating'],
+        ratingCount: json['RatingCount'],
       );
 }

@@ -6,7 +6,6 @@ import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
-import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/productDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/searchField.dart';
@@ -344,7 +343,7 @@ class _AutoPartsState extends State<AutoParts> {
                                                           .toString());
                                                 }, 'Add', priceTextColor, white)
                                               : cartButton(
-                                                  () => Get.to(() => SignUp()),
+                                                  () => gotoLoginPage(),
                                                   'Add',
                                                   priceTextColor,
                                                   white),
@@ -369,8 +368,9 @@ class _AutoPartsState extends State<AutoParts> {
               ),
             )),
             Obx(() {
-              if (_cartData.length > 0) {
+              if (_cartData.length > 0 && sp.isLogin() == true) {
                 var data = _cartData.first;
+                print('this is me ${sp.getUserId().toString()}');
                 return SizedBox(
                     height: 0.06.sh,
                     child: RaisedButton.icon(
@@ -378,12 +378,23 @@ class _AutoPartsState extends State<AutoParts> {
                       onPressed: () {},
                       icon: Icon(Icons.shopping_cart_outlined),
                       label: Text(
-                          'Order Cart *(${data.orderCartCount})* || \$${data.totalCostUSD}'),
+                          'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
                     )
                     // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
                     );
               }
-              return Container();
+              return SizedBox(
+                  height: 0.06.sh,
+                  child: RaisedButton.icon(
+                    color: Color(0xff5BC0DE),
+                    onPressed: () {
+                      gotoLoginPage();
+                    },
+                    icon: Icon(Icons.shopping_cart_outlined),
+                    label: Text('Order Cart *(0)* || \$0.0'),
+                  )
+                  // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
+                  );
             })
           ],
         ),
@@ -438,7 +449,7 @@ class _AutoPartsState extends State<AutoParts> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
-    final data = await networkcallService.addToCartAPICall(
+    var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
         orderType,
@@ -448,11 +459,15 @@ class _AutoPartsState extends State<AutoParts> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
+    if (data == true) {
+      _cartBox();
+    }
   }
 
   void _cartBox() async {
-    _cartData.value = (await networkcallService
-        .getCartBoxAPICall(sp.getUserId().toString()))!;
+    if (sp.getUserId() != null)
+      _cartData.value = (await networkcallService
+          .getCartBoxAPICall(sp.getUserId().toString()))!;
     print('l ${_cartData.length}');
   }
 }

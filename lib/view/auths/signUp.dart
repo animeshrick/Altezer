@@ -660,7 +660,7 @@ class _SignUpState extends State<SignUp> {
       String month,
       String year,
       String gender) async {
-    print('call');
+    // print('call');
     try {
       setState(() {
         isLoading = true;

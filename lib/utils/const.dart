@@ -1,6 +1,8 @@
+import 'package:altezar/view/auths/intro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 
 /*-------------------------text-------------------------*/
 TextStyle customizeTextStyle(fontWeight, fontSize, fontColor) => TextStyle(
@@ -119,6 +121,17 @@ final String getDetailsOfPages = '$_baseUrl/GetProduct.ashx';
 final String addtoCart = '$_baseUrl/AddToCart.ashx';
 final String getCategoryForStore = '$_baseUrl/GetCategoryForStore.ashx';
 final String getCartBox = '$_baseUrl/GetCartBoxa.ashx';
+final String getDeliveryOption = '$_baseUrl/GetDeliveryOption.ashx';
+final String getCartOrderDetails = '$_baseUrl/GetcartOrderDetails.ashx';
+final String getUserInfo = '$_baseUrl/GetUserInfo.ashx';
+final String getQuestion = '$_baseUrl/GetQuestion.ashx';
+final String updateUserInfo = '$_baseUrl/UpdateUserInfo.ashx';
+final String updateUserPassword = '$_baseUrl/UpdateUserPassword.ashx';
+final String getBanks = '$_baseUrl/GetBankList.ashx';
+final String getBankBranch = '$_baseUrl/GetBankbyBranch.ashx';
+final String addBankDetails = '$_baseUrl/AddUserBankAccount.ashx';
+final String editBankDetails = '$_baseUrl/GetAccountbankById.ashx';
+final String getbankList = '$_baseUrl/GetUserBankAccountlist.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 
@@ -140,4 +153,10 @@ showProgress(BuildContext context) {
 
 void hideProgress(BuildContext context) {
   Navigator.pop(context);
+}
+
+gotoLoginPage() {
+  return Get.to(() => Intro(
+        isChecked: false,
+      ));
 }

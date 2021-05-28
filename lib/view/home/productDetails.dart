@@ -3,8 +3,8 @@ import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/productDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
-import 'package:altezar/view/auths/signUp.dart';
-import 'package:altezar/view/home/checkout/checkout.dart';
+import 'package:altezar/view/auths/intro.dart';
+import 'package:altezar/view/home/registry/addRegistry.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/detailsPageAppBar.dart';
 import 'package:altezar/view/widgets/dropDown.dart';
@@ -16,7 +16,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'addRegistry.dart';
+import 'cart/cart.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final String prdTypeId;
@@ -160,6 +160,28 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 15,
                           ),
+
+                          /*sp.isLogin() == true
+                                              ? cartButton(() {
+                                                  _addToCart(
+                                                      '${list[i].yjProductId}',
+                                                      '${list[i].clientId}',
+                                                      'AutoParts',
+                                                      '',
+                                                      '',
+                                                      1.toString(),
+                                                      '',
+                                                      '',
+                                                      sp
+                                                          .getUserId()
+                                                          .toString());
+                                                }, 'Add', priceTextColor, white)
+                                              : cartButton(
+                                                  () => Get.to(() => gotoLoginPage()),
+                                                  'Add',
+                                                  priceTextColor,
+                                                  white),*/
+
                           sp.isLogin() == true
                               ? SizedBox(
                                   width: 0.95.sw,
@@ -175,7 +197,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   width: 0.95.sw,
                                   height: 0.08.sh,
                                   child: button(() {
-                                    Get.to(() => SignUp());
+                                    Get.to(() => gotoLoginPage());
                                   }, 'Add to cart', Color(0xff5BC0DE), white)),
                           SizedBox(
                             height: 15,
@@ -271,7 +293,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                   ),
                                                   TextButton(
                                                     onPressed: () {
-                                                      Get.to(AddRegistry());
+                                                      Get.to(
+                                                          () => AddRegistry());
                                                     },
                                                     child: Text(
                                                       'Click here',
@@ -319,7 +342,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   ),
                                 )
                               : InkWell(
-                                  onTap: () => Get.to(() => SignUp()),
+                                  onTap: () {
+                                    Get.to(() => Intro(
+                                          isChecked: false,
+                                        ));
+                                  },
                                   child: Container(
                                     height: 0.09.sh,
                                     width: double.infinity,
@@ -378,7 +405,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           ),
                           sp.isLogin() == true
                               ? Obx(() {
-                                  if (_cartData.length > 0) {
+                                  if (_cartData.length > 0 &&
+                                      sp.isLogin() == true) {
                                     var data = _cartData.first;
                                     return SizedBox(
                                         height: 0.08.sh,
@@ -386,11 +414,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         child: RaisedButton.icon(
                                           color: Color(0xff5BC0DE),
                                           onPressed: () {
-                                            Get.to(() => CheckOut());
+                                            Get.to(() => CartPage());
                                           },
-                                          icon: Icon(Icons.shopping_cart_outlined),
+                                          icon: Icon(
+                                              Icons.shopping_cart_outlined),
                                           label: Text(
-                                              'Order Cart *(${data.orderCartCount})* || \$${data.totalCostUSD}'),
+                                              'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
                                         )
                                         // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
                                         );
@@ -403,7 +432,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   child: RaisedButton.icon(
                                       color: Color(0xff5BC0DE),
                                       onPressed: () {
-                                        Get.to(() => SignUp());
+                                        Get.to(() => Intro(
+                                              isChecked: false,
+                                            ));
                                       },
                                       icon: Icon(Icons.shopping_cart_outlined),
                                       label:
@@ -499,9 +530,35 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     );
   }
 
+  void _addToCart(
+      String prdID,
+      String clientId,
+      String orderType,
+      String selectedStyle,
+      String mtoInfo,
+      String qty,
+      String mtoDelivaryDate,
+      String mtoImgPath,
+      String userId) async {
+    var data = await networkcallService.addToCartAPICall(
+        prdID,
+        clientId,
+        orderType,
+        selectedStyle,
+        mtoInfo,
+        qty,
+        mtoDelivaryDate,
+        mtoImgPath,
+        userId);
+    if (data == true) {
+      _cartBox();
+    }
+  }
+
   void _cartBox() async {
-    _cartData.value = (await networkcallService
-        .getCartBoxAPICall(sp.getUserId().toString()))!;
+    if (sp.getUserId() != null)
+      _cartData.value = (await networkcallService
+          .getCartBoxAPICall(sp.getUserId().toString()))!;
     print('l ${_cartData.length}');
   }
 }

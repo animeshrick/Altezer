@@ -1,7 +1,8 @@
+import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/auths/intro.dart';
-import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/deal/deals.dart';
 import 'package:altezar/view/home/store/onTapStore.dart';
 import 'package:altezar/view/widgets/button.dart';
@@ -11,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'autoParts/autoParts.dart';
-import 'checkout/checkout.dart';
+import 'cart/cart.dart';
 import 'food/food.dart';
 import 'grocery/grocery.dart';
 import 'store/dashboard.dart';
@@ -24,11 +25,15 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   var _controller;
   bool? isLogin = false;
+  var _cartData = <CartBoxData>[].obs;
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 5, vsync: this);
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      if (sp.isLogin()!) _cartBox();
+    });
   }
 
   @override
@@ -69,27 +74,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               appbarImg,
               height: 0.1.sh,
             ),
-            sp.isLogin() == true
-                ? Flexible(
-                    child: FlatButton.icon(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          Get.to(() => CheckOut());
-                        },
-                        color: white,
-                        icon: Icon(Icons.shopping_cart_outlined),
-                        label: Text('0')),
-                  )
-                : Flexible(
-                    child: FlatButton.icon(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          Get.to(() => SignUp());
-                        },
-                        color: white,
-                        icon: Icon(Icons.shopping_cart_outlined),
-                        label: Text('0')),
-                  ),
+            Obx(() {
+              if (_cartData.length > 0 && sp.isLogin() == true) {
+                var data = _cartData.first;
+                return Flexible(
+                  child: FlatButton.icon(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Get.to(() => CartPage());
+                      },
+                      color: white,
+                      icon: Icon(Icons.shopping_cart_outlined),
+                      label: Text('${data.orderCartCount}')),
+                );
+              }
+              return Flexible(
+                child: FlatButton.icon(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      gotoLoginPage();
+                    },
+                    color: white,
+                    icon: Icon(Icons.shopping_cart_outlined),
+                    label: Text('0')),
+              );
+            })
           ],
         ),
         backgroundColor: appbarColor,
@@ -154,5 +163,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  void _cartBox() async {
+    _cartData.value = (await networkcallService
+        .getCartBoxAPICall(sp.getUserId().toString()))!;
+    print('length ${_cartData.length}');
   }
 }

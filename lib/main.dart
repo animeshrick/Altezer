@@ -41,7 +41,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var returnWidget1 = Home();
-  // var returnWidget1 = SignUp();
 
   var scafoldKey = GlobalKey<FormState>();
   var internetStatus = "Unknown";

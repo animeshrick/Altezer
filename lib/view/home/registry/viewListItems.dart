@@ -1,15 +1,14 @@
 import 'package:altezar/utils/const.dart';
+import 'package:altezar/view/home/autoParts/autoParts.dart';
+import 'package:altezar/view/home/cart/cart.dart';
 import 'package:altezar/view/home/deal/deals.dart';
+import 'package:altezar/view/home/food/food.dart';
+import 'package:altezar/view/home/grocery/grocery.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/listView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import 'autoParts/autoParts.dart';
-import 'checkout/checkout.dart';
-import 'food/food.dart';
-import 'grocery/grocery.dart';
 
 class ViewListItems extends StatelessWidget {
   bool isLogin = true;
@@ -45,7 +44,7 @@ class ViewListItems extends StatelessWidget {
               child: FlatButton.icon(
                   padding: EdgeInsets.zero,
                   onPressed: () {
-                    Get.to(CheckOut());
+                    Get.to(() => CartPage());
                   },
                   color: white,
                   icon: Icon(Icons.shopping_cart_outlined),

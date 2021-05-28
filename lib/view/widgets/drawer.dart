@@ -1,9 +1,9 @@
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/auths/intro.dart';
-import 'package:altezar/view/home/addRegistry.dart';
 import 'package:altezar/view/home/cart/cart.dart';
 import 'package:altezar/view/home/orders/orders.dart';
+import 'package:altezar/view/home/registry/addRegistry.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,25 +21,25 @@ Widget customDrawer() {
             height: 20,
           ),
           customInkWellText(() {
-            Get.to(CartPage());
+            Get.to(() => CartPage());
           }, 'View Cart', buttonColor, 22.0),
           SizedBox(
             height: 20,
           ),
           customInkWellText(() {
-            Get.to(Orders());
+            Get.to(() => Orders());
           }, 'My Orders', buttonColor, 22.0),
           SizedBox(
             height: 20,
           ),
           customInkWellText(() {
-            Get.to(AddRegistry());
+            Get.to(() => AddRegistry());
           }, 'My List and Registry', buttonColor, 22.0),
           SizedBox(
             height: 20,
           ),
           customInkWellText(() {
-            Get.to(AddRegistry());
+            Get.to(() => AddRegistry());
           }, 'Create List or Registry', buttonColor, 22.0),
           SizedBox(
             height: 20,
