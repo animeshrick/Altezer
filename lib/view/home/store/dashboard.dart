@@ -25,12 +25,7 @@ class _DashBoardState extends State<DashBoard>
     _controller = TabController(length: 2, vsync: this);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    print('mydispose');
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -50,7 +50,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           preferredSize: Size.fromHeight(50.0), child: detailsPageAppBar()),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -65,6 +65,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       var x = sameList.length;
 
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text('${detail.productName}',
                               style: TextStyle(
@@ -444,16 +445,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             height: 15,
                           ),
                           Align(
-                              alignment: Alignment.topLeft,
+                              alignment: Alignment.center,
                               child: Text('Suggestion Items',
                                   style: TextStyle(
                                       fontSize: 20,
-                                      fontWeight: FontWeight.w400))),
+                                      fontWeight: FontWeight.w500))),
                           SizedBox(
                             height: 15,
                           ),
                           x == 0
-                              ? Text('Data not dound')
+                              ? customText('Data not dound', red, 18)
                               : ListView.separated(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
@@ -465,49 +466,79 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   },
                                   itemBuilder: (_, i) {
                                     // print('length - $x');
-                                    return ColoredBox(
-                                      color: Color(0xffF2F2F2),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          CachedNetworkImage(
-                                            imageUrl:
-                                                "$imgBaseUrl${sameList[i].productUrl}",
-                                            height: 0.25.sh,
-                                            width: 0.2.sw,
-                                            placeholder: (context, url) => Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                            errorWidget: (context, url,
-                                                    error) =>
-                                                Image.network(imageNotFound),
+                                    return InkWell(
+                                      onTap: () {
+                                        // print(
+                                        //     '${sameList[i].yjProductId.toString()}');
+                                        // Get.to(() => ProductDetailsPage(
+                                        //       prdTypeId: '1',
+                                        //       prdId: sameList[i]
+                                        //           .yjProductId
+                                        //           .toString(),
+                                        //     ));
+                                      },
+                                      child: Card(
+                                        color: Color(0xffF2F2F2),
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              10, 10, 10, 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              CachedNetworkImage(
+                                                imageUrl:
+                                                    "$imgBaseUrl${sameList[i].productUrl}",
+                                                height: 0.15.sh,
+                                                width: 0.2.sw,
+                                                placeholder: (context, url) =>
+                                                    Center(
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.network(
+                                                            imageNotFound),
+                                              ),
+                                              SizedBox(
+                                                width: 0.5.sw,
+                                                child: Flexible(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text(
+                                                          '${sameList[i].productName}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: Colors
+                                                                  .blueAccent)),
+                                                      Text(
+                                                          '${sameList[i].price}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  priceTextColor)),
+                                                      Text(
+                                                          '${sameList[i].brandName}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: grey)),
+                                                      // Text('Shipping --- ${sameList[i].productName}',
+                                                      //     style: TextStyle(fontSize: 16, color: black)),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                    '${sameList[i].productName}',
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        color:
-                                                            Colors.blueAccent)),
-                                                Text('${sameList[i].price}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: priceTextColor)),
-                                                Text('${sameList[i].brandName}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: grey)),
-                                                // Text('Shipping --- ${sameList[i].productName}',
-                                                //     style: TextStyle(fontSize: 16, color: black)),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                        ),
                                       ),
                                     );
                                   }),

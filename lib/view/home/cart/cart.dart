@@ -2,6 +2,7 @@ import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/getCartOrderDetailsModel.dart';
 import 'package:altezar/models/getDeliveryOptions.dart';
 import 'package:altezar/models/getLists.dart';
+import 'package:altezar/models/shippingCountryStateList.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/widgets/button.dart';
@@ -28,19 +29,21 @@ class _CartPageState extends State<CartPage> {
   TextEditingController areaCtrl = TextEditingController();
   TextEditingController zipCtrl = TextEditingController();
   TextEditingController noteCtrl = TextEditingController();
-  String? _optionValue, _optionId, _countryValue, countryId;
+  String? _optionValue, _optionId, _countryValue, countryId,_stateValue,_stateId;
   var _optionDataList = <DeliveryOption>[].obs;
   bool isAddressShow = false;
   Rx<GetCartOrderDetails> _cartData = GetCartOrderDetails(
       message: '', status: '', cartProductList: [], orderDetails: []).obs;
-  List<CountryList> _countryList = [];
+  // List<CountryList> _countryList = [];
+  var _shippingCountryList = <ShippingCountryList>[].obs;
+  var _shippingStateList = <ShippingStateList>[].obs;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
-      _getDropDownData();
+    _shippingCountryState();
     });
     _getCartPrdDetails();
   }
@@ -145,6 +148,7 @@ class _CartPageState extends State<CartPage> {
                       ),
 
                     /// order details --------------------------------------------
+                   
                     Container(
                       margin: const EdgeInsets.all(15.0),
                       padding: const EdgeInsets.all(3.0),
@@ -399,16 +403,23 @@ class _CartPageState extends State<CartPage> {
         .getCartOrderDetailsAPICall(sp.getUserId().toString()))!;
   }
 
-  void _getDropDownData() async {
-    // showProgress(context);
-    final response = await networkcallService.getAllDropdownValue();
-    // hideProgress(context);
-    _countryList = response!.countryList;
-    // _monthDayList = response.monthDayList;
-    // _monthNumberList = response.monthNumberList;
-    // _yearList = response.yearList;
-    // _genderList = response.genderList;
-    setState(() {});
+  // void _getDropDownData() async {
+  //   // showProgress(context);
+  //   final response = await networkcallService.getAllDropdownValue();
+  //   // hideProgress(context);
+  //   _countryList = response!.countryList;
+  //   // _monthDayList = response.monthDayList;
+  //   // _monthNumberList = response.monthNumberList;
+  //   // _yearList = response.yearList;
+  //   // _genderList = response.genderList;
+  //   setState(() {});
+  // }
+
+  void _shippingCountryState() async {
+    var shippingData =
+        await networkcallService.getShippingCountryStateAPICall();
+    _shippingCountryList.value = shippingData!.shippingcountryList;
+    _shippingStateList.value = shippingData.shippingstateList;
   }
 
   var _isDefaultAccount = false.obs;
@@ -452,20 +463,23 @@ class _CartPageState extends State<CartPage> {
                             setState(() {
                               _countryValue = newValue!;
                             });
-                            countryId = _countryList
+                            countryId = _shippingCountryList
                                 .where((element) =>
-                                    element.countryName == _countryValue)
+                                    element.shippingCountry == _countryValue)
                                 .toList()[0]
                                 .countryId
                                 .toString();
                             print('countryId --->$countryId');
                           },
-                          items: _countryList.map((value) {
+                          items: _shippingCountryList.map((value) {
                             return DropdownMenuItem<String>(
-                              value: value.countryName,
-                              child: Text(
-                                value.countryName,
-                                style: TextStyle(fontSize: 18),
+                              value: value.shippingCountry,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left:8.0),
+                                child: Text(
+                                  value.shippingCountry,
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             );
                           }).toList(),
@@ -516,36 +530,29 @@ class _CartPageState extends State<CartPage> {
                                   size: 30,
                                 )),
                             isExpanded: true,
-                            value: _optionValue, //'Delivery Option'
-                            hint: Text('Delivery Option'),
-                            items: _optionDataList.map((value) {
+                            value: _stateValue, 
+                            hint: Text('Parish/State/Province'),
+                            items: _shippingStateList.map((value) {
                               return DropdownMenuItem<String>(
-                                value: value.deliveryName,
+                                value: value.shippingState,
                                 child: Text(
-                                  value.deliveryName,
+                                  value.shippingState,
                                   style: TextStyle(fontSize: 18),
                                 ),
                               );
                             }).toList(),
-                            onChanged: (String? value) {
-                              if (value!.toLowerCase().contains('deliver to'))
-                                isAddressShow = true;
-                              else
-                                isAddressShow = false;
-
-                              setState(() {
-                                _optionValue = value;
-                              });
-                              _optionId = _optionDataList
-                                  .where((element) =>
-                                      element.deliveryName == _optionValue)
-                                  .toList()
-                                  .first
-                                  .deliveryId
-                                  .toString();
-
-                              print('_optionId  $_optionId');
-                            },
+                           onChanged: (String? newValue) {
+                            setState(() {
+                              _stateValue = newValue!;
+                            });
+                            _stateId = _shippingStateList
+                                .where((element) =>
+                                    element.shippingState == _stateValue)
+                                .toList()[0]
+                                .parishOrStateId
+                                .toString();
+                            print('_stateId --->$_stateId');
+                          },
                           ),
                         ),
                       ),

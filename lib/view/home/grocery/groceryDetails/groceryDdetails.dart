@@ -253,38 +253,46 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                           errorWidget: (context, url, error) =>
                                               Image.network(imageNotFound),
                                         ),
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text('${_prdList[i].productName}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.blue)),
-                                              Text(
-                                                  '${_prdList[i].size} ${_prdList[i].perks}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: grey)),
-                                              RatingBarIndicator(
-                                                rating: _prdList[i]
-                                                    .ratingCount
-                                                    .toDouble(),
-                                                itemBuilder: (context, index) =>
-                                                    Icon(
-                                                  Icons.star,
-                                                  color: Colors.amber,
+                                        SizedBox(
+                                          width: 0.5.sw,
+                                          child: Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                    '${_prdList[i].productName}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.blue)),
+                                                Text(
+                                                    '${_prdList[i].size} ${_prdList[i].perks}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: grey)),
+                                                RatingBarIndicator(
+                                                  rating: _prdList[i]
+                                                      .ratingCount
+                                                      .toDouble(),
+                                                  itemBuilder:
+                                                      (context, index) => Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  itemCount: 5,
+                                                  itemSize: 25.0,
+                                                  direction: Axis.horizontal,
                                                 ),
-                                                itemCount: 5,
-                                                itemSize: 25.0,
-                                                direction: Axis.horizontal,
-                                              ),
-                                              Text('${_prdList[i].price}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: green)),
-                                            ],
+                                                Text('${_prdList[i].price}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: green)),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],

@@ -159,26 +159,33 @@ class _DealsState extends State<Deals> {
                                     errorWidget: (context, url, error) =>
                                         Image.network(imageNotFound),
                                   ),
-                                  Flexible(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text('${list[i].productName}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                                color: Colors.blueAccent)),
-                                        Text('${list[i].price}',
-                                            style: TextStyle(
-                                                fontSize: 15, color: red)),
-                                        Text('${list[i].sellerName}',
-                                            style: TextStyle(
-                                                fontSize: 15, color: grey)),
-                                        Text('Shipping --- ${list[i].perks}',
-                                            style: TextStyle(
-                                                fontSize: 16, color: black)),
-                                      ],
+                                  SizedBox(
+                                    width: 0.5.sw,
+                                    child: Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text('${list[i].productName}',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                  color: Colors.blueAccent)),
+                                          Text('${list[i].price}',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 15, color: red)),
+                                          Text('${list[i].sellerName}',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 15, color: grey)),
+                                          Text('Shipping --- ${list[i].perks}',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 16, color: black)),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],

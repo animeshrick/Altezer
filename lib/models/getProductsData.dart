@@ -18,7 +18,7 @@ class GetProducts {
 }
 
 class ProductListData {
-  final String prdId,
+  final String? prdId,
       prdName,
       prdFullName,
       prdImg,

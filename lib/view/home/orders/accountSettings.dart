@@ -188,7 +188,11 @@ class _AccountSettingsState extends State<AccountSettings> {
                                   );
                                 }),
                           )
-                        : Text('text'),
+                        : customText(
+                            'You Currently Do Not Have Any Bank Account On File',
+                            red,
+                            18,
+                            fontWeight: FontWeight.bold),
                     SizedBox(
                       height: 10,
                     ),
@@ -1020,7 +1024,7 @@ class _AccountSettingsState extends State<AccountSettings> {
       hideProgress(context);
     }
   }
-
+/*yarapar254@sc2hub.com*/
   // void _editBank() async {
   //   var _bankData = await networkcallService.getEditedBankAccDetailsAPICall(
   //       sp.getUserId().toString(), 0.toString());
@@ -1031,9 +1035,8 @@ class _AccountSettingsState extends State<AccountSettings> {
         .getAddBankListAPICall(sp.getUserId().toString()))!;
 
     if (_addBankList.length > 0) {
-      _addBankList.value = _addBankList
-          .where((element) => element.accountInfo != null)
-          .toList();
+      _addBankList.value =
+          _addBankList.where((element) => element.accountInfo != null).toList();
     }
   }
 

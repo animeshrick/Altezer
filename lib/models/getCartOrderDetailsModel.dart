@@ -98,22 +98,22 @@ class OrderDetail {
     required this.totalCostInUsd,
   });
 
-  final String subtotal;
-  final String usdSubTotal;
-  final double exchangeRate;
-  final int orderCartCount;
-  final double salesTax;
-  final double totalCouponDiscount;
-  final double shippingCost;
-  final double serviceFee;
-  final int isContainsGroceryItems;
-  final String totalCost;
-  final double totalCostInUsd;
+  final String? subtotal;
+  final String? usdSubTotal;
+  final double? exchangeRate;
+  final int? orderCartCount;
+  final double? salesTax;
+  final double? totalCouponDiscount;
+  final double? shippingCost;
+  final double? serviceFee;
+  final int? isContainsGroceryItems;
+  final String? totalCost;
+  final double? totalCostInUsd;
 
   factory OrderDetail.fromJson(Map<String, dynamic> json) => OrderDetail(
         subtotal: json["subtotal"],
         usdSubTotal: json["USD_Sub_Total"],
-        exchangeRate: json["Exchange_Rate"].toDouble(),
+        exchangeRate: json["Exchange_Rate"],
         orderCartCount: json["order_Cart_Count"],
         salesTax: json["sales_tax"],
         totalCouponDiscount: json["total_coupon_Discount"],
@@ -121,6 +121,6 @@ class OrderDetail {
         serviceFee: json["service_fee"],
         isContainsGroceryItems: json["Is_Contains_Grocery_Items"],
         totalCost: json["Total_Cost"],
-        totalCostInUsd: json["Total_Cost_In_USD"].toDouble(),
+        totalCostInUsd: json["Total_Cost_In_USD"],
       );
 }

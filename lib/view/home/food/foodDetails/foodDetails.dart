@@ -257,6 +257,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                                                 CrossAxisAlignment.end,
                                             children: [
                                               Text('${_prdList[i].productName}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.blue)),
@@ -268,6 +270,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                                               //         color: greenColor)),
                                               Text(
                                                   '${_prdList[i].size} ${_prdList[i].perks}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: grey)),
@@ -285,9 +289,48 @@ class _FoodDetailsState extends State<FoodDetails> {
                                                 direction: Axis.horizontal,
                                               ),
                                               Text('${_prdList[i].price}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: green)),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  button(() {
+                                                    Get.to(() => ProductDetailsPage(
+                                                        prdTypeId: '1',
+                                                        prdId:
+                                                            '${_prdList[i].yjProductId}'));
+                                                  }, 'Details', greenColor,
+                                                      white),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  sp.isLogin() == true
+                                                      ? cartButton(() {
+                                                          _addToCart(
+                                                              '${_prdList[i].yjProductId}',
+                                                              '${_prdList[i].clientId}',
+                                                              'Products',
+                                                              '',
+                                                              '',
+                                                              1.toString(),
+                                                              '',
+                                                              '',
+                                                              sp
+                                                                  .getUserId()
+                                                                  .toString());
+                                                        }, 'Add',
+                                                          priceTextColor, white)
+                                                      : cartButton(
+                                                          () => gotoLoginPage(),
+                                                          'Add',
+                                                          priceTextColor,
+                                                          white),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -295,36 +338,6 @@ class _FoodDetailsState extends State<FoodDetails> {
                                     ),
                                     SizedBox(
                                       height: 15,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        button(() {
-                                          Get.to(() => ProductDetailsPage(
-                                              prdTypeId: '1',
-                                              prdId:
-                                                  '${_prdList[i].yjProductId}'));
-                                        }, 'Details', greenColor, white),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        sp.isLogin() == true
-                                            ? cartButton(() {
-                                                _addToCart(
-                                                    '${_prdList[i].yjProductId}',
-                                                    '${_prdList[i].clientId}',
-                                                    'Products',
-                                                    '',
-                                                    '',
-                                                    1.toString(),
-                                                    '',
-                                                    '',
-                                                    sp.getUserId().toString());
-                                              }, 'Add', priceTextColor, white)
-                                            : cartButton(() => gotoLoginPage(),
-                                                'Add', priceTextColor, white),
-                                      ],
                                     ),
                                   ],
                                 );

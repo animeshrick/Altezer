@@ -45,29 +45,29 @@ class AutoPartsList {
     required this.isMadeToOrder,
     required this.size,
   });
-  final String productTypeId;
+  final String? productTypeId;
   final int yjProductId;
-  final String productName;
-  final String productFullName;
-  final String productImage;
-  final String productImageUrl;
-  final String price;
-  final String productUrl;
-  final String sellerName;
-  final String sellerNameMobile;
-  final String inStockOrOutOfStock;
+  final String? productName;
+  final String? productFullName;
+  final String? productImage;
+  final String? productImageUrl;
+  final String? price;
+  final String? productUrl;
+  final String? sellerName;
+  final String? sellerNameMobile;
+  final String? inStockOrOutOfStock;
   final int clientId;
-  final String forSaleBy;
-  final String sellerName1;
-  final String brand;
-  final String description;
+  final String? forSaleBy;
+  final String? sellerName1;
+  final String? brand;
+  final String? description;
   final double price1;
   final int inStock;
   final String? clientLogoUrl;
-  final String allowOnlineOrder;
-  final String displayPriceFlag;
+  final String? allowOnlineOrder;
+  final String? displayPriceFlag;
   final int autoPartCategoryId;
-  final String perks;
+  final String? perks;
   final int isMadeToOrder;
   final String? size;
 

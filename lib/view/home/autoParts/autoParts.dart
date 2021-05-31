@@ -287,67 +287,84 @@ class _AutoPartsState extends State<AutoParts> {
                                                     error) =>
                                                 Image.network(imageNotFound),
                                           ),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Text('${list[i].productName}',
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.blue)),
-                                                Text('${list[i].price}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: priceTextColor)),
-                                                Text(
-                                                    '${list[i].size} | By: ${list[i].sellerName}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.green)),
-                                              ],
+                                          SizedBox(
+                                            width: 0.6.sw,
+                                            child: Flexible(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text('${list[i].productName}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors.blue)),
+                                                  Text('${list[i].price}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              priceTextColor)),
+                                                  Text(
+                                                      '${list[i].size} | By: ${list[i].sellerName}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.green)),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      button(() {
+                                                        Get.to(() =>
+                                                            ProductDetailsPage(
+                                                              prdTypeId: '1',
+                                                              prdId:
+                                                                  '${list[i].yjProductId}',
+                                                            ));
+                                                      }, 'Details', greenColor,
+                                                          white),
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      sp.isLogin() == true
+                                                          ? cartButton(() {
+                                                              _addToCart(
+                                                                  '${list[i].yjProductId}',
+                                                                  '${list[i].clientId}',
+                                                                  'AutoParts',
+                                                                  '',
+                                                                  '',
+                                                                  1.toString(),
+                                                                  '',
+                                                                  '',
+                                                                  sp
+                                                                      .getUserId()
+                                                                      .toString());
+                                                            },
+                                                              'Add',
+                                                              priceTextColor,
+                                                              white)
+                                                          : cartButton(
+                                                              () =>
+                                                                  gotoLoginPage(),
+                                                              'Add',
+                                                              priceTextColor,
+                                                              white),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
                                       SizedBox(
                                         height: 20,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          button(() {
-                                            Get.to(() => ProductDetailsPage(
-                                                  prdTypeId: '1',
-                                                  prdId:
-                                                      '${list[i].yjProductId}',
-                                                ));
-                                          }, 'Details', greenColor, white),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          sp.isLogin() == true
-                                              ? cartButton(() {
-                                                  _addToCart(
-                                                      '${list[i].yjProductId}',
-                                                      '${list[i].clientId}',
-                                                      'AutoParts',
-                                                      '',
-                                                      '',
-                                                      1.toString(),
-                                                      '',
-                                                      '',
-                                                      sp
-                                                          .getUserId()
-                                                          .toString());
-                                                }, 'Add', priceTextColor, white)
-                                              : cartButton(
-                                                  () => gotoLoginPage(),
-                                                  'Add',
-                                                  priceTextColor,
-                                                  white),
-                                        ],
                                       ),
                                     ],
                                   ),

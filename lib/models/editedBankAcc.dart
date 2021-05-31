@@ -37,22 +37,22 @@ class BankDetail {
         required this.isDefault,
     });
 
-    final String accountInfo;
+    final String? accountInfo;
     final int customerBankAccountId;
-    final String nameOnAccount;
-    final String checkingAccountNumber;
-    final String driverLicensenOrIdNumber;
+    final String? nameOnAccount;
+    final String? checkingAccountNumber;
+    final String? driverLicensenOrIdNumber;
     final int stateOrParishCode;
     final int countryId;
     final DateTime timeStamp;
     final int customerBankId;
     final int customerBankBranchId;
-    final String nickName;
+    final String? nickName;
     final int yjUserId;
-    final String bankName;
-    final String bankBranchName;
-    final String customerParish;
-    final String customerName;
+    final String? bankName;
+    final String? bankBranchName;
+    final String? customerParish;
+    final String? customerName;
     final bool isDefault;
 
     factory BankDetail.fromJson(Map<String, dynamic> json) => BankDetail(

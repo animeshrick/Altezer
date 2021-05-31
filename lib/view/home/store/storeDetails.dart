@@ -1,4 +1,5 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/bannerImage.dart';
 import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getGategoryForStores.dart';
 import 'package:altezar/models/getSortByData.dart';
@@ -38,6 +39,8 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
   final _listContr = ScrollController();
   int _pageIndex = 0;
 
+  var result =
+      BannerImage(message: '', imgCover: '', imgLogo: '', status: '').obs;
   Future<List<Productlist>>? _storeDetailFuture;
   @override
   void initState() {
@@ -57,6 +60,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
     });
 
     _getPrdData();
+    _getBannerImage();
   }
 
   @override
@@ -73,7 +77,14 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Image.asset(banner5),
+                    CachedNetworkImage(
+                      imageUrl: "$imgBaseUrl${result.value.imgCover}",
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) =>
+                          Image.network(imageNotFound),
+                    ),
+                    // Image.asset(banner5),
                     SizedBox(
                       height: 15,
                     ),
@@ -231,8 +242,9 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                     Obx(
                       () => _prdList.length != 0
                           ? ListView.separated(
+                              // primary: true,
                               separatorBuilder: (_, __) => SizedBox(
-                                    height: 20,
+                                    height: 10,
                                   ),
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -247,7 +259,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                         CachedNetworkImage(
                                           imageUrl:
                                               "$imgBaseUrl${_prdList[i].productImageUrl}",
-                                          height: 0.3.sh,
+                                          // height: 0.3.sh,
                                           width: 0.3.sw,
                                           placeholder: (context, url) => Center(
                                               child:
@@ -260,15 +272,19 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
                                             children: [
-                                              Text('${_prdList[i].productName}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.blue)),
                                               Text(
-                                                  '${_prdList[i].size} ${_prdList[i].perks}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: grey)),
+                                                '${_prdList[i].productName}',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.blue),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                '${_prdList[i].size} ${_prdList[i].perks}',
+                                                style: TextStyle(
+                                                    fontSize: 16, color: grey),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                               RatingBarIndicator(
                                                 rating: _prdList[i]
                                                     .ratingCount
@@ -286,6 +302,44 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: green)),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  button(() {
+                                                    Get.to(() => ProductDetailsPage(
+                                                        prdTypeId: '1',
+                                                        prdId:
+                                                            '${_prdList[i].yjProductId}'));
+                                                  }, 'Details', greenColor,
+                                                      white),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  sp.isLogin() == true
+                                                      ? cartButton(() {
+                                                          _addToCart(
+                                                              '${_prdList[i].yjProductId}',
+                                                              '${_prdList[i].clientId}',
+                                                              'Products',
+                                                              '',
+                                                              '',
+                                                              1.toString(),
+                                                              '',
+                                                              '',
+                                                              sp
+                                                                  .getUserId()
+                                                                  .toString());
+                                                        }, 'Add',
+                                                          priceTextColor, white)
+                                                      : cartButton(
+                                                          () => Get.to(() =>
+                                                              gotoLoginPage()),
+                                                          'Add',
+                                                          priceTextColor,
+                                                          white),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -293,40 +347,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                     ),
                                     SizedBox(
                                       height: 15,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        button(() {
-                                          Get.to(() => ProductDetailsPage(
-                                              prdTypeId: '1',
-                                              prdId:
-                                                  '${_prdList[i].yjProductId}'));
-                                        }, 'Details', greenColor, white),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        sp.isLogin() == true
-                                            ? cartButton(() {
-                                                _addToCart(
-                                                    '${_prdList[i].yjProductId}',
-                                                    '${_prdList[i].clientId}',
-                                                    'Products',
-                                                    '',
-                                                    '',
-                                                    1.toString(),
-                                                    '',
-                                                    '',
-                                                    sp.getUserId().toString());
-                                              }, 'Add', priceTextColor, white)
-                                            : cartButton(
-                                                () => Get.to(
-                                                    () => gotoLoginPage()),
-                                                'Add',
-                                                priceTextColor,
-                                                white),
-                                      ],
                                     ),
                                   ],
                                 );
@@ -413,6 +433,11 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
     if (data != null) {
       _prdList(data);
     }
+  }
+
+  void _getBannerImage() async {
+    result.value = (await networkcallService
+        .getBannerImageAPICall(widget.storeId.toString()))!;
   }
 
   void _addToCart(

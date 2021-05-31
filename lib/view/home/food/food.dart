@@ -82,7 +82,7 @@ class _FoodState extends State<Food> {
           padding: EdgeInsets.only(left: 10, right: 10, top: 10),
           child: Column(
             children: [
-              Image.asset(banner4),
+              Image.asset(banner3),
               SizedBox(
                 height: 15,
               ),

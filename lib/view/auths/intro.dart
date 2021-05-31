@@ -2,6 +2,7 @@ import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/home.dart';
+import 'package:altezar/view/home/store/dashboard.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,11 +46,21 @@ class _IntroState extends State<Intro> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset(
-                  altezerLogoImage,
-                  fit: BoxFit.fill,
-                  height: 0.05.sh,
-                  width: 0.1.sw,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      altezerLogoImage,
+                      fit: BoxFit.fill,
+                      height: 0.05.sh,
+                      width: 0.1.sw,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Get.to(() => Home());
+                        },
+                        icon: Icon(Icons.close))
+                  ],
                 ),
                 SizedBox(height: 0.07.sh),
                 Image.asset(

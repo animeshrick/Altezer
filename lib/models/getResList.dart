@@ -39,18 +39,18 @@ class RestShopList {
   });
 
   final int restaurantId;
-  final String restaurantName;
-  final String restaurantType;
+  final String? restaurantName;
+  final String? restaurantType;
   final String? restaurantAddress;
-  final String reservationCode;
-  final String phone;
-  final String mainImage;
+  final String? reservationCode;
+  final String? phone;
+  final String? mainImage;
   final String? deliveryFee;
-  final String deliveryInfo;
-  final String restaurantEthnic;
-  final String logoImageFile;
+  final String? deliveryInfo;
+  final String? restaurantEthnic;
+  final String? logoImageFile;
   final int clientId;
-  final String logoImageFile2;
+  final String? logoImageFile2;
   final String? parish;
   final int parishId;
   final int menuCount;

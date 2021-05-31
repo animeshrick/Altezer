@@ -65,7 +65,7 @@ final strip = 'assets/strip.png';
 final checkout = 'assets/checkout.gif';
 
 final imageNotFound =
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYvNmVokcDTJaBNpgbqxtIMKTyaJaU77G-0w&usqp=CAU';
+    'https://demo20.gowebbi.us//CompanyLogos/altezer_grocery_logo.png';
 /*-------------------------Fluttertoast-------------------------*/
 
 showToast(msg, color) => Fluttertoast.showToast(
@@ -132,6 +132,10 @@ final String getBankBranch = '$_baseUrl/GetBankbyBranch.ashx';
 final String addBankDetails = '$_baseUrl/AddUserBankAccount.ashx';
 final String editBankDetails = '$_baseUrl/GetAccountbankById.ashx';
 final String getbankList = '$_baseUrl/GetUserBankAccountlist.ashx';
+final String shippingCountryState =
+    '$_baseUrl/GetShippingCountryandstatelist.ashx';
+final String addShippingAddress = '$_baseUrl/SaveUserShippingAddress.ashx';
+final String bannerImageAPI = '$_baseUrl/GetStoreBannerById.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 
