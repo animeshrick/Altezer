@@ -45,21 +45,21 @@ class CartProductList {
 
   final int productCartItemId;
   final int yjProductId;
-  final String productName;
-  final String productImageUrl;
-  final String price;
-  final String unitPrice;
-  final String productUrl;
-  final String sellerName;
-  final String sellerNameMobile;
-  final String inStockOrOutOfStock;
-  final int clientId;
-  final int quantity;
-  final String forSaleBy;
-  final String brand;
+  final String? productName;
+  final String? productImageUrl;
+  final String? price;
+  final String? unitPrice;
+  final String? productUrl;
+  final String? sellerName;
+  final String? sellerNameMobile;
+  final String? inStockOrOutOfStock;
+  final int? clientId;
+  final int? quantity;
+  final String? forSaleBy;
+  final String? brand;
   final String? notes;
-  final String shippingInfo;
-  final DateTime timeStamp;
+  final String? shippingInfo;
+  final DateTime? timeStamp;
 
   factory CartProductList.fromJson(Map<String, dynamic> json) =>
       CartProductList(

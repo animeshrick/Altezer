@@ -1024,9 +1024,9 @@ class _AccountSettingsState extends State<AccountSettings> {
       hideProgress(context);
     }
   }
-/*yarapar254@sc2hub.com*/
+
   // void _editBank() async {
-  //   var _bankData = await networkcallService.getEditedBankAccDetailsAPICall(
+  //   var _bankData = await networkcallService.getAddAddressAPICall(
   //       sp.getUserId().toString(), 0.toString());
   // }
 

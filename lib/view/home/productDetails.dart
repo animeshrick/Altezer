@@ -131,7 +131,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 10,
                           ),
-                          detail.productColorStyleType != ''
+                          detail.productColorStyleType != null
                               ? Text('Color - ${detail.productColorStyleType}',
                                   style: TextStyle(fontSize: 19))
                               : Text('Color not available for that item'),
@@ -188,12 +188,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   width: 0.95.sw,
                                   height: 0.08.sh,
                                   child: button(() {
-                                    // Get.to(CheckOut());
-                                    setState(() {
-                                      pressed = !pressed;
-                                    });
-                                  }, pressed ? 'Order Placed' : 'Add to cart',
-                                      Color(0xff5BC0DE), white))
+                                    _addToCart(
+                                        '${detail.yjProductId}',
+                                        '${detail.clientId}',
+                                        'AutoParts',
+                                        '',
+                                        '',
+                                        1.toString(),
+                                        '',
+                                        '',
+                                        sp.getUserId().toString());
+                                  }, 'Add to cart', Color(0xff5BC0DE), white))
                               : SizedBox(
                                   width: 0.95.sw,
                                   height: 0.08.sh,
@@ -395,7 +400,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 25,
                           ),
-                          detail.shippingInfo != ''
+                          detail.shippingInfo != null
                               ? customText(
                                   'Shipping info ${detail.shippingInfo}',
                                   black,

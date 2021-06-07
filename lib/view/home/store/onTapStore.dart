@@ -136,7 +136,7 @@ class _OnTapStoreState extends State<OnTapStore> {
                     if (snapshot.hasData) {
                       list = snapshot.data;
                       return SizedBox(
-                        height: 1.0.sh,
+                        // height: 1.0.sh,
                         child: GridView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -201,6 +201,4 @@ class _OnTapStoreState extends State<OnTapStore> {
       });
     }
   }
-
-  
 }

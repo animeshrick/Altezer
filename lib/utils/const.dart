@@ -77,6 +77,20 @@ showToast(msg, color) => Fluttertoast.showToast(
     textColor: white,
     fontSize: 16.0);
 
+getSnackbar(
+  msg,
+  Color color,
+) =>
+    Get.snackbar(
+      '',
+      '',
+      messageText: customText(msg, black, 18, fontWeight: FontWeight.bold),
+      margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+      snackPosition: SnackPosition.BOTTOM,
+      colorText: black,
+      backgroundColor: color,
+    );
+
 /*-------------------------colors-------------------------*/
 
 final Color transperent = Colors.transparent;
@@ -136,6 +150,17 @@ final String shippingCountryState =
     '$_baseUrl/GetShippingCountryandstatelist.ashx';
 final String addShippingAddress = '$_baseUrl/SaveUserShippingAddress.ashx';
 final String bannerImageAPI = '$_baseUrl/GetStoreBannerById.ashx';
+final String addressList = '$_baseUrl/GetUserShippingList.ashx';
+final String defaultAddress = '$_baseUrl/GetUserShippingDefaultAddress.ashx';
+final String delivertoHome =
+    '$_baseUrl/GetUserShippingOptionsForDeliverToHome.ashx';
+final String delivertoPickup =
+    '$_baseUrl/GetUserShippingOptionsForDeliverToPichUpLocation.ashx';
+final String updateAddress = '$_baseUrl/ChangeDefaultAddressByUser.ashx';
+final String removeCartItem = '$_baseUrl/RemoveCartItem.ashx';
+final String sellerNote = '$_baseUrl/AddSellerNotInCartPage.ashx';
+final String cuponCodeAPI = '$_baseUrl/ApplyCouponForCartProduct.ashx';
+final String addPrdQuantity = '$_baseUrl/UpdateProductCartQuantity.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 

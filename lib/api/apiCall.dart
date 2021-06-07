@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:altezar/models/autoPartsListModel.dart';
+import 'package:altezar/models/bannerImage.dart';
 import 'package:altezar/models/editedBankAcc.dart';
 import 'package:altezar/models/getAddBankAccList.dart';
+import 'package:altezar/models/getAddressList.dart';
 import 'package:altezar/models/getAutoPartsCat.dart';
 import 'package:altezar/models/getAutoPartsSubCat.dart';
 import 'package:altezar/models/getBankBranch.dart';
@@ -12,6 +14,7 @@ import 'package:altezar/models/getBankList.dart';
 import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getCartOrderDetailsModel.dart';
 import 'package:altezar/models/getCategories.dart';
+import 'package:altezar/models/getDefAdd.dart';
 import 'package:altezar/models/getDeliveryOptions.dart';
 import 'package:altezar/models/getGategoryForStores.dart';
 import 'package:altezar/models/getLatestDeals.dart';
@@ -30,6 +33,9 @@ import 'package:altezar/models/groceryStateList.dart';
 import 'package:altezar/models/groceryStoreList.dart';
 import 'package:altezar/models/pageDetailsModel.dart';
 import 'package:altezar/models/productDetailsModel.dart';
+import 'package:altezar/models/shippingCountryStateList.dart';
+import 'package:altezar/models/shippingDeliverToHome.dart';
+import 'package:altezar/models/shippingDelivertoPickup.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 
@@ -44,8 +50,361 @@ class Networkcall {
     return networkcall;
   }
 
+  /// ----------- increase prd to cart -------------------
+  Future<bool> getIncreasedCartPrd(String qty, String productCartItemId) async {
+    Map<String, dynamic> data = {
+      'qty': qty,
+      'productCartItemId': productCartItemId
+    };
+    final response =
+        await MyClient().post(Uri.parse(addPrdQuantity), body: data);
+    var resp = response.body;
+    final myResponse = jsonDecode(resp);
+    print('addPrdQuantity -- $addPrdQuantity');
+    print('$data --- $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
 
- ///  ---------------------- edit bank detals ---------------
+  /// -------------- apply cupon code --------------
+  Future<bool> getApplyCuponCode(String cuponCode, String userId) async {
+    Map<String, dynamic> data = {'couponCode': cuponCode, 'UserId': userId};
+    final response = await MyClient().post(Uri.parse(cuponCodeAPI), body: data);
+    var resp = response.body;
+    final myResponse = jsonDecode(resp);
+    print('cuponCodeAPI -- $cuponCodeAPI');
+    print('$data --- $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------- update default address --------------
+  Future<bool> getUpdateAddressDefault(String userID, String addressID) async {
+    Map<String, dynamic> data = {'UserId': userID, 'addressId': addressID};
+
+    final response =
+        await MyClient().post(Uri.parse(updateAddress), body: data);
+    var resp = response.body;
+    final myResponse = jsonDecode(resp);
+    print('update default address -- $updateAddress');
+    print('$data --- $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------- add note to seller --------------
+  Future<bool> getAddNotestoSeller(
+      String note, String productCartItemId) async {
+    Map<String, dynamic> data = {
+      'note': note,
+      'productCartItemId': productCartItemId
+    };
+
+    final response = await MyClient().post(Uri.parse(sellerNote), body: data);
+    var resp = response.body;
+    final myResponse = jsonDecode(resp);
+    print('sellerNote -- $sellerNote');
+    print('$data --- $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------- remove cart product --------------
+  Future<bool> getRemoveCartProduct(
+      String userID, String productCartItemId) async {
+    Map<String, dynamic> data = {
+      'UserId': userID,
+      'productCartItemId': productCartItemId
+    };
+
+    final response =
+        await MyClient().post(Uri.parse(removeCartItem), body: data);
+    var resp = response.body;
+    final myResponse = jsonDecode(resp);
+    print('removeCartItem -- $removeCartItem');
+    print('$data --- $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------------------- get shippingoption DelivertoHome ---------------
+  Future<DeliverToHome?> getShippingAeliverToHome(String userID) async {
+    Map<String, dynamic> data = {'UserId': userID};
+    final response =
+        await MyClient().post(Uri.parse(delivertoHome), body: data);
+    final resp = response.body;
+    final myResponse = DeliverToHome.fromJson(jsonDecode(resp));
+    // print('$delivertoHome --> $data = $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------------------- get shippingOption DelivertoPickup ---------------
+
+  Future<DeliverToPickup?> getShippingAeliverToPickup(String userID) async {
+    Map<String, dynamic> data = {'UserId': userID};
+    final response =
+        await MyClient().post(Uri.parse(delivertoPickup), body: data);
+    final resp = response.body;
+    final myResponse = DeliverToPickup.fromJson(jsonDecode(resp));
+    // print('$delivertoPickup --> $data = $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ------------- get default address  --------
+  Future<List<DeaultAddress>?> getDefaultAddAPICall(String userID) async {
+    Map<String, dynamic> data = {'UserId': userID};
+    final response =
+        await MyClient().post(Uri.parse(defaultAddress), body: data);
+    final resp = response.body;
+    final myResponse = GetDefaultAddress.fromJson(jsonDecode(resp));
+    // print('$defaultAddress --> $data = $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse.deaultAddress;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ------------- shippping address list --------
+  Future<List<ShippingAddressList>?> getAddressListAPICall(
+      String userID) async {
+    Map<String, dynamic> data = {'UserId': userID};
+    final response = await MyClient().post(Uri.parse(addressList), body: data);
+    final resp = response.body;
+    final myResponse = GetAddressList.fromJson(jsonDecode(resp));
+    // print('$addressList --> $data = $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse.shippingAddressList;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ------------------- banner image ----------------
+  Future<BannerImage?> getBannerImageAPICall(String storeId) async {
+    Map<String, dynamic> data = {'StoreId': storeId};
+    final response =
+        await MyClient().post(Uri.parse(bannerImageAPI), body: data);
+    final resp = response.body;
+    final myResponse = BannerImage.fromJson(jsonDecode(resp));
+    // print('$bannerImageAPI --> $data = $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ---------------- add address ----------------------
+  Future<bool> getAddAddressAPICall(
+    String userId,
+    String fullname,
+    String companyName,
+    String address1,
+    String address2,
+    String area,
+    String city,
+    String stateCode,
+    String zipCode,
+    String countryCode,
+    String isDefault,
+    String deliveryPhone,
+    String deliveryInstructions,
+  ) async {
+    Map<String, dynamic> data = {
+      'UserId': userId,
+      'Fullname': fullname,
+      'CompanyName': companyName,
+      'Address1': address1,
+      'Address2': address2,
+      'Area': area,
+      'City': city,
+      'ParishCode': stateCode,
+      'ZipOrPostalCode': zipCode,
+      'CountryCode': countryCode,
+      'IsDefault': isDefault,
+      'DeliveryPhone': deliveryPhone,
+      'DeliveryInstructions': deliveryInstructions,
+    };
+    final response =
+        await MyClient().post(Uri.parse(addShippingAddress), body: data);
+    var resp = response.body;
+    final myResponse = jsonDecode(resp);
+    print('addShippingAddress -- $addShippingAddress');
+    print('$data --- $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// --------------------- shipping country & state list -------------------
+  Future<GetShippingCountryandstatelist?>
+      getShippingCountryStateAPICall() async {
+    final response = await MyClient().get(Uri.parse(shippingCountryState));
+    var resp = response.body;
+    final myResponse =
+        GetShippingCountryandstatelist.fromJson(jsonDecode(resp));
+    // print('shippingCountryState -- $shippingCountryState');
+    // print('$resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse;
+        } else {
+          return showToast(myResponse.message, red);
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  ///  ---------------------- edit bank detals ---------------
   //   Future<List<BankDetail>?> getEditedBankAccDetailsAPICall(String userId,String cusBankAccId) async{
   //       Map<String, dynamic> data = {'UserId': userId,'Customer_Bank_Account_Id':cusBankAccId};
   //   final response =
@@ -70,15 +429,13 @@ class Networkcall {
   //   }
   // }
 
-
   ///  ---------------------- added bank list ---------------
-  Future<List<AddBanklist>?> getAddBankListAPICall(String userId) async{
-        Map<String, dynamic> data = {'UserId': userId};
-    final response =
-        await MyClient().post(Uri.parse(getbankList), body: data);
+  Future<List<AddBanklist>?> getAddBankListAPICall(String userId) async {
+    Map<String, dynamic> data = {'UserId': userId};
+    final response = await MyClient().post(Uri.parse(getbankList), body: data);
     var resp = response.body;
     final myResponse = GetAddBankAccList.fromJson(jsonDecode(resp));
-    print('$getbankList --> $resp');
+    // print('$getbankList --> $resp');
     try {
       if (response.statusCode == 200) {
         if (myResponse.status == success) {
@@ -94,7 +451,6 @@ class Networkcall {
       throw internetError;
     }
   }
-
 
   /// --------------------- save bank details ---------------
   Future<bool?> saveBankDetailsAPICall(
@@ -130,8 +486,8 @@ class Networkcall {
         await MyClient().post(Uri.parse(addBankDetails), body: data);
     var resp = response.body;
     final myResponse = jsonDecode(resp);
-    print('update bank details -- $addBankDetails');
-    print('$data --- $resp');
+    // print('update bank details -- $addBankDetails');
+    // print('$data --- $resp');
     try {
       if (response.statusCode == 200) {
         if (myResponse['status'] == success) {
@@ -151,7 +507,6 @@ class Networkcall {
     }
   }
 
- 
   /// ------------ get bank branch-----------------------------
   Future<List<Branchlist>?> getBankBranchListAPICall(String bankId) async {
     Map<String, dynamic> data = {'BankId': bankId};
@@ -1151,7 +1506,6 @@ class Networkcall {
   }
 }
 
-class Final {
-}
+class Final {}
 
 Networkcall networkcallService = new Networkcall();

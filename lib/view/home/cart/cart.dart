@@ -1,8 +1,13 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/editedBankAcc.dart';
+import 'package:altezar/models/getAddressList.dart';
 import 'package:altezar/models/getCartOrderDetailsModel.dart';
+import 'package:altezar/models/getDefAdd.dart';
 import 'package:altezar/models/getDeliveryOptions.dart';
 import 'package:altezar/models/getLists.dart';
 import 'package:altezar/models/shippingCountryStateList.dart';
+import 'package:altezar/models/shippingDeliverToHome.dart';
+import 'package:altezar/models/shippingDelivertoPickup.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/widgets/button.dart';
@@ -28,8 +33,15 @@ class _CartPageState extends State<CartPage> {
   TextEditingController addCtrl = TextEditingController();
   TextEditingController areaCtrl = TextEditingController();
   TextEditingController zipCtrl = TextEditingController();
+  TextEditingController phnCtrl = TextEditingController();
   TextEditingController noteCtrl = TextEditingController();
-  String? _optionValue, _optionId, _countryValue, countryId,_stateValue,_stateId;
+  TextEditingController updateQty = TextEditingController();
+  String? _optionValue,
+      _optionId,
+      _countryValue,
+      countryId,
+      _stateValue,
+      _stateId;
   var _optionDataList = <DeliveryOption>[].obs;
   bool isAddressShow = false;
   Rx<GetCartOrderDetails> _cartData = GetCartOrderDetails(
@@ -37,15 +49,32 @@ class _CartPageState extends State<CartPage> {
   // List<CountryList> _countryList = [];
   var _shippingCountryList = <ShippingCountryList>[].obs;
   var _shippingStateList = <ShippingStateList>[].obs;
+  final _formKey = GlobalKey<FormState>();
+  var _addList = <ShippingAddressList>[].obs;
+  var _defAdd = <DeaultAddress>[].obs;
+  var _shippingHomeData = DeliverToHome(
+          message: '', shippingOptionsHome: [], status: '', infoHome: "")
+      .obs;
+  var _shippingPickupData = DeliverToPickup(
+          message: '', shippingOptionsPickup: [], status: '', infoPickup: "")
+      .obs;
 
+  var _pickAddress = 0.obs;
+  var homeRadio = 0.obs;
+  var pickupRadio = 0.obs;
+  var _isDefaultAccount = false.obs;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
-    _shippingCountryState();
+      _shippingCountryState();
     });
     _getCartPrdDetails();
+    _shippingAddList();
+    _defaultAddress();
+    _homeShippingDelivary();
+    _pickupShippingDelivary();
   }
 
   @override
@@ -53,344 +82,651 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(50.0), child: detailsPageAppBar()),
-        body: Obx(() {
-          if (_cartData.value.status == '')
-            return Center(
-              child: CupertinoActivityIndicator(
-                radius: 50,
-              ),
-            );
-          else {
-            var _prdDetailsList = _cartData.value.cartProductList;
-            var _orderDetails = _cartData.value.orderDetails.first;
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    customText('Delivery Options :', red, 20.0),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Card(
-                      color: Color(0xffEDEDED),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            elevation: 16,
-                            icon: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: grey,
-                                child: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: white,
-                                  size: 30,
-                                )),
-                            isExpanded: true,
-                            value: _optionValue, //'Delivery Option'
-                            hint: Text('Delivery Option'),
-                            items: _optionDataList.map((value) {
-                              return DropdownMenuItem<String>(
-                                value: value.deliveryName,
-                                child: Text(
-                                  value.deliveryName,
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              if (value!.toLowerCase().contains('deliver to'))
-                                isAddressShow = true;
-                              else
-                                isAddressShow = false;
+        body: Form(
+          key: _formKey,
+          child: Obx(() {
+            if (_cartData.value.status == '')
+              return Center(
+                child: CupertinoActivityIndicator(
+                  radius: 50,
+                ),
+              );
+            else {
+              var _prdDetailsList = _cartData.value.cartProductList;
+              var _orderDetails = _cartData.value.orderDetails.first;
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      customText('Delivery Options :', red, 20.0),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Card(
+                        color: Color(0xffEDEDED),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              elevation: 16,
+                              icon: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: white,
+                                    size: 30,
+                                  )),
+                              isExpanded: true,
+                              value: _optionValue, //'Delivery Option'
+                              hint: Text('Delivery Option'),
+                              items: _optionDataList.map((value) {
+                                return DropdownMenuItem<String>(
+                                  value: value.deliveryName,
+                                  child: Text(
+                                    value.deliveryName,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                if (value!.toLowerCase().contains('deliver to'))
+                                  isAddressShow = true;
+                                else
+                                  isAddressShow = false;
 
-                              setState(() {
-                                _optionValue = value;
-                              });
-                              _optionId = _optionDataList
-                                  .where((element) =>
-                                      element.deliveryName == _optionValue)
-                                  .toList()
-                                  .first
-                                  .deliveryId
-                                  .toString();
+                                setState(() {
+                                  _optionValue = value;
+                                });
+                                _optionId = _optionDataList
+                                    .where((element) =>
+                                        element.deliveryName == _optionValue)
+                                    .toList()
+                                    .first
+                                    .deliveryId
+                                    .toString();
 
-                              print('_optionId  $_optionId');
-                            },
+                                print('_optionId  $_optionId');
+                              },
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    if (isAddressShow)
-                      InkWell(
-                        onTap: () {
-                          _addAddress();
-                        },
-                        child: Container(
+                      SizedBox(
+                        height: 10,
+                      ),
+
+                      ///  --------------- deliver to home -----------
+                      if (_optionId == '1524')
+                        Container(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               customText(
-                                  'Your shipping address :', black, 16.0),
+                                  'Your shipping address : ', black, 16.0,
+                                  fontWeight: FontWeight.bold),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              _defAdd.length == 0
+                                  ? customText(
+                                      'You must have alteast one address to deliver.',
+                                      red,
+                                      16.0)
+                                  :
+
+                                  /// ------- default address ------------
+                                  SizedBox(
+                                      width: 1.sw,
+                                      child: ListView.separated(
+                                          shrinkWrap: true,
+                                          // primary: true,
+                                          separatorBuilder: (_, __) => SizedBox(
+                                                height: 10,
+                                              ),
+                                          itemCount: _defAdd.length,
+                                          itemBuilder: (_, int i) {
+                                            return Text(
+                                                '${_defAdd[i].customerShippingAddress}');
+                                          }),
+                                    ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                      onTap: () {
+                                        _addAddress();
+                                      },
+                                      child: customText(
+                                        'Add Address  ||',
+                                        blue,
+                                        16.0,
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  InkWell(
+                                      onTap: () {
+                                        _showAddressList();
+                                      },
+                                      child: customText(
+                                        '  Change Address',
+                                        blue,
+                                        16.0,
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+
+                              /// --------------- shipping home value ------
                               customText(
-                                  'You must have alteast one address to deliver.',
-                                  red,
+                                  'Please Select A Shipping Cost Option :\n',
+                                  black,
                                   16.0),
-                              customText('Add Address', blue, 16.0),
+
+                              SizedBox(
+                                width: 1.sw,
+                                child: ListView.separated(
+                                    shrinkWrap: true,
+                                    separatorBuilder: (_, __) => SizedBox(
+                                          height: 10,
+                                        ),
+                                    itemCount: _shippingHomeData
+                                        .value.shippingOptionsHome.length,
+                                    itemBuilder: (_, int i) {
+                                      return Row(
+                                        children: [
+                                          Radio(
+                                            onChanged: (val) {
+                                              homeRadio.value = val as int;
+                                              print('id- ${homeRadio.value}');
+                                              setState(() {});
+                                            },
+                                            groupValue: homeRadio.value,
+                                            value: _shippingHomeData
+                                                .value
+                                                .shippingOptionsHome[i]
+                                                .deliveryCompanyServiceId,
+                                          ),
+                                          Flexible(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text:
+                                                          '🚚 ${_shippingHomeData.value.shippingOptionsHome[i].serviceName} ${_shippingHomeData.value.shippingOptionsHome[i].shippingCost}',
+                                                      style: TextStyle(
+                                                          color: black,
+                                                          fontSize: 17)),
+                                                  TextSpan(
+                                                      text:
+                                                          '  ${_shippingHomeData.value.shippingOptionsHome[i].leadTime}',
+                                                      style: TextStyle(
+                                                          color: green,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 17))
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                              ),
+
+                              customText('${_shippingHomeData.value.infoHome}',
+                                  red, 18.0,
+                                  fontWeight: FontWeight.bold)
                             ],
                           ),
                         ),
-                      ),
 
-                    /// order details --------------------------------------------
-                   
-                    Container(
-                      margin: const EdgeInsets.all(15.0),
-                      padding: const EdgeInsets.all(3.0),
-                      decoration:
-                          BoxDecoration(border: Border.all(color: black)),
-                      child: Column(
-                        children: [
-                          customText(
-                              'Debit & Credit card Accepted', black, 18.0,
-                              fontWeight: FontWeight.w400),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      ///  --------------- deliver to pickup location -----------
+                      if (_optionId == '1525')
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Image.asset(
-                                card1,
-                                height: 50,
-                                width: 50,
+                              customText(
+                                'Your shipping address : ',
+                                black,
+                                16.0,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Image.asset(
-                                card2,
-                                height: 50,
-                                width: 50,
+                              SizedBox(
+                                height: 10,
                               ),
-                              Image.asset(
-                                card3,
-                                height: 50,
-                                width: 50,
+                              _defAdd.length == 0
+                                  ? customText(
+                                      'You must have alteast one address to deliver.',
+                                      red,
+                                      16.0)
+                                  :
+
+                                  /// ------- default address ------------
+                                  SizedBox(
+                                      width: 1.sw,
+                                      child: ListView.separated(
+                                          shrinkWrap: true,
+                                          // primary: true,
+                                          separatorBuilder: (_, __) => SizedBox(
+                                                height: 10,
+                                              ),
+                                          itemCount: _defAdd.length,
+                                          itemBuilder: (_, int i) {
+                                            return Text(
+                                                '${_defAdd[i].customerShippingAddress}');
+                                          }),
+                                    ),
+                              SizedBox(
+                                height: 10,
                               ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                      onTap: () {
+                                        _addAddress();
+                                      },
+                                      child: customText(
+                                        'Add Address  ||',
+                                        blue,
+                                        16.0,
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  InkWell(
+                                      onTap: () {
+                                        _showAddressList();
+                                      },
+                                      child: customText(
+                                        '  Change Address',
+                                        blue,
+                                        16.0,
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+
+                              /// --------------- shipping pickup value ------
+
+                              customText(
+                                  'Please Select Your Pickup Location:\n',
+                                  black,
+                                  16.0),
+                              _shippingPickupData
+                                          .value.shippingOptionsPickup.length ==
+                                      0
+                                  ? SizedBox(
+                                      width: 1.sw,
+                                      child: ListView.separated(
+                                          shrinkWrap: true,
+                                          primary: false,
+                                          separatorBuilder: (_, __) => SizedBox(
+                                                height: 10,
+                                              ),
+                                          itemCount: _shippingPickupData.value
+                                              .shippingOptionsPickup.length,
+                                          itemBuilder: (_, int i) {
+                                            return Row(
+                                              children: [
+                                                Radio(
+                                                  onChanged: (val) {
+                                                    pickupRadio.value =
+                                                        val as int;
+                                                    print(
+                                                        'id- ${pickupRadio.value}');
+                                                    // setState(() {});
+                                                  },
+                                                  groupValue: pickupRadio.value,
+                                                  value: _shippingPickupData
+                                                      .value
+                                                      .shippingOptionsPickup[i]
+                                                      .deliveryCompanyId,
+                                                ),Flexible(
+                                                        child: customText(
+                                                            '🚚 ${_shippingPickupData.value.shippingOptionsPickup[i].serviceName} ${_shippingPickupData.value.shippingOptionsPickup[i].customerPickUpLocation} ${_shippingPickupData.value.shippingOptionsPickup[i].shippingCost}',
+                                                            black,
+                                                            16.0)),
+                                              ],
+                                            );
+                                          }),
+                                    )
+                                  : customText(
+                                      'No Pickup Location Available', red, 16.0,
+                                      fontWeight: FontWeight.bold),
+                              customText(
+                                  '${_shippingPickupData.value.infoPickup}',
+                                  red,
+                                  18.0,
+                                  fontWeight: FontWeight.bold)
                             ],
                           ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          customText(
-                              'Subtotal for ${_orderDetails.orderCartCount} items: JMD\$${_orderDetails.subtotal}',
-                              black,
-                              18.0,
-                              fontWeight: FontWeight.w400),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          customText(
-                              'Service fees: JMD\$${_orderDetails.serviceFee}',
-                              black,
-                              14.0,
-                              fontWeight: FontWeight.bold),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          customText(
-                              'Shipping and handling: JMD\$${_orderDetails.shippingCost}',
-                              black,
-                              18.0,
-                              fontWeight: FontWeight.w400),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          customText(
-                              'All taxes: JMD\$${_orderDetails.salesTax}',
-                              black,
-                              18.0,
-                              fontWeight: FontWeight.w400),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          customText(
-                              'Total Order: JMD\$${_orderDetails.totalCost}',
-                              Color(0xffFF0000),
-                              20.0,
-                              fontWeight: FontWeight.bold),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          customText(
-                              'Total in USD: \$${_orderDetails.totalCostInUsd}',
-                              black,
-                              18.0,
-                              fontWeight: FontWeight.w400),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          SizedBox(
-                              width: 0.8.sw,
-                              child: searchField(cuponCode, 'Enter Code')),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                              height: 0.07.sh,
-                              width: 0.8.sw,
-                              child: button(() {}, 'Apply', grey, white)),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          customText(
-                              '\$200.00 JMD Minimum Required To Pay With Card',
-                              Color(0xffFF0000),
-                              18.0,
-                              fontWeight: FontWeight.w400),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            width: 0.8.sw,
-                            height: 0.09.sh,
-                            child: button(
-                                () {},
-                                'Logon to xyz.com to pay with card',
-                                Colors.blue,
-                                white),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text('Why ?',
-                                style: TextStyle(
-                                  fontSize: 19,
-                                  color: Colors.blue,
-                                )),
-                          ),
-                          customText('OR', black, 20.0,
-                              fontWeight: FontWeight.w400),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            width: 0.8.sw,
-                            height: 0.09.sh,
-                            child: button(() {}, 'Pick-up and Pay-in-store',
-                                Colors.orange, white),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          customText('OR', black, 20.0,
-                              fontWeight: FontWeight.w400),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            width: 0.8.sw,
-                            height: 0.09.sh,
-                            child: button(() {}, 'Pay cash on delivary',
-                                Colors.green, white),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text('Learn More',
-                                style: TextStyle(
-                                  fontSize: 19,
-                                  color: Colors.blue,
-                                )),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(checkout),
-                              Image.asset(strip)
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    _prdDetailsList.length == 0
-                        ? Center(
-                            child: customText('Your cart is empty', red, 25.0,
+                        ),
+
+                      /// ------------------------
+                      // if (isAddressShow)
+                      //   InkWell(
+                      // onTap: () {
+                      //   _addAddress();
+                      // },
+                      //     child: Container(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           customText(
+                      //               'Your shipping address :', black, 16.0),
+                      //           customText(
+                      //               'You must have alteast one address to deliver.',
+                      //               red,
+                      //               16.0),
+                      //           customText('Add Address', blue, 16.0),
+                      //         ],
+                      //       ),
+                      //     ),
+                      // ),
+
+                      /// order details --------------------------------------------
+
+                      Container(
+                        margin: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.all(3.0),
+                        decoration:
+                            BoxDecoration(border: Border.all(color: black)),
+                        child: Column(
+                          children: [
+                            customText(
+                                'Debit & Credit card Accepted', black, 18.0,
                                 fontWeight: FontWeight.w400),
-                          )
-                        :
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  card1,
+                                  height: 50,
+                                  width: 50,
+                                ),
+                                Image.asset(
+                                  card2,
+                                  height: 50,
+                                  width: 50,
+                                ),
+                                Image.asset(
+                                  card3,
+                                  height: 50,
+                                  width: 50,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            _orderDetails.subtotal != null
+                                ? customText(
+                                    'Subtotal for ${_orderDetails.orderCartCount} items: JMD\$${_orderDetails.subtotal}',
+                                    black,
+                                    18.0,
+                                    fontWeight: FontWeight.w400)
+                                : customText('Subtotal for 0 items: JMD\$0.00',
+                                    black, 18.0),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            _orderDetails.subtotal != null
+                                ? customText(
+                                    'Service fees: JMD\$${_orderDetails.serviceFee}',
+                                    black,
+                                    14.0,
+                                    fontWeight: FontWeight.bold)
+                                : customText(
+                                    'Service fees: JMD\$0.00', black, 18.0),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            customText(
+                                'Shipping and handling: JMD\$${_orderDetails.shippingCost}',
+                                black,
+                                18.0,
+                                fontWeight: FontWeight.w400),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            customText(
+                                'All taxes: JMD\$${_orderDetails.salesTax}',
+                                black,
+                                18.0,
+                                fontWeight: FontWeight.w400),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            _orderDetails.totalCost != null
+                                ? customText(
+                                    'Total Order: JMD\$${_orderDetails.totalCost}',
+                                    Color(0xffFF0000),
+                                    20.0,
+                                    fontWeight: FontWeight.bold)
+                                : customText('Total Order: JMD\$0.00',
+                                    Color(0xffFF0000), 20.0,
+                                    fontWeight: FontWeight.bold),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            _orderDetails.totalCostInUsd != null
+                                ? customText(
+                                    'Total in USD: \$${_orderDetails.totalCostInUsd}',
+                                    black,
+                                    18.0,
+                                    fontWeight: FontWeight.w400)
+                                : customText(
+                                    'Total in USD: \$0.00', black, 18.0,
+                                    fontWeight: FontWeight.w400),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            SizedBox(
+                                width: 0.8.sw,
+                                child: searchField(
+                                    cuponCode, 'Enter coupon Code')),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                                height: 0.07.sh,
+                                width: 0.8.sw,
+                                child: button(() {
+                                  applyCuponCode();
+                                }, 'Apply', grey, white)),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            customText(
+                                '\$200.00 JMD Minimum Required To Pay With Card',
+                                Color(0xffFF0000),
+                                18.0,
+                                fontWeight: FontWeight.w400),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              width: 0.8.sw,
+                              height: 0.09.sh,
+                              child: button(
+                                  () {},
+                                  'Logon to xyz.com to pay with card',
+                                  Colors.blue,
+                                  white),
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text('Why ?',
+                                  style: TextStyle(
+                                    fontSize: 19,
+                                    color: Colors.blue,
+                                  )),
+                            ),
+                            customText('OR', black, 20.0,
+                                fontWeight: FontWeight.w400),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              width: 0.8.sw,
+                              height: 0.09.sh,
+                              child: button(() {}, 'Pick-up and Pay-in-store',
+                                  Colors.orange, white),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            customText('OR', black, 20.0,
+                                fontWeight: FontWeight.w400),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              width: 0.8.sw,
+                              height: 0.09.sh,
+                              child: button(() {}, 'Pay cash on delivary',
+                                  Colors.green, white),
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text('Learn More',
+                                  style: TextStyle(
+                                    fontSize: 19,
+                                    color: Colors.blue,
+                                  )),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(checkout),
+                                Image.asset(strip)
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      _prdDetailsList.length == 0
+                          ? Center(
+                              child: customText('Your cart is empty', red, 25.0,
+                                  fontWeight: FontWeight.w400),
+                            )
+                          :
 
-                        /// prd list -------------------------------------------------
-                        ListView.separated(
-                            separatorBuilder: (_, __) => SizedBox(
-                                  height: 12,
-                                ),
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: _prdDetailsList.length,
-                            itemBuilder: (_, i) {
-                              return Card(
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Center(
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              "$imgBaseUrl${_prdDetailsList[i].productImageUrl}",
-                                          height: 0.2.sh,
-                                          width: 0.3.sw,
-                                          placeholder: (context, url) => Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              Image.network(imageNotFound),
-                                        ),
-                                      ),
-                                      customText(
-                                          '${_prdDetailsList[i].productName}',
-                                          blue,
-                                          16),
-                                      customText(
-                                          '${_prdDetailsList[i].price} for quantity of ${_prdDetailsList[i].quantity}',
-                                          green,
-                                          16),
-                                      customText('Change Quantity', blue, 16),
-                                      customText(
-                                          '${_prdDetailsList[i].shippingInfo}',
-                                          green,
-                                          16),
-                                      customText(
-                                          '${_prdDetailsList[i].sellerName}',
-                                          grey,
-                                          16),
-                                      customText('Delete', red, 16),
-                                      customText(
-                                          'Add note to seller', blue, 16),
-                                    ],
+                          /// prd list -------------------------------------------------
+                          ListView.separated(
+                              separatorBuilder: (_, __) => SizedBox(
+                                    height: 12,
                                   ),
-                                ),
-                              );
-                            }),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    customText(
-                        '© 2021 - YeahJamaica.com a Product of CITS Jamaica Limited',
-                        black,
-                        18.0,
-                        fontWeight: FontWeight.w400),
-                  ],
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: _prdDetailsList.length,
+                              itemBuilder: (_, i) {
+                                return Card(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Center(
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                "$imgBaseUrl${_prdDetailsList[i].productImageUrl}",
+                                            height: 0.2.sh,
+                                            width: 0.3.sw,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.network(imageNotFound),
+                                          ),
+                                        ),
+                                        customText(
+                                            '${_prdDetailsList[i].productName}',
+                                            blue,
+                                            16),
+                                        customText(
+                                            '${_prdDetailsList[i].price}',
+                                            green,
+                                            16),
+                                        customText(
+                                            'Quantity - ${_prdDetailsList[i].quantity}',
+                                            green,
+                                            16),
+                                        InkWell(
+                                            onTap: () {
+                                              _qtyUpdateBox();
+                                            },
+                                            child: customText(
+                                                'Change Quantity', blue, 16,
+                                                fontWeight: FontWeight.bold)),
+                                        customText(
+                                            '${_prdDetailsList[i].shippingInfo}',
+                                            green,
+                                            16),
+                                        customText(
+                                            '${_prdDetailsList[i].sellerName}',
+                                            grey,
+                                            16),
+                                        InkWell(
+                                            onTap: () {
+                                              removeCartItem();
+                                            },
+                                            child: customText('Delete', red, 16,
+                                                fontWeight: FontWeight.bold)),
+                                        InkWell(
+                                          onTap: () => _sellerNotes(),
+                                          child: customText(
+                                              'Add note to seller', blue, 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        _prdDetailsList[i].notes != null
+                                            ? customText(
+                                                '${_prdDetailsList[i].notes}',
+                                                black,
+                                                16)
+                                            : SizedBox(
+                                                height: 10,
+                                              ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }),
+                      SizedBox(
+                        height: 35,
+                      ),
+                      customText(
+                          '© 2021 - YeahJamaica.com a Product of CITS Jamaica Limited',
+                          black,
+                          18.0,
+                          fontWeight: FontWeight.w400),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
-        }));
+              );
+            }
+          }),
+        ));
   }
 
   void _getData() async {
@@ -403,18 +739,6 @@ class _CartPageState extends State<CartPage> {
         .getCartOrderDetailsAPICall(sp.getUserId().toString()))!;
   }
 
-  // void _getDropDownData() async {
-  //   // showProgress(context);
-  //   final response = await networkcallService.getAllDropdownValue();
-  //   // hideProgress(context);
-  //   _countryList = response!.countryList;
-  //   // _monthDayList = response.monthDayList;
-  //   // _monthNumberList = response.monthNumberList;
-  //   // _yearList = response.yearList;
-  //   // _genderList = response.genderList;
-  //   setState(() {});
-  // }
-
   void _shippingCountryState() async {
     var shippingData =
         await networkcallService.getShippingCountryStateAPICall();
@@ -422,7 +746,265 @@ class _CartPageState extends State<CartPage> {
     _shippingStateList.value = shippingData.shippingstateList;
   }
 
-  var _isDefaultAccount = false.obs;
+  void _shippingAddList() async {
+    _addList.value = (await networkcallService
+        .getAddressListAPICall(sp.getUserId().toString()))!;
+  }
+
+  void _defaultAddress() async {
+    _defAdd.value = (await networkcallService
+        .getDefaultAddAPICall(sp.getUserId().toString()))!;
+  }
+
+  void _homeShippingDelivary() async {
+    _shippingHomeData.value = (await networkcallService
+        .getShippingAeliverToHome(sp.getUserId().toString()))!;
+  }
+
+  void _pickupShippingDelivary() async {
+    _shippingPickupData.value = (await networkcallService
+        .getShippingAeliverToPickup(sp.getUserId().toString()))!;
+  }
+
+  void _shippingAddress() async {
+    showProgress(context);
+    var data = await networkcallService.getAddAddressAPICall(
+        sp.getUserId().toString(),
+        nameCtrl.text,
+        companyCtrl.text,
+        add1Ctrl.text,
+        add2Ctrl.text,
+        areaCtrl.text,
+        addCtrl.text,
+        _stateId.toString(),
+        zipCtrl.text,
+        countryId.toString(),
+        _isDefaultAccount.value == false ? '0' : '1',
+        phnCtrl.text,
+        noteCtrl.text);
+    hideProgress(context);
+    if (data) {
+      nameCtrl.clear();
+      companyCtrl.clear();
+      add1Ctrl.clear();
+      add2Ctrl.clear();
+      areaCtrl.clear();
+      addCtrl.clear();
+      zipCtrl.clear();
+      phnCtrl.clear();
+      noteCtrl.clear();
+      _stateValue = null;
+      _countryValue = null;
+      _isDefaultAccount.value = false;
+
+      _defaultAddress();
+      Get.back();
+    }
+  }
+
+  void addNotetoSeller() async {
+    showProgress(context);
+    var data = await networkcallService.getAddNotestoSeller(
+        noteCtrl.text.toString(),
+        _cartData.value.cartProductList.first.productCartItemId.toString());
+    hideProgress(context);
+    if (data) {
+      noteCtrl.clear();
+      _getCartPrdDetails();
+      Get.back();
+    }
+  }
+
+  void removeCartItem() async {
+    showProgress(context);
+    var data = await networkcallService.getRemoveCartProduct(
+        sp.getUserId().toString(),
+        _cartData.value.cartProductList.first.productCartItemId.toString());
+    hideProgress(context);
+    if (data) {
+      _getCartPrdDetails();
+    }
+  }
+
+  void updateAddressDefault() async {
+    showProgress(context);
+    var data = await networkcallService.getUpdateAddressDefault(
+        sp.getUserId().toString(), _pickAddress.value.toString());
+    hideProgress(context);
+    if (data) {
+      _defaultAddress();
+      Get.back();
+    }
+  }
+
+  void cartQtyUpdate() async {
+    showProgress(context);
+    var cartQty = await networkcallService.getIncreasedCartPrd(updateQty.text,
+        _cartData.value.cartProductList.first.productCartItemId.toString());
+    hideProgress(context);
+    if (cartQty) {
+      updateQty.clear();
+      _getCartPrdDetails();
+      Get.back();
+    }
+  }
+
+  void applyCuponCode() async {
+    showProgress(context);
+    var _cupon = await networkcallService.getApplyCuponCode(
+        cuponCode.text, sp.getUserId().toString());
+    hideProgress(context);
+    if (_cupon) {
+      cuponCode.clear();
+      _getCartPrdDetails();
+    }
+  }
+
+  Future<void> _qtyUpdateBox() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Change Quantity :'),
+          content: StatefulBuilder(
+            builder: (context, mState) {
+              return Container(
+                height: 0.2.sh,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    customText('Enter quantity :', black, 16.0,
+                        fontWeight: FontWeight.bold),
+                    searchField(updateQty, 'Enter quantity'),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Save and Close'),
+              onPressed: () {
+                cartQtyUpdate();
+              },
+            ),
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _sellerNotes() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add a note to seller :'),
+          content: StatefulBuilder(
+            builder: (context, mState) {
+              return Container(
+                height: 0.2.sh,
+                child: Column(
+                  children: [
+                    customText(
+                        'Enter A Quick Note To The Seller About Your Order :',
+                        black,
+                        16.0,
+                        fontWeight: FontWeight.bold),
+                    searchField(noteCtrl, 'Add a note'),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Save and Close'),
+              onPressed: () {
+                addNotetoSeller();
+              },
+            ),
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAddressList() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Chnage Shipping Address'),
+          content: StatefulBuilder(
+            builder: (context, mState) {
+              return Obx(() => SizedBox(
+                    width: 1.sw,
+                    child: SizedBox(
+                      width: 1.sw,
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          // primary: true,
+                          separatorBuilder: (_, __) => SizedBox(
+                                height: 10,
+                              ),
+                          itemCount: _addList.length,
+                          itemBuilder: (_, int i) {
+                            return Row(
+                              children: [
+                                Radio(
+                                  onChanged: (val) {
+                                    _pickAddress.value = val as int;
+                                    print('id- ${_pickAddress.value}');
+                                    mState(() {});
+                                  },
+                                  groupValue: _pickAddress.value,
+                                  value: _addList[i].userAddressId,
+                                ),
+                                Flexible(
+                                  child: customText(
+                                      '${_addList[i].customerShippingAddress}',
+                                      black,
+                                      16.0),
+                                ),
+                              ],
+                            );
+                          }),
+                    ),
+                  ));
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Save and Close'),
+              onPressed: () {
+                updateAddressDefault();
+              },
+            ),
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _addAddress() async {
     return showDialog<void>(
       context: context,
@@ -475,7 +1057,7 @@ class _CartPageState extends State<CartPage> {
                             return DropdownMenuItem<String>(
                               value: value.shippingCountry,
                               child: Padding(
-                                padding:  EdgeInsets.only(left:8.0),
+                                padding: EdgeInsets.only(left: 8.0),
                                 child: Text(
                                   value.shippingCountry,
                                   style: TextStyle(fontSize: 18),
@@ -530,7 +1112,7 @@ class _CartPageState extends State<CartPage> {
                                   size: 30,
                                 )),
                             isExpanded: true,
-                            value: _stateValue, 
+                            value: _stateValue,
                             hint: Text('Parish/State/Province'),
                             items: _shippingStateList.map((value) {
                               return DropdownMenuItem<String>(
@@ -541,18 +1123,18 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               );
                             }).toList(),
-                           onChanged: (String? newValue) {
-                            setState(() {
-                              _stateValue = newValue!;
-                            });
-                            _stateId = _shippingStateList
-                                .where((element) =>
-                                    element.shippingState == _stateValue)
-                                .toList()[0]
-                                .parishOrStateId
-                                .toString();
-                            print('_stateId --->$_stateId');
-                          },
+                            onChanged: (String? newValue) {
+                              mState(() {
+                                _stateValue = newValue!;
+                              });
+                              _stateId = _shippingStateList
+                                  .where((element) =>
+                                      element.shippingState == _stateValue)
+                                  .toList()[0]
+                                  .parishOrStateId
+                                  .toString();
+                              print('_stateId --->$_stateId');
+                            },
                           ),
                         ),
                       ),
@@ -560,11 +1142,15 @@ class _CartPageState extends State<CartPage> {
                     SizedBox(
                       height: 0.02.sh,
                     ),
-                    searchField(zipCtrl, 'ZIP COde'),
+                    searchField(zipCtrl, 'ZIP Code'),
                     SizedBox(
                       height: 0.02.sh,
                     ),
-                    searchField(noteCtrl, 'Enter ote'),
+                    searchField(phnCtrl, 'Enter Phone Number'),
+                    SizedBox(
+                      height: 0.02.sh,
+                    ),
+                    searchField(noteCtrl, 'Enter note'),
                     SizedBox(
                       height: 0.02.sh,
                     ),
@@ -589,7 +1175,58 @@ class _CartPageState extends State<CartPage> {
           actions: <Widget>[
             TextButton(
               child: const Text('Save and Close'),
-              onPressed: () {},
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  if (nameCtrl.text.isEmpty) {
+                    getSnackbar(
+                      'Enter Country',
+                      red,
+                    );
+                  } else if (add1Ctrl.text.isEmpty) {
+                    getSnackbar(
+                      'Enter Address',
+                      red,
+                    );
+                  } else if (add2Ctrl.text.isEmpty) {
+                    getSnackbar(
+                      'Enter Address',
+                      red,
+                    );
+                  } else if (addCtrl.text.isEmpty) {
+                    getSnackbar(
+                      'Enter City/Town/District',
+                      red,
+                    );
+                  } else if (areaCtrl.text.isEmpty) {
+                    getSnackbar(
+                      'Enter your area',
+                      red,
+                    );
+                  } else if (zipCtrl.text.isEmpty) {
+                    getSnackbar(
+                      'ZIP code missing',
+                      red,
+                    );
+                  } else if (noteCtrl.text.isEmpty) {
+                    getSnackbar(
+                      'Phone number can\'t be empty',
+                      red,
+                    );
+                  } else if (_stateValue!.isEmpty) {
+                    getSnackbar(
+                      'Select your state',
+                      red,
+                    );
+                  } else if (_countryValue!.isEmpty) {
+                    getSnackbar(
+                      'Select your country',
+                      red,
+                    );
+                  } else {
+                    _shippingAddress();
+                  }
+                }
+              },
             ),
             TextButton(
               child: const Text('Close'),

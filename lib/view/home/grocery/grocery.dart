@@ -198,41 +198,40 @@ class _GroceryState extends State<Grocery> {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 0.5.sw,
-                                        child: Flexible(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 10.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Text('${list[i].storeName}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 20,
-                                                        color:
-                                                            Color(0xff0000FF))),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                customText('Online Ordering',
-                                                    Color(0xff8C9093), 15.0),
-                                                Text('${list[i].storeLocation}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color:
-                                                            Color(0xff8C9093))),
-                                                // Text('${list[i].storeName}',
-                                                //     style: TextStyle(
-                                                //         fontSize: 16, color: grey)),
-                                              ],
-                                            ),
+                                        width: 0.2.sw,
+                                      ),
+                                      Flexible(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(right: 10.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text('${list[i].storeName}',
+                                                  // overflow:
+                                                  //     TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20,
+                                                      color:
+                                                          Color(0xff0000FF))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              customText('Online Ordering',
+                                                  Color(0xff8C9093), 15.0),
+                                              Text('${list[i].storeLocation}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color:
+                                                          Color(0xff8C9093))),
+                                              // Text('${list[i].storeName}',
+                                              //     style: TextStyle(
+                                              //         fontSize: 16, color: grey)),
+                                            ],
                                           ),
                                         ),
                                       ),

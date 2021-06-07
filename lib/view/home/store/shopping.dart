@@ -79,7 +79,8 @@ class _ShoppingState extends State<Shopping> {
       ),
       child: RefreshIndicator(
         onRefresh: () async {
-          Get.to(() => Home());
+          print('x');
+          // Get.to(() => Home());
         },
         child: SingleChildScrollView(
           controller: _listContr,
@@ -289,7 +290,9 @@ class _ShoppingState extends State<Shopping> {
                                         return InkWell(
                                           onTap: () {
                                             Get.to(() => ProductDetailsPage(
-                                                  prdId: list[i].latestyjPrdId.toString(),
+                                                  prdId: list[i]
+                                                      .latestyjPrdId
+                                                      .toString(),
                                                   prdTypeId: '1',
                                                 ));
                                           },
