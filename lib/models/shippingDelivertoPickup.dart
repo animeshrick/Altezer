@@ -8,17 +8,16 @@ class DeliverToPickup {
 
   final String message;
   final String status;
-  final List<ShippingOptionDeliverToPickup> shippingOptionsPickup;
+  final List<ShippingOptionDeliverToPickup>? shippingOptionsPickup;
   final String infoPickup;
 
   factory DeliverToPickup.fromJson(Map<String, dynamic> json) =>
       DeliverToPickup(
         message: json["message"],
         status: json["status"],
-        shippingOptionsPickup: List<ShippingOptionDeliverToPickup>.from(
-            json["ShippingOptions"]
-                .map((x) => ShippingOptionDeliverToPickup.fromJson(x))),
-        infoPickup: json["Info"],
+        shippingOptionsPickup: json["ShippingOptions"] != ''?(json["ShippingOptions"] as List)
+                .map((x) => ShippingOptionDeliverToPickup.fromJson(x)).toList():null,
+        infoPickup: json["Info"] == null ? '' :json["Info"],
       );
 }
 

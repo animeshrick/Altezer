@@ -6,6 +6,7 @@ import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
+import 'package:altezar/view/home/cart/cart.dart';
 import 'package:altezar/view/home/productDetails.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/searchField.dart';
@@ -28,7 +29,6 @@ class _AutoPartsState extends State<AutoParts> {
 
   List<AutoPartsCategory>? _autoPartsCategoryList;
   List<AutoPartsSubcategory>? _autoPartsSubCategoryList;
-  var _cartData = <CartBoxData>[].obs;
 
   List<GetSortByData> _sortingDataList = [];
   final _listContr = ScrollController();
@@ -44,7 +44,7 @@ class _AutoPartsState extends State<AutoParts> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
-      _cartBox();
+      cartBox();
     });
 
     _getProductData();
@@ -261,7 +261,7 @@ class _AutoPartsState extends State<AutoParts> {
 
                           return ListView.separated(
                               separatorBuilder: (_, __) => SizedBox(
-                                    height: 20,
+                                    height: 5,
                                   ),
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -269,11 +269,11 @@ class _AutoPartsState extends State<AutoParts> {
                               itemBuilder: (_, i) {
                                 return InkWell(
                                   onTap: () {},
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                  child: Card(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                      child: Row(
                                         children: [
                                           CachedNetworkImage(
                                             imageUrl:
@@ -288,12 +288,12 @@ class _AutoPartsState extends State<AutoParts> {
                                                 Image.network(imageNotFound),
                                           ),
                                           SizedBox(
-                                            width: 0.1.sw,
+                                            width: 0.07.sw,
                                           ),
                                           Flexible(
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text('${list[i].productName}',
                                                     // overflow:
@@ -307,16 +307,27 @@ class _AutoPartsState extends State<AutoParts> {
                                                     style: TextStyle(
                                                         fontSize: 16,
                                                         color: priceTextColor)),
-                                                Text(
-                                                    '${list[i].size} | By: ${list[i].sellerName}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.green)),
+                                                list[i].size != null
+                                                    ? Text(
+                                                        '${list[i].size} | By: ${list[i].sellerName}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.green))
+                                                    : Text(
+                                                        'Size not available | By: ${list[i].sellerName}',
+                                                        // overflow: TextOverflow
+                                                        //     .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.green)),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     button(() {
                                                       Get.to(() =>
@@ -327,9 +338,6 @@ class _AutoPartsState extends State<AutoParts> {
                                                           ));
                                                     }, 'Details', greenColor,
                                                         white),
-                                                    SizedBox(
-                                                      width: 20,
-                                                    ),
                                                     sp.isLogin() == true
                                                         ? cartButton(() {
                                                             _addToCart(
@@ -361,10 +369,7 @@ class _AutoPartsState extends State<AutoParts> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 );
                               });
@@ -383,20 +388,19 @@ class _AutoPartsState extends State<AutoParts> {
               ),
             )),
             Obx(() {
-              if (_cartData.length > 0 && sp.isLogin() == true) {
-                var data = _cartData.first;
-                print('this is me ${sp.getUserId().toString()}');
+              if (cartData.length > 0 && sp.isLogin() == true) {
+                var data = cartData.first;
                 return SizedBox(
                     height: 0.06.sh,
                     child: RaisedButton.icon(
                       color: Color(0xff5BC0DE),
-                      onPressed: () {},
+                      onPressed: () {
+                        gotoCart();
+                      },
                       icon: Icon(Icons.shopping_cart_outlined),
                       label: Text(
                           'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
-                    )
-                    // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
-                    );
+                    ));
               }
               return SizedBox(
                   height: 0.06.sh,
@@ -474,15 +478,5 @@ class _AutoPartsState extends State<AutoParts> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
-    if (data == true) {
-      _cartBox();
-    }
-  }
-
-  void _cartBox() async {
-    if (sp.getUserId() != null)
-      _cartData.value = (await networkcallService
-          .getCartBoxAPICall(sp.getUserId().toString()))!;
-    print('l ${_cartData.length}');
   }
 }

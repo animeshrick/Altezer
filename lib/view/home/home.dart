@@ -25,21 +25,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   var _controller;
   bool? isLogin = false;
-  var _cartData = <CartBoxData>[].obs;
+
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 5, vsync: this);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      if (sp.isLogin()!) _cartBox();
+      if (sp.isLogin()!) cartBox();
     });
-  }
 
-  @override
-  void dispose() {
-    super.dispose();
-    print('first dispose');
   }
 
   @override
@@ -75,8 +70,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               height: 0.1.sh,
             ),
             Obx(() {
-              if (_cartData.length > 0 && sp.isLogin() == true) {
-                var data = _cartData.first;
+              // print('x');
+              if (cartData.length > 0 && sp.isLogin() == true) {
+                var data = cartData.first;
                 return Flexible(
                   child: FlatButton.icon(
                       padding: EdgeInsets.zero,
@@ -141,19 +137,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               child: Row(
                 children: [
                   tabbarButton(() {
-                    Get.to(OnTapStore());
+                    Get.to(() => OnTapStore());
                   }, 'Stores', white, 15.0),
                   tabbarButton(() {
-                    Get.to(Deals());
+                    Get.to(() => Deals());
                   }, 'Deals', Color(0xffDC7633), 15.0),
                   tabbarButton(() {
                     Get.to(() => Grocery());
                   }, 'Grocery', Color(0xff9457B0), 15.0),
                   tabbarButton(() {
-                    Get.to(Food());
+                    Get.to(() => Food());
                   }, 'Food', Color(0xff2ECC71), 15.0),
                   tabbarButton(() {
-                    Get.to(AutoParts());
+                    Get.to(() => AutoParts());
                   }, 'Auto Parts', Color(0xffEC7063), 15.0),
                 ],
               ),
@@ -165,9 +161,5 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  void _cartBox() async {
-    _cartData.value = (await networkcallService
-        .getCartBoxAPICall(sp.getUserId().toString()))!;
-    print('length ${_cartData.length}');
-  }
+
 }

@@ -25,7 +25,6 @@ class _DashBoardState extends State<DashBoard>
     _controller = TabController(length: 2, vsync: this);
   }
 
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,14 +36,14 @@ class _DashBoardState extends State<DashBoard>
         backgroundColor: Colors.green,
       ),
       appBar: AppBar(
+        automaticallyImplyLeading: true,
         toolbarHeight: 0.13.sh,
         backgroundColor: white,
         bottom: TabBar(
-          // labelPadding: EdgeInsets.only(left: 15, right: 35, bottom: 15),
+          // labelPadding: EdgeInsets.zero,
           labelColor: black,
           controller: _controller,
           indicatorColor: Colors.blue,
-
           indicator: BoxDecoration(color: Colors.blue),
           tabs: [
             Tab(

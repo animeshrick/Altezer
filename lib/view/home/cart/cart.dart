@@ -361,8 +361,8 @@ class _CartPageState extends State<CartPage> {
                                   'Please Select Your Pickup Location:\n',
                                   black,
                                   16.0),
-                              _shippingPickupData
-                                          .value.shippingOptionsPickup.length ==
+                              _shippingPickupData.value.shippingOptionsPickup!
+                                          .length ==
                                       0
                                   ? SizedBox(
                                       width: 1.sw,
@@ -373,7 +373,7 @@ class _CartPageState extends State<CartPage> {
                                                 height: 10,
                                               ),
                                           itemCount: _shippingPickupData.value
-                                              .shippingOptionsPickup.length,
+                                              .shippingOptionsPickup!.length,
                                           itemBuilder: (_, int i) {
                                             return Row(
                                               children: [
@@ -388,13 +388,14 @@ class _CartPageState extends State<CartPage> {
                                                   groupValue: pickupRadio.value,
                                                   value: _shippingPickupData
                                                       .value
-                                                      .shippingOptionsPickup[i]
+                                                      .shippingOptionsPickup![i]
                                                       .deliveryCompanyId,
-                                                ),Flexible(
-                                                        child: customText(
-                                                            '🚚 ${_shippingPickupData.value.shippingOptionsPickup[i].serviceName} ${_shippingPickupData.value.shippingOptionsPickup[i].customerPickUpLocation} ${_shippingPickupData.value.shippingOptionsPickup[i].shippingCost}',
-                                                            black,
-                                                            16.0)),
+                                                ),
+                                                Flexible(
+                                                    child: customText(
+                                                        '🚚 ${_shippingPickupData.value.shippingOptionsPickup![i].serviceName} ${_shippingPickupData.value.shippingOptionsPickup![i].customerPickUpLocation} ${_shippingPickupData.value.shippingOptionsPickup![i].shippingCost}',
+                                                        black,
+                                                        16.0)),
                                               ],
                                             );
                                           }),
@@ -762,8 +763,11 @@ class _CartPageState extends State<CartPage> {
   }
 
   void _pickupShippingDelivary() async {
-    _shippingPickupData.value = (await networkcallService
-        .getShippingAeliverToPickup(sp.getUserId().toString()))!;
+    var result = await networkcallService
+        .getShippingAeliverToPickup(sp.getUserId().toString());
+    if (result != null) {
+      _shippingPickupData.value = result;
+    }
   }
 
   void _shippingAddress() async {

@@ -1,4 +1,8 @@
+import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/getCartBox.dart';
+import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/auths/intro.dart';
+import 'package:altezar/view/home/cart/cart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -105,6 +109,7 @@ final Color green = Color.fromRGBO(92, 184, 98, 1);
 final Color appbarColor = new Color(0xff2C3E50);
 final Color priceTextColor = Color(0xffFF0000);
 final Color greenColor = Color(0xff5CB85C);
+final Color removeBtnColor = Color(0xff995F0D);
 
 /*-------------------------apis-------------------------*/
 final String _baseUrl = 'https://demo20.gowebbi.us/ApiHandler';
@@ -161,6 +166,11 @@ final String removeCartItem = '$_baseUrl/RemoveCartItem.ashx';
 final String sellerNote = '$_baseUrl/AddSellerNotInCartPage.ashx';
 final String cuponCodeAPI = '$_baseUrl/ApplyCouponForCartProduct.ashx';
 final String addPrdQuantity = '$_baseUrl/UpdateProductCartQuantity.ashx';
+final String registryList = '$_baseUrl/GetListOfRegistry.ashx';
+final String registryListTypeCode = '$_baseUrl/GetListOfRegistryTypeCode.ashx';
+final String registryInfo = '$_baseUrl/GetListOfRegistryInfo.ashx';
+final String registryListInfo =
+    '$_baseUrl/GetListOrRegistryItemListByRegId.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 
@@ -188,4 +198,14 @@ gotoLoginPage() {
   return Get.to(() => Intro(
         isChecked: false,
       ));
+}
+
+gotoCart() => Get.to(() => CartPage());
+
+var cartData = <CartBoxData>[].obs;
+void cartBox() async {
+  if (sp.getUserId() != null)
+    cartData.value = (await networkcallService
+        .getCartBoxAPICall(sp.getUserId().toString()))!;
+  // print('l ${_cartData.length}');
 }

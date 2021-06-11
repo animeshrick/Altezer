@@ -35,7 +35,6 @@ class _FoodDetailsState extends State<FoodDetails> {
   List<GetSortByData> _sortingDataList = [];
 
   var _prdList = <Productlist>[].obs;
-  var _cartData = <CartBoxData>[].obs;
 
   int _pageIndex = 0;
   final _listContr = ScrollController();
@@ -45,7 +44,7 @@ class _FoodDetailsState extends State<FoodDetails> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
-      _cartBox();
+      cartBox();
     });
 
     _listContr.addListener(() {
@@ -228,15 +227,16 @@ class _FoodDetailsState extends State<FoodDetails> {
                       () => _prdList.length != 0
                           ? ListView.separated(
                               separatorBuilder: (_, __) => SizedBox(
-                                    height: 20,
+                                    height: 5,
                                   ),
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: _prdList.length,
                               itemBuilder: (_, i) {
-                                return Column(
-                                  children: [
-                                    Row(
+                                return Card(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
@@ -257,8 +257,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                                                 CrossAxisAlignment.end,
                                             children: [
                                               Text('${_prdList[i].productName}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                  // overflow:
+                                                  //     TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.blue)),
@@ -336,10 +336,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                  ],
+                                  ),
                                 );
                               })
                           : CupertinoActivityIndicator(
@@ -352,20 +349,19 @@ class _FoodDetailsState extends State<FoodDetails> {
             ),
           ),
           Obx(() {
-            if (_cartData.length > 0 && sp.isLogin() == true) {
-              var data = _cartData.first;
-              print('this is me ${sp.getUserId().toString()}');
+            if (cartData.length > 0 && sp.isLogin() == true) {
+              var data = cartData.first;
               return SizedBox(
                   height: 0.06.sh,
                   child: RaisedButton.icon(
                     color: Color(0xff5BC0DE),
-                    onPressed: () {},
+                    onPressed: () {
+                      gotoCart();
+                    },
                     icon: Icon(Icons.shopping_cart_outlined),
                     label: Text(
                         'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
-                  )
-                  // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
-                  );
+                  ));
             }
             return SizedBox(
                 height: 0.06.sh,
@@ -445,15 +441,8 @@ class _FoodDetailsState extends State<FoodDetails> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
-    if (data == true) {
-      _cartBox();
-    }
+ 
   }
 
-  void _cartBox() async {
-    if (sp.getUserId() != null)
-      _cartData.value = (await networkcallService
-          .getCartBoxAPICall(sp.getUserId().toString()))!;
-    print('l ${_cartData.length}');
-  }
+
 }

@@ -30,7 +30,7 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool pressed = false;
   TextEditingController quantityController = TextEditingController();
-  var _cartData = <CartBoxData>[].obs;
+  // var _cartData = <CartBoxData>[].obs;
 
   Future<ProdDetailModel?>? _dealDetailFuture;
   void initState() {
@@ -38,7 +38,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     _dealDetailFuture =
         networkcallService.getAllPrdDetails(widget.prdTypeId, widget.prdId);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _cartBox();
+      cartBox();
     });
   }
 
@@ -126,21 +126,34 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Size - ${detail.size}  ',
-                              style: TextStyle(fontSize: 19)),
+                          detail.size != null
+                              ? detail.size != ''
+                                  ? Text('Size - ${detail.size}',
+                                      style: TextStyle(fontSize: 19))
+                                  : Text('Size not available for that item',
+                                      style: TextStyle(fontSize: 19))
+                              : Text('Size not available for that item',
+                                  style: TextStyle(fontSize: 19)),
                           SizedBox(
                             height: 10,
                           ),
-                          detail.productColorStyleType != null
-                              ? Text('Color - ${detail.productColorStyleType}',
-                                  style: TextStyle(fontSize: 19))
-                              : Text('Color not available for that item'),
+                          detail.productColorStyleType != ''
+                              ? detail.productColorStyleType != null
+                                  ? Text(
+                                      'Color - ${detail.productColorStyleType}',
+                                      style: TextStyle(fontSize: 19))
+                                  : Text('Color not available for that item',
+                                      style: TextStyle(fontSize: 19))
+                              : Text('Color not available for that item',
+                                  style: TextStyle(fontSize: 19)),
                           SizedBox(
                             height: 20,
                           ),
-                          Center(
-                              child: customText(
-                                  '${detail.sellerNameMobile}', black, 16.0)),
+                          detail.sellerNameMobile != null
+                              ? customText(
+                                  '${detail.sellerNameMobile}', black, 16.0)
+                              : Text('Seller Info not available for that item',
+                                  style: TextStyle(fontSize: 19)),
                           SizedBox(
                             height: 5,
                           ),
@@ -161,28 +174,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 15,
                           ),
-
-                          /*sp.isLogin() == true
-                                              ? cartButton(() {
-                                                  _addToCart(
-                                                      '${list[i].yjProductId}',
-                                                      '${list[i].clientId}',
-                                                      'AutoParts',
-                                                      '',
-                                                      '',
-                                                      1.toString(),
-                                                      '',
-                                                      '',
-                                                      sp
-                                                          .getUserId()
-                                                          .toString());
-                                                }, 'Add', priceTextColor, white)
-                                              : cartButton(
-                                                  () => Get.to(() => gotoLoginPage()),
-                                                  'Add',
-                                                  priceTextColor,
-                                                  white),*/
-
                           sp.isLogin() == true
                               ? SizedBox(
                                   width: 0.95.sw,
@@ -400,20 +391,22 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 25,
                           ),
-                          detail.shippingInfo != null
-                              ? customText(
-                                  'Shipping info ${detail.shippingInfo}',
-                                  black,
-                                  18.0)
+                          detail.shippingInfo != ''
+                              ? detail.shippingInfo != null
+                                  ? customText(
+                                      'Shipping info ${detail.shippingInfo}',
+                                      black,
+                                      18.0)
+                                  : Text('Shipping info not available')
                               : Text('Shipping info not available'),
                           SizedBox(
                             height: 15,
                           ),
                           sp.isLogin() == true
                               ? Obx(() {
-                                  if (_cartData.length > 0 &&
+                                  if (cartData.length > 0 &&
                                       sp.isLogin() == true) {
-                                    var data = _cartData.first;
+                                    var data = cartData.first;
                                     return SizedBox(
                                         height: 0.08.sh,
                                         width: 1.sw,
@@ -449,12 +442,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 15,
                           ),
-                          Align(
-                              alignment: Alignment.center,
-                              child: Text('Suggestion Items',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500))),
+                          Text('Suggestion Items',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w500)),
                           SizedBox(
                             height: 15,
                           ),
@@ -473,8 +463,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     // print('length - $x');
                                     return InkWell(
                                       onTap: () {
-                                        // print(
-                                        //     '${sameList[i].yjProductId.toString()}');
+                                        print(
+                                            '${sameList[i].yjProductId.toString()}');
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProductDetailsPage(
+                                                      prdTypeId: '1',
+                                                      prdId: sameList[i]
+                                                          .yjProductId
+                                                          .toString(),
+                                                    )));
                                         // Get.to(() => ProductDetailsPage(
                                         //       prdTypeId: '1',
                                         //       prdId: sameList[i]
@@ -506,39 +506,38 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                             imageNotFound),
                                               ),
                                               SizedBox(
-                                                width: 0.5.sw,
-                                                child: Flexible(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      Text(
-                                                          '${sameList[i].productName}',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                              fontSize: 18,
-                                                              color: Colors
-                                                                  .blueAccent)),
-                                                      Text(
-                                                          '${sameList[i].price}',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              color:
-                                                                  priceTextColor)),
-                                                      Text(
-                                                          '${sameList[i].brandName}',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              color: grey)),
-                                                      // Text('Shipping --- ${sameList[i].productName}',
-                                                      //     style: TextStyle(fontSize: 16, color: black)),
-                                                    ],
-                                                  ),
+                                                width: 0.1.sw,
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                        '${sameList[i].productName}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            color: Colors
+                                                                .blueAccent)),
+                                                    Text('${sameList[i].price}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                priceTextColor)),
+                                                    Text(
+                                                        '${sameList[i].brandName}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: grey)),
+                                                    // Text('Shipping --- ${sameList[i].productName}',
+                                                    //     style: TextStyle(fontSize: 16, color: black)),
+                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -586,15 +585,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
-    if (data == true) {
-      _cartBox();
-    }
   }
 
-  void _cartBox() async {
-    if (sp.getUserId() != null)
-      _cartData.value = (await networkcallService
-          .getCartBoxAPICall(sp.getUserId().toString()))!;
-    print('l ${_cartData.length}');
-  }
+  // void _cartBox() async {
+  //   if (sp.getUserId() != null)
+  //     _cartData.value = (await networkcallService
+  //         .getCartBoxAPICall(sp.getUserId().toString()))!;
+  //   print('l ${_cartData.length}');
+  // }
 }

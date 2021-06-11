@@ -17,8 +17,6 @@ import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../home.dart';
-
 class Shopping extends StatefulWidget {
   @override
   _ShoppingState createState() => _ShoppingState();
@@ -66,8 +64,6 @@ class _ShoppingState extends State<Shopping> {
         _getProductData();
       }
     });
-
-    // _getProductData();
   }
 
   @override
@@ -79,8 +75,18 @@ class _ShoppingState extends State<Shopping> {
       ),
       child: RefreshIndicator(
         onRefresh: () async {
-          print('x');
-          // Get.to(() => Home());
+          _categoriesName = null;
+          _catId = null;
+          _subCatName = null;
+          _subCatId = null;
+          _sortingValue = null;
+          _sortId = null;
+          searchController.clear();
+          _latestDealsFuture = networkcallService.getAllLatestDealsAPICall();
+          _catList.add(CategoriesList(prdId: 0, prdName: 'All Category'));
+          _getData();
+          _getSortData();
+          setState(() {});
         },
         child: SingleChildScrollView(
           controller: _listContr,
@@ -118,7 +124,6 @@ class _ShoppingState extends State<Shopping> {
                         setState(() {
                           _categoriesName = value!;
                         });
-
                         _catId = _catList
                             .where(
                                 (element) => element.prdName == _categoriesName)

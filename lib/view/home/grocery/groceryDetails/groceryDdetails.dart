@@ -33,18 +33,17 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
   List<GetSubCateProductsList> _subCatList = [];
   List<GetSortByData> _sortingDataList = [];
   var _prdList = <Productlist>[].obs;
-  var _cartData = <CartBoxData>[].obs;
   final _listContr = ScrollController();
   int _pageIndex = 0;
 
-  Future<List<Productlist>>? _storeDetailFuture;
+  // Future<List<Productlist>>? _storeDetailFuture;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
-      _cartBox();
+      cartBox();
     });
 
     _listContr.addListener(() {
@@ -230,15 +229,16 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                       () => _prdList.length != 0
                           ? ListView.separated(
                               separatorBuilder: (_, __) => SizedBox(
-                                    height: 20,
+                                    height: 5,
                                   ),
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: _prdList.length,
                               itemBuilder: (_, i) {
-                                return Column(
-                                  children: [
-                                    Row(
+                                return Card(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
@@ -254,83 +254,86 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                               Image.network(imageNotFound),
                                         ),
                                         SizedBox(
-                                          width: 0.5.sw,
-                                          child: Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                    '${_prdList[i].productName}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.blue)),
-                                                Text(
-                                                    '${_prdList[i].size} ${_prdList[i].perks}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: grey)),
-                                                RatingBarIndicator(
-                                                  rating: _prdList[i]
-                                                      .ratingCount
-                                                      .toDouble(),
-                                                  itemBuilder:
-                                                      (context, index) => Icon(
-                                                    Icons.star,
-                                                    color: Colors.amber,
-                                                  ),
-                                                  itemCount: 5,
-                                                  itemSize: 25.0,
-                                                  direction: Axis.horizontal,
+                                          width: 0.1.sw,
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text('${_prdList[i].productName}',
+                                                  // overflow:
+                                                  // TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.blue)),
+                                              Text(
+                                                  '${_prdList[i].size} ${_prdList[i].perks}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: grey)),
+                                              RatingBarIndicator(
+                                                rating: _prdList[i]
+                                                    .ratingCount
+                                                    .toDouble(),
+                                                itemBuilder: (context, index) =>
+                                                    Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
                                                 ),
-                                                Text('${_prdList[i].price}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: green)),
-                                              ],
-                                            ),
+                                                itemCount: 5,
+                                                itemSize: 25.0,
+                                                direction: Axis.horizontal,
+                                              ),
+                                              Text('${_prdList[i].price}',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: green)),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  button(() {
+                                                    Get.to(() => ProductDetailsPage(
+                                                        prdTypeId: '1',
+                                                        prdId:
+                                                            '${_prdList[i].yjProductId}'));
+                                                  }, ' Details', greenColor,
+                                                      white),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  sp.isLogin() == true
+                                                      ? cartButton(() {
+                                                          _addToCart(
+                                                              '${_prdList[i].yjProductId}',
+                                                              '${_prdList[i].clientId}',
+                                                              'Products',
+                                                              '',
+                                                              '',
+                                                              1.toString(),
+                                                              '',
+                                                              '',
+                                                              sp
+                                                                  .getUserId()
+                                                                  .toString());
+                                                        }, 'Add',
+                                                          priceTextColor, white)
+                                                      : cartButton(
+                                                          () => gotoLoginPage(),
+                                                          'Add',
+                                                          priceTextColor,
+                                                          white),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        button(() {
-                                          Get.to(() => ProductDetailsPage(
-                                              prdTypeId: '1',
-                                              prdId:
-                                                  '${_prdList[i].yjProductId}'));
-                                        }, ' Details', greenColor, white),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        sp.isLogin() == true
-                                            ? cartButton(() {
-                                                _addToCart(
-                                                    '${_prdList[i].yjProductId}',
-                                                    '${_prdList[i].clientId}',
-                                                    'Products',
-                                                    '',
-                                                    '',
-                                                    1.toString(),
-                                                    '',
-                                                    '',
-                                                    sp.getUserId().toString());
-                                              }, 'Add', priceTextColor, white)
-                                            : cartButton(() => gotoLoginPage(),
-                                                'Add', priceTextColor, white),
-                                      ],
-                                    ),
-                                  ],
+                                  ),
                                 );
                               })
                           : CupertinoActivityIndicator(
@@ -343,14 +346,15 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
             ),
           ),
           Obx(() {
-            if (_cartData.length > 0 && sp.isLogin() == true) {
-              var data = _cartData.first;
-              print('this is me ${sp.getUserId().toString()}');
+            if (cartData.length > 0 && sp.isLogin() == true) {
+              var data = cartData.first;
               return SizedBox(
                   height: 0.06.sh,
                   child: RaisedButton.icon(
                     color: Color(0xff5BC0DE),
-                    onPressed: () {},
+                    onPressed: () {
+                      gotoCart();
+                    },
                     icon: Icon(Icons.shopping_cart_outlined),
                     label: Text(
                         'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
@@ -437,15 +441,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
-    if (data == true) {
-      _cartBox();
-    }
+
   }
 
-  void _cartBox() async {
-    if (sp.getUserId() != null)
-      _cartData.value = (await networkcallService
-          .getCartBoxAPICall(sp.getUserId().toString()))!;
-    print('l ${_cartData.length}');
-  }
 }

@@ -45,13 +45,13 @@ class Productlist {
 
   final String productTypeId;
   final int yjProductId;
-  final String productName;
-  final String productFullName;
-  final String productImageUrl;
-  final String price;
-  final String productUrl;
-  final String sellerName;
-  final String sellerNameMobile;
+  final String? productName;
+  final String? productFullName;
+  final String? productImageUrl;
+  final String? price;
+  final String? productUrl;
+  final String? sellerName;
+  final String? sellerNameMobile;
   final int productCategoryId;
   final int productCategorySub1Id;
   final int productCategorySub2Id;

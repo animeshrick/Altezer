@@ -34,7 +34,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
   List<GetSubCateProductsList> _subCatList = [];
   List<GetSortByData> _sortingDataList = [];
   var _prdList = <Productlist>[].obs;
-  var _cartData = <CartBoxData>[].obs;
 
   final _listContr = ScrollController();
   int _pageIndex = 0;
@@ -48,7 +47,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
-      _cartBox();
+      cartBox();
     });
 
     _listContr.addListener(() {
@@ -361,20 +360,20 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
             ),
           ),
           Obx(() {
-            if (_cartData.length > 0 && sp.isLogin() == true) {
-              var data = _cartData.first;
-              print('this is me ${sp.getUserId().toString()}');
-              return SizedBox(
+            if (cartData.length > 0 && sp.isLogin() == true) {
+              var data = cartData.first;
+              return SizedBox(   
+                
                   height: 0.06.sh,
                   child: RaisedButton.icon(
                     color: Color(0xff5BC0DE),
-                    onPressed: () {},
+                    onPressed: () {
+                      gotoCart();
+                    },
                     icon: Icon(Icons.shopping_cart_outlined),
                     label: Text(
                         'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
-                  )
-                  // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
-                  );
+                  ));
             }
             return SizedBox(
                 height: 0.06.sh,
@@ -460,15 +459,5 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
-    if (data == true) {
-      _cartBox();
-    }
-  }
-
-  void _cartBox() async {
-    if (sp.getUserId() != null)
-      _cartData.value = (await networkcallService
-          .getCartBoxAPICall(sp.getUserId().toString()))!;
-    print('l ${_cartData.length}');
   }
 }

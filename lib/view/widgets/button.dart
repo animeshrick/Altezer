@@ -11,7 +11,7 @@ Widget button(
     onPressed: onPressed,
     child: Text(
       text,
-      style: TextStyle(fontSize: 18, color: textColor),
+      style: TextStyle(fontSize: 15, color: textColor),
     ),
     color: btnColor,
   );
@@ -26,17 +26,16 @@ Widget cartButton(
   return RaisedButton(
     onPressed: onPressed,
     child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           text,
-          style: TextStyle(fontSize: 18, color: textColor),
-        ),
-        SizedBox(
-          width: 10,
+          style: TextStyle(fontSize: 15, color: textColor),
         ),
         Icon(
           Icons.shopping_cart_outlined,
           color: white,
+          size: 15,
         ),
       ],
     ),

@@ -35,7 +35,7 @@ class _DealsState extends State<Deals> {
       if (_listContr.position.atEdge && _catId != null) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
-        // _getProductData();
+        _getDealList(_catId);
       }
     });
   }
@@ -145,50 +145,57 @@ class _DealsState extends State<Deals> {
                                     prdTypeId: '1',
                                     prdId: '${list[i].yJProductID}'));
                               },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl:
-                                        "$imgBaseUrl${list[i].productImageURL}",
-                                    height: 0.2.sh,
-                                    width: 0.3.sw,
-                                    placeholder: (context, url) => Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                        Image.network(imageNotFound),
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(5, 0, 10, 10),
+                                  child: Row(
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl:
+                                            "$imgBaseUrl${list[i].productImageURL}",
+                                        height: 0.2.sh,
+                                        width: 0.3.sw,
+                                        placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) =>
+                                            Image.network(imageNotFound),
+                                      ),
+                                      SizedBox(
+                                        width: 0.22.sw,
+                                      ),
+                                      Flexible(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('${list[i].productName}',
+                                                // overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                    color: Colors.blueAccent)),
+                                            Text('${list[i].price}',
+                                                // overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontSize: 15, color: red)),
+                                            Text('${list[i].sellerName}',
+                                                // overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontSize: 15, color: grey)),
+                                            list[i].perks != ''
+                                                ? Text(
+                                                    'Shipping --- ${list[i].perks}',
+                                                    // overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: grey))
+                                                : SizedBox(),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 0.2.sw,
-                                  ),
-                                  Flexible(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text('${list[i].productName}',
-                                            // overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                                color: Colors.blueAccent)),
-                                        Text('${list[i].price}',
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 15, color: red)),
-                                        Text('${list[i].sellerName}',
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 15, color: grey)),
-                                        Text('Shipping --- ${list[i].perks}',
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 16, color: black)),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             );
                           });

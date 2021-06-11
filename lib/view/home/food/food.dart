@@ -190,84 +190,85 @@ class _FoodState extends State<Food> {
                   child: button(() {
                     _getShopData();
                   }, 'Search', Color(0xffEC971F), white)),
-              Container(
-                padding: EdgeInsets.only(right: 15, top: 15),
-                child: FutureBuilder<List<RestShopList>>(
-                    future: _shopFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var list = snapshot.data;
-                        return list!.length != 0
-                            ? ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: 2, //list.length,
-                                itemBuilder: (_, i) {
-                                  return Column(
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          Get.to(() => FoodDetails(
-                                              storeId: list[i].clientId));
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            CachedNetworkImage(
-                                              imageUrl:
-                                                  "$imgBaseUrl${list[i].logoImageFile}",
-                                              height: 0.2.sh,
-                                              width: 0.3.sw,
-                                              placeholder: (context, url) => Center(
-                                                  child:
-                                                      CircularProgressIndicator()),
-                                              errorWidget: (context, url,
-                                                      error) =>
-                                                  Image.network(imageNotFound),
+              FutureBuilder<List<RestShopList>>(
+                  future: _shopFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      var list = snapshot.data;
+                      return list!.length != 0
+                          ? ListView.separated(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              separatorBuilder: (_, __) => SizedBox(
+                                    height: 10,
+                                  ),
+                              itemCount: list.length,
+                              itemBuilder: (_, i) {
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(() =>
+                                        FoodDetails(storeId: list[i].clientId));
+                                  },
+                                  child: Card(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "$imgBaseUrl${list[i].logoImageFile}",
+                                            height: 0.2.sh,
+                                            width: 0.3.sw,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.network(imageNotFound),
+                                          ),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                    '${list[i].restaurantName}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color:
+                                                            Colors.blueAccent)),
+                                                Text(
+                                                    '${list[i].restaurantEthnic}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: red)),
+                                                Text('${list[i].deliveryInfo}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: grey)),
+                                              ],
                                             ),
-                                            Flexible(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                      '${list[i].restaurantName}',
-                                                      style: TextStyle(
-                                                          fontSize: 20,
-                                                          color: Colors
-                                                              .blueAccent)),
-                                                  Text(
-                                                      '${list[i].restaurantEthnic}',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: red)),
-                                                  Text(
-                                                      '${list[i].deliveryInfo}',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: grey)),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  );
-                                })
-                            : Text('Data not available now');
-                      } else if (snapshot.hasError) {
-                        return Center(
-                            child: customText('${snapshot.error}', red, 20.0));
-                      } else
-                        return Center(
-                          child: CupertinoActivityIndicator(
-                            radius: 25,
-                          ),
-                        );
-                    }),
-              ),
+                                    ),
+                                  ),
+                                );
+                              })
+                          : Text('Data not available now');
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: customText('${snapshot.error}', red, 20.0));
+                    } else
+                      return Center(
+                        child: CupertinoActivityIndicator(
+                          radius: 25,
+                        ),
+                      );
+                  }),
             ],
           ),
         ),

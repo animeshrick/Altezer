@@ -1,8 +1,3 @@
-import 'dart:convert';
-
-ProdDetailModel getRestListFromJson(String str) =>
-    ProdDetailModel.fromJson(json.decode(str));
-
 class ProdDetailModel {
   ProdDetailModel({
     required this.message,
@@ -65,7 +60,7 @@ class Detail {
     required this.youTubeVideoId,
   });
 
-  final int yjProductId;
+  final int? yjProductId;
   final String? productName;
   final String? productImageUrl;
   final String? productImage;
@@ -160,7 +155,7 @@ class RelatedProductlist {
   final String productName;
   final String productImageUrl;
   final String price;
-  final String productUrl;
+  final String? productUrl;
   final String brandName;
 
   factory RelatedProductlist.fromJson(Map<String, dynamic> json) =>
