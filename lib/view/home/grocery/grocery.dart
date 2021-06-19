@@ -108,7 +108,7 @@ class _GroceryState extends State<Grocery> {
                     isExpanded: true,
                     hint: Padding(
                       padding: const EdgeInsets.only(left: 15.0),
-                      child: customText('Choose an option', black, 18.0),
+                      child: customText('Parish', black, 18.0),
                     ),
                     value: _groceryStateValue,
                     items: _groceryStateList.map((value) {
@@ -149,10 +149,9 @@ class _GroceryState extends State<Grocery> {
                 width: 1.sw,
                 child: button(() {
                   // print('id- $_groceryStateId');
-                  setState(() {
-                    _isShow = true;
-                  });
-
+                  // setState(() {
+                  //   _isShow = true;
+                  // });
                   _getGroceryStoreData();
                 }, 'Search', Color(0xffEC971F), white),
               ),
@@ -198,14 +197,14 @@ class _GroceryState extends State<Grocery> {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 0.2.sw,
+                                        width: 0.15.sw,
                                       ),
                                       Flexible(
                                         child: Padding(
                                           padding: EdgeInsets.only(right: 10.0),
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text('${list[i].storeName}',
                                                   // overflow:
@@ -270,7 +269,6 @@ class _GroceryState extends State<Grocery> {
   void _getGroceryStoreData() async {
     _groceryStoreFuture = networkcallService.getGroceryStoreListAPICall(
         _groceryStateId ?? '0', searchController.text);
-
     setState(() {});
   }
 }

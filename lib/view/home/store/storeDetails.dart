@@ -48,6 +48,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
       _getData();
       _getSortData();
       cartBox();
+      _getPrdData();
     });
 
     _listContr.addListener(() {
@@ -57,8 +58,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
         _getPrdData();
       }
     });
-
-    _getPrdData();
     _getBannerImage();
   }
 
@@ -174,7 +173,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .prdCatSubId
                                   .toString();
                               print('_subCatId  $_subCatId');
-                              // _getProductData();
+                              _getPrdData();
                             },
                           ),
                         ),
@@ -219,7 +218,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .sortId
                                   .toString();
                               print('_sortId  $_sortId');
-                              // _getProductData();
+                              _getPrdData();
                             },
                           ),
                         ),
@@ -241,6 +240,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                     Obx(
                       () => _prdList.length != 0
                           ? ListView.separated(
+
                               // primary: true,
                               separatorBuilder: (_, __) => SizedBox(
                                     height: 10,
@@ -252,8 +252,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                 return Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         CachedNetworkImage(
                                           imageUrl:
@@ -266,24 +264,32 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                           errorWidget: (context, url, error) =>
                                               Image.network(imageNotFound),
                                         ),
+                                        SizedBox(
+                                          width: 0.1.sw,
+                                        ),
                                         Flexible(
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 '${_prdList[i].productName}',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     color: Colors.blue),
-                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              Text(
-                                                '${_prdList[i].size} ${_prdList[i].perks}',
-                                                style: TextStyle(
-                                                    fontSize: 16, color: grey),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                              _prdList[i].size == '' &&
+                                                      _prdList[i].perks == ''
+                                                  ? Text(
+                                                      '${_prdList[i].size} ${_prdList[i].perks}',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: grey),
+                                                    )
+                                                  : customText(
+                                                      'Size & Perks not available',
+                                                      grey,
+                                                      16),
                                               RatingBarIndicator(
                                                 rating: _prdList[i]
                                                     .ratingCount
@@ -350,9 +356,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   ],
                                 );
                               })
-                          : CupertinoActivityIndicator(
-                              radius: 25,
-                            ),
+                          : Text('no data found'),
                     )
                   ],
                 ),
@@ -362,8 +366,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
           Obx(() {
             if (cartData.length > 0 && sp.isLogin() == true) {
               var data = cartData.first;
-              return SizedBox(   
-                
+              return SizedBox(
                   height: 0.06.sh,
                   child: RaisedButton.icon(
                     color: Color(0xff5BC0DE),
@@ -408,7 +411,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
     _subCatList = (await networkcallService.getSubCatAPICall(_catId!))!;
     hideProgress(context);
     setState(() {});
-    // _getProductData();
+    // _getSortData();
   }
 
   void _getSortData() async {
@@ -422,13 +425,15 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
   }
 
   void _getPrdData() async {
+    showProgress(context);
     final data = await networkcallService.getprdDetails(
         _catId ?? '0',
-        '',
+        searchController.text == '' ? '' : searchController.text,
         _subCatId ?? '0',
         _sortId ?? '0',
         _pageIndex.toString(),
         widget.storeId.toString());
+    hideProgress(context);
     if (data != null) {
       _prdList(data);
     }
@@ -449,6 +454,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
+    showProgress(context);
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -459,5 +465,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
+    hideProgress(context);
   }
 }

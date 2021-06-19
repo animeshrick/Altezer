@@ -102,9 +102,12 @@ class _DealsState extends State<Deals> {
                     items: _catList.map((value) {
                       return DropdownMenuItem<String>(
                         value: value.prdName,
-                        child: Text(
-                          value.prdName,
-                          style: TextStyle(fontSize: 18),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            value.prdName,
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ),
                       );
                     }).toList(),
@@ -134,71 +137,81 @@ class _DealsState extends State<Deals> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       List<DealsListData>? list = snapshot.data!;
-                      return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: list.length,
-                          itemBuilder: (_, i) {
-                            return InkWell(
-                              onTap: () {
-                                Get.to(() => ProductDetailsPage(
-                                    prdTypeId: '1',
-                                    prdId: '${list[i].yJProductID}'));
-                              },
-                              child: Card(
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(5, 0, 10, 10),
-                                  child: Row(
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            "$imgBaseUrl${list[i].productImageURL}",
-                                        height: 0.2.sh,
-                                        width: 0.3.sw,
-                                        placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            Image.network(imageNotFound),
-                                      ),
-                                      SizedBox(
-                                        width: 0.22.sw,
-                                      ),
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('${list[i].productName}',
-                                                // overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                    color: Colors.blueAccent)),
-                                            Text('${list[i].price}',
-                                                // overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontSize: 15, color: red)),
-                                            Text('${list[i].sellerName}',
-                                                // overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontSize: 15, color: grey)),
-                                            list[i].perks != ''
-                                                ? Text(
-                                                    'Shipping --- ${list[i].perks}',
+                      return list.length != 0
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: list.length,
+                              itemBuilder: (_, i) {
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(() => ProductDetailsPage(
+                                        prdTypeId: '1',
+                                        prdId: '${list[i].yJProductID}'));
+                                  },
+                                  child: Card(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(5, 0, 10, 10),
+                                      child: Row(
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "$imgBaseUrl${list[i].productImageURL}",
+                                            height: 0.2.sh,
+                                            width: 0.3.sw,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.network(imageNotFound),
+                                          ),
+                                          SizedBox(
+                                            width: 0.22.sw,
+                                          ),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('${list[i].productName}',
                                                     // overflow: TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: grey))
-                                                : SizedBox(),
-                                          ],
-                                        ),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 18,
+                                                        color:
+                                                            Colors.blueAccent)),
+                                                Text('${list[i].price}',
+                                                    // overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: red)),
+                                                Text('${list[i].sellerName}',
+                                                    // overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: grey)),
+                                                list[i].perks != ''
+                                                    ? Text(
+                                                        'Shipping --- ${list[i].perks}',
+                                                        // overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: grey))
+                                                    : SizedBox(),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            );
-                          });
+                                );
+                              })
+                          : customText(
+                              'Currently no products avaiable', red, 16.0);
                     } else if (snapshot.hasError) {
                       return Center(
                           child: customText('${snapshot.error}', red, 20.0));

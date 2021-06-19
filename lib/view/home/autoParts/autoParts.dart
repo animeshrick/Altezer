@@ -45,9 +45,8 @@ class _AutoPartsState extends State<AutoParts> {
       _getData();
       _getSortData();
       cartBox();
+      _getProductData();
     });
-
-    _getProductData();
 
     _listContr.addListener(() {
       if (_listContr.position.atEdge && _autoCatId != null) {
@@ -248,6 +247,7 @@ class _AutoPartsState extends State<AutoParts> {
                       height: 0.07.sh,
                       width: 1.sw,
                       child: button(() {
+                        print('x');
                         _getProductData();
                       }, 'Search', Color(0xffEC971F), white)),
                   SizedBox(
@@ -258,7 +258,6 @@ class _AutoPartsState extends State<AutoParts> {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           var list = snapshot.data;
-
                           return ListView.separated(
                               separatorBuilder: (_, __) => SizedBox(
                                     height: 5,
@@ -422,7 +421,9 @@ class _AutoPartsState extends State<AutoParts> {
   }
 
   void _getData() async {
+    showProgress(context);
     final autoCatResult = await networkcallService.getPartsCatAPICall();
+    hideProgress(context);
     if (autoCatResult != null) {
       setState(() {
         _autoPartsCategoryList = autoCatResult;
@@ -435,11 +436,14 @@ class _AutoPartsState extends State<AutoParts> {
     _autoPartsSubCategoryList =
         (await networkcallService.getPartsSubCatAPICall(autoCatId))!;
     hideProgress(context);
+    _getProductData();
     setState(() {});
   }
 
   void _getSortData() async {
+    showProgress(context);
     final sortResult = await networkcallService.getSortByDataAPICall();
+    hideProgress(context);
     if (sortResult != null) {
       setState(() {
         _sortingDataList = sortResult;
@@ -449,12 +453,14 @@ class _AutoPartsState extends State<AutoParts> {
   }
 
   void _getProductData() async {
+    showProgress(context);
     _autoPartsFuture = networkcallService.getAutoPartList(
         searchController.text,
         _autoCatId ?? '0',
         _autoSubCatId ?? '0',
         _sortId ?? '0',
         _pageIndex.toString());
+    hideProgress(context);
     setState(() {});
   }
 
@@ -468,6 +474,7 @@ class _AutoPartsState extends State<AutoParts> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
+    showProgress(context);
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -478,5 +485,6 @@ class _AutoPartsState extends State<AutoParts> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
+    hideProgress(context);
   }
 }

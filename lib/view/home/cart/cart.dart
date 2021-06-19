@@ -658,18 +658,24 @@ class _CartPageState extends State<CartPage> {
                                                 Image.network(imageNotFound),
                                           ),
                                         ),
-                                        customText(
-                                            '${_prdDetailsList[i].productName}',
-                                            blue,
-                                            16),
-                                        customText(
-                                            '${_prdDetailsList[i].price}',
-                                            green,
-                                            16),
-                                        customText(
-                                            'Quantity - ${_prdDetailsList[i].quantity}',
-                                            green,
-                                            16),
+                                        _prdDetailsList[i].productName == null
+                                            ? Text('No product name available')
+                                            : customText(
+                                                '${_prdDetailsList[i].productName}',
+                                                blue,
+                                                16),
+                                        _prdDetailsList[i].price == null
+                                            ? Text('No price available')
+                                            : customText(
+                                                '${_prdDetailsList[i].price}',
+                                                green,
+                                                16),
+                                        _prdDetailsList[i].price == null
+                                            ? Text('No quantity available')
+                                            : customText(
+                                                'Quantity - ${_prdDetailsList[i].quantity}',
+                                                green,
+                                                16),
                                         InkWell(
                                             onTap: () {
                                               _qtyUpdateBox();
@@ -677,14 +683,18 @@ class _CartPageState extends State<CartPage> {
                                             child: customText(
                                                 'Change Quantity', blue, 16,
                                                 fontWeight: FontWeight.bold)),
-                                        customText(
-                                            '${_prdDetailsList[i].shippingInfo}',
-                                            green,
-                                            16),
-                                        customText(
-                                            '${_prdDetailsList[i].sellerName}',
-                                            grey,
-                                            16),
+                                        _prdDetailsList[i].shippingInfo == null
+                                            ? Text('No Shipping Info available')
+                                            : customText(
+                                                '${_prdDetailsList[i].shippingInfo}',
+                                                green,
+                                                16),
+                                        _prdDetailsList[i].sellerName == null
+                                            ? Text('No sellerName available')
+                                            : customText(
+                                                '${_prdDetailsList[i].sellerName}',
+                                                grey,
+                                                16),
                                         InkWell(
                                             onTap: () {
                                               removeCartItem();

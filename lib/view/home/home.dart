@@ -26,7 +26,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   var _controller;
   bool? isLogin = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +33,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       if (sp.isLogin()!) cartBox();
     });
-
   }
 
   @override
@@ -129,6 +127,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       //   children: [Store(), Deals(), Grocery(), Food(), AutoParts()],
       // ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -155,11 +154,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
             ),
           ),
-          Expanded(child: DashBoard()),
+          Flexible(child: DashBoard()),
         ],
       ),
     );
   }
-
-
 }

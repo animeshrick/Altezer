@@ -9,11 +9,9 @@ class GetProducts {
     return GetProducts(
         message: myjson['message'],
         status: myjson['status'],
-        prdListData: myjson['productlist'] == null
-            ? []
-            : (myjson['productlist'] as List)
-                .map((e) => ProductListData.fromJson(e))
-                .toList());
+        prdListData: (myjson['productlist'] as List)
+            .map((e) => ProductListData.fromJson(e))
+            .toList());
   }
 }
 
@@ -63,25 +61,25 @@ class ProductListData {
 
   factory ProductListData.fromJson(Map<String, dynamic> myjson) {
     return ProductListData(
-        prdId: myjson['ProductTypeId'],
-        prdName: myjson['Product_Name'],
-        prdFullName: myjson['Product_FullName'],
-        prdImg: myjson['Product_Image_URL'],
-        price: myjson['Price'],
-        prdUrl: myjson['Product_url'],
-        sellerName: myjson['Seller_Name'],
-        sellerNameMobile: myjson['Seller_Name_Mobile'],
-        inoutStock: myjson['InStock_Or_OutOfStock'],
-        allowOnlineOrder: myjson['allow_online_order'],
-        displayPriceFlag: myjson['Display_Price_Flag'],
-        perks: myjson['Perks'],
-        size: myjson['Size'],
-        yjprdId: myjson['YJProduct_ID'],
-        prdCatId: myjson['Product_Category_ID'],
-        prdCatSubId1: myjson['Product_Category_Sub1_ID'],
-        prdCatSubId2: myjson['Product_Category_Sub2_ID'],
-        inStock: myjson['in_stock'],
-        isMadetoOrder: myjson['is_Made_To_Order'],
-        clientId: myjson['client_id']);
+        prdId: myjson['ProductTypeId'] ?? '',
+        prdName: myjson['Product_Name'] ?? '',
+        prdFullName: myjson['Product_FullName'] ?? '',
+        prdImg: myjson['Product_Image_URL'] ?? '',
+        price: myjson['Price'] ?? '',
+        prdUrl: myjson['Product_url'] ?? '',
+        sellerName: myjson['Seller_Name'] ?? '',
+        sellerNameMobile: myjson['Seller_Name_Mobile'] ?? '',
+        inoutStock: myjson['InStock_Or_OutOfStock'] ?? '',
+        allowOnlineOrder: myjson['allow_online_order'] ?? '',
+        displayPriceFlag: myjson['Display_Price_Flag'] ?? '',
+        perks: myjson['Perks'] ?? '',
+        size: myjson['Size'] ?? '',
+        yjprdId: myjson['YJProduct_ID'] ?? 0,
+        prdCatId: myjson['Product_Category_ID'] ?? 0,
+        prdCatSubId1: myjson['Product_Category_Sub1_ID'] ?? 0,
+        prdCatSubId2: myjson['Product_Category_Sub2_ID'] ?? 0,
+        inStock: myjson['in_stock'] ?? 0,
+        isMadetoOrder: myjson['is_Made_To_Order'] ?? 0,
+        clientId: myjson['client_id'] ?? 0);
   }
 }

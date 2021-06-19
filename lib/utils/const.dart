@@ -171,6 +171,11 @@ final String registryListTypeCode = '$_baseUrl/GetListOfRegistryTypeCode.ashx';
 final String registryInfo = '$_baseUrl/GetListOfRegistryInfo.ashx';
 final String registryListInfo =
     '$_baseUrl/GetListOrRegistryItemListByRegId.ashx';
+final String addRegistry = '$_baseUrl/AddListOfRegistry.ashx';
+final String userListofRegistry = '$_baseUrl/GetUserListOrMyRegistry.ashx';
+final String deleteRegistry = '$_baseUrl/DeleteRegistryDataBYId.ashx';
+final String deleteRegistryProducts= '$_baseUrl/DeleteRegistryInsideItemBYId.ashx';
+final String addtoCartAll = '$_baseUrl/AddToCartRegistryListItem.ashx';
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
 

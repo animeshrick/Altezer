@@ -39,8 +39,8 @@ class _FoodState extends State<Food> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _resType();
+      _getShopData();
     });
-    _getShopData();
   }
 
   @override
@@ -232,7 +232,7 @@ class _FoodState extends State<Food> {
                                           Flexible(
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                     '${list[i].restaurantName}',
@@ -277,8 +277,10 @@ class _FoodState extends State<Food> {
   }
 
   void _getData() async {
+    showProgress(context);
     final groceryStateResult =
         await networkcallService.getGroceryStateListAPICall();
+    hideProgress(context);
     if (groceryStateResult != null) {
       setState(() {
         _groceryStateList = groceryStateResult;
@@ -287,15 +289,19 @@ class _FoodState extends State<Food> {
   }
 
   void _resType() async {
+    showProgress(context);
     final resType = await networkcallService.getResTypeListAPICall();
+    hideProgress(context);
     setState(() {
       _resTypeList = resType;
     });
   }
 
   void _getShopData() async {
+    showProgress(context);
     _shopFuture = networkcallService.getResListAPICall(
         _resTypeId ?? '0', searchController.text, _groceryStateId ?? '0');
+    hideProgress(context);
     setState(() {});
   }
 }

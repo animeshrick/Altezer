@@ -32,6 +32,7 @@ class _ViewListItemsState extends State<ViewListItems> {
 
   var _regInfoList = <RegistryInfo?>[].obs;
   var _regListInfoList = <ListOfRegistryItem?>[].obs;
+  RxBool isShowMessage = false.obs;
 
   void initState() {
     super.initState();
@@ -69,7 +70,6 @@ class _ViewListItemsState extends State<ViewListItems> {
               height: 0.1.sh,
             ),
             Obx(() {
-              // print('x');
               if (cartData.length > 0 && sp.isLogin() == true) {
                 var data = cartData.first;
                 return Flexible(
@@ -140,11 +140,28 @@ class _ViewListItemsState extends State<ViewListItems> {
                     SizedBox(
                       height: 10,
                     ),
-                    _regListInfoList.length == 0
+                    SizedBox(
+                      width: 1.sw,
+                      child: ElevatedButton.icon(
+                        label: Text('Add all to cart'),
+                        icon: Icon(Icons.shopping_cart_outlined),
+                        onPressed: () {
+                          _addAlltoCart();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            primary: white,
+                            onPrimary: black,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        // child: Text('Save'),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    isShowMessage.value
                         ? Center(
-                            child: CupertinoActivityIndicator(
-                              radius: 25,
-                            ),
+                            child: customText('Data not available', red, 20),
                           )
                         : SizedBox(
                             width: 1.sw,
@@ -181,7 +198,7 @@ class _ViewListItemsState extends State<ViewListItems> {
                                         Flexible(
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               customText(
                                                   '${_regListInfoList[i]!.productName}',
@@ -205,7 +222,13 @@ class _ViewListItemsState extends State<ViewListItems> {
                                                         .spaceEvenly,
                                                 children: [
                                                   ElevatedButton(
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      _removeRegistryItems(
+                                                          pid: _regListInfoList[
+                                                                  i]!
+                                                              .registryItemId
+                                                              .toString());
+                                                    },
                                                     style: ElevatedButton.styleFrom(
                                                         primary: removeBtnColor,
                                                         onPrimary: white,
@@ -277,6 +300,31 @@ class _ViewListItemsState extends State<ViewListItems> {
     _regListInfoList.value = await networkcallService.getRegistryListInfo(
         widget.registryID.toString(), '0');
     hideProgress(context);
+    if (_regListInfoList.length == 0) {
+      isShowMessage.value = true;
+    } else
+      isShowMessage.value = false;
+  }
+
+  void _removeRegistryItems({required String pid}) async {
+    showProgress(context);
+    var res = await networkcallService.getRemoveRegistryPoductsAPICall(
+        registryItemId: pid);
+    hideProgress(context);
+    if (res) {
+      _registryListInfo();
+    }
+  }
+
+  void _addAlltoCart() async {
+    showProgress(context);
+    var res = await networkcallService.getAddRegistryItems(
+        regID: widget.registryID.toString(), userID: sp.getUserId().toString());
+    hideProgress(context);
+    if (res) {
+      _registryListInfo();
+      cartBox();
+    }
   }
 
   void _addToCart(
@@ -289,6 +337,7 @@ class _ViewListItemsState extends State<ViewListItems> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
+    showProgress(context);
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -299,5 +348,6 @@ class _ViewListItemsState extends State<ViewListItems> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
+    hideProgress(context);
   }
 }

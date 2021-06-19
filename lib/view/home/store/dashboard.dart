@@ -3,8 +3,8 @@ import 'package:altezar/view/home/fab.dart';
 import 'package:altezar/view/home/store/retailSpl.dart';
 import 'package:altezar/view/home/store/shopping.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DashBoard extends StatefulWidget {
   @override
@@ -30,16 +30,19 @@ class _DashBoardState extends State<DashBoard>
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.to(Fab());
+          Get.to(() => Fab());
         },
-        child: const Icon(Icons.message),
+        child: const Icon(Icons.message_outlined),
         backgroundColor: Colors.green,
       ),
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        toolbarHeight: 0.13.sh,
+        // primary: false,
+        //automaticallyImplyLeading: true,
+        // toolbarHeight: 0.12.sh,
+
         backgroundColor: white,
-        bottom: TabBar(
+
+        flexibleSpace: TabBar(
           // labelPadding: EdgeInsets.zero,
           labelColor: black,
           controller: _controller,
@@ -49,24 +52,28 @@ class _DashBoardState extends State<DashBoard>
             Tab(
               iconMargin: EdgeInsets.zero,
               icon: CircleAvatar(
+                  radius: 15,
                   backgroundColor: Color(0xffACACAC),
                   child: Icon(
                     Icons.shopping_bag,
                     color: white,
+                    size: 15,
                   )),
               // text: 'Shopping',
-              child: customText('Shopping', black, 18),
+              child: customText('Shopping', black, 15),
             ),
             Tab(
               iconMargin: EdgeInsets.zero,
               icon: CircleAvatar(
+                  radius: 15,
                   backgroundColor: Color(0xffACACAC),
                   child: Icon(
                     Icons.edit,
                     color: white,
+                    size: 15,
                   )),
               // text: 'Retail Specials',
-              child: customText('Retail Specials', black, 18),
+              child: customText('Retail Specials', black, 15),
             ),
           ],
         ),

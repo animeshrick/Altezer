@@ -44,6 +44,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
       _getData();
       _getSortData();
       cartBox();
+       _getPrdData();
     });
 
     _listContr.addListener(() {
@@ -54,7 +55,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
       }
     });
 
-    _getPrdData();
+   
   }
 
   @override
@@ -259,7 +260,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                         Flexible(
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text('${_prdList[i].productName}',
                                                   // overflow:
@@ -267,13 +268,17 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.blue)),
-                                              Text(
-                                                  '${_prdList[i].size} ${_prdList[i].perks}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: grey)),
+                                              _prdList[i].size != ''
+                                                  ? Text(
+                                                      '${_prdList[i].size} ${_prdList[i].perks}',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: grey))
+                                                  : Text(
+                                                      'Size not available ${_prdList[i].perks}',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: grey)),
                                               RatingBarIndicator(
                                                 rating: _prdList[i]
                                                     .ratingCount
@@ -336,9 +341,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                   ),
                                 );
                               })
-                          : CupertinoActivityIndicator(
-                              radius: 25,
-                            ),
+                          : customText('Data not available', red, 20),
                     )
                   ],
                 ),
@@ -409,6 +412,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
   }
 
   void _getPrdData() async {
+    showProgress(context);
     final data = await networkcallService.getprdDetails(
         _catId ?? '0',
         searchController.text,
@@ -416,6 +420,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
         _sortId ?? '0',
         _pageIndex.toString(),
         widget.storeId.toString());
+    hideProgress(context);
     if (data != null) {
       _prdList(data);
     }
@@ -431,6 +436,7 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
+    showProgress(context);
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -441,7 +447,6 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
-
+    hideProgress(context);
   }
-
 }

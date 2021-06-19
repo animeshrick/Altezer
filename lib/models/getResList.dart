@@ -56,20 +56,20 @@ class RestShopList {
   final int menuCount;
 
   factory RestShopList.fromJson(Map<String, dynamic> json) => RestShopList(
-      restaurantId: json["Restaurant_ID"],
-      restaurantName: json["Restaurant_Name"],
-      restaurantType: json["Restaurant_Type"],
-      restaurantAddress: json["Restaurant_Address"],
-      reservationCode: json["Reservation_Code"],
-      phone: json["Phone"],
-      mainImage: json["MainImage"],
-      deliveryFee: json["delivery_Fee"],
-      deliveryInfo: json["Delivery_Info"],
-      restaurantEthnic: json["Restaurant_Ethnic"],
-      logoImageFile: json["Logo_Image_File"],
-      clientId: json["Client_Id"],
-      logoImageFile2: json["Logo_Image_File2"],
-      parish: json["Parish"],
-      parishId: json["Parish_ID"],
-      menuCount: json["menu_count"]);
+      restaurantId: json["Restaurant_ID"] ?? 0,
+      restaurantName: json["Restaurant_Name"] ?? '',
+      restaurantType: json["Restaurant_Type"] ?? "",
+      restaurantAddress: json["Restaurant_Address"] ?? "",
+      reservationCode: json["Reservation_Code"] ?? "",
+      phone: json["Phone"] ?? "",
+      mainImage: json["MainImage"] ?? "",
+      deliveryFee: json["delivery_Fee"] ?? '',
+      deliveryInfo: json["Delivery_Info"] ?? '',
+      restaurantEthnic: json["Restaurant_Ethnic"] ?? '',
+      logoImageFile: json["Logo_Image_File"] ?? '',
+      clientId: json["Client_Id"] ?? 0,
+      logoImageFile2: json["Logo_Image_File2"] ?? '',
+      parish: json["Parish"] ?? '',
+      parishId: json["Parish_ID"] ?? 0,
+      menuCount: json["menu_count"] ?? 0);
 }

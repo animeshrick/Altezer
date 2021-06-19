@@ -93,6 +93,9 @@ class _ShoppingState extends State<Shopping> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 20,
+              ),
               Card(
                 color: Color(0xffEDEDED),
                 child: Padding(
@@ -359,110 +362,114 @@ class _ShoppingState extends State<Shopping> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         list.addAll(snapshot.data!);
-
-                        return ListView.separated(
-                            separatorBuilder: (_, __) => SizedBox(
-                                  height: 20,
-                                ),
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: list.length,
-                            itemBuilder: (_, i) {
-                              return Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                        return list.length == 0
+                            ? Center(child: Text('Data not available'))
+                            : ListView.separated(
+                                separatorBuilder: (_, __) => SizedBox(
+                                      height: 5,
+                                    ),
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: list.length,
+                                itemBuilder: (_, i) {
+                                  return Column(
                                     children: [
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            "$imgBaseUrl${list[i].prdImg}",
-                                        width: 0.3.sw,
-                                        height: 0.2.sh,
-                                        placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            Image.network(imageNotFound),
-                                      ),
-                                      // Image.network(
-                                      //   // 'https://demo20.gowebbi.us//ProductImages/arg-sp-1020_basep_2.jpg',
-                                      //   '$imgBaseUrl${list[i].prdImg}',
-                                      //   width: 0.4.sw,
-                                      //   height: 0.2.sh,
-                                      // ),
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              '${list[i].prdFullName}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blue),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Text(
-                                              'Price - ${list[i].price}',
-                                              style: TextStyle(
-                                                  fontSize: 14, color: green),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Text(
-                                              'Size- ${list[i].size} |Seller- ${list[i].sellerName} ',
-                                              style: TextStyle(
-                                                  fontSize: 14, color: grey),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                      Row(
+                                        // mainAxisAlignment:
+                                        //     MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "$imgBaseUrl${list[i].prdImg}",
+                                            width: 0.3.sw,
+                                            height: 0.2.sh,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.network(imageNotFound),
+                                          ),
+                                          SizedBox(
+                                            width: 0.15.sw,
+                                          ),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                button(() {
-                                                  Get.to(() => ProductDetailsPage(
-                                                      prdTypeId: '1',
-                                                      prdId:
-                                                          '${list[i].yjprdId}'));
-                                                }, 'Details', green, white),
-                                                SizedBox(
-                                                  width: 20,
+                                                Text(
+                                                  '${list[i].prdFullName}',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: blue),
                                                 ),
-                                                sp.isLogin() == true
-                                                    ? cartButton(() {
-                                                        _addToCart(
-                                                            '${list[i].yjprdId}',
-                                                            '${list[i].clientId}',
-                                                            'Products',
-                                                            '',
-                                                            '',
-                                                            1.toString(),
-                                                            '',
-                                                            '',
-                                                            sp
-                                                                .getUserId()
-                                                                .toString());
-                                                      }, 'Add', priceTextColor,
-                                                        white)
-                                                    : cartButton(
-                                                        () => Get.to(
-                                                            () => SignUp()),
-                                                        'Add',
-                                                        priceTextColor,
-                                                        white),
+                                                Text(
+                                                  'Price - ${list[i].price}',
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: green),
+                                                ),
+                                                list[i].size == null
+                                                    ? Text(
+                                                        'Size not available | Seller- ${list[i].sellerName}')
+                                                    : Text(
+                                                        'Size- ${list[i].size} | Seller- ${list[i].sellerName} ',
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: grey),
+                                                      ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    button(() {
+                                                      Get.to(() =>
+                                                          ProductDetailsPage(
+                                                              prdTypeId: '1',
+                                                              prdId:
+                                                                  '${list[i].yjprdId}'));
+                                                    }, 'Details', green, white),
+                                                    sp.isLogin() == true
+                                                        ? cartButton(() {
+                                                            _addToCart(
+                                                                '${list[i].yjprdId}',
+                                                                '${list[i].clientId}',
+                                                                'Products',
+                                                                '',
+                                                                '',
+                                                                1.toString(),
+                                                                '',
+                                                                '',
+                                                                sp
+                                                                    .getUserId()
+                                                                    .toString());
+                                                          },
+                                                            'Add',
+                                                            priceTextColor,
+                                                            white)
+                                                        : cartButton(
+                                                            () => Get.to(
+                                                                () => SignUp()),
+                                                            'Add',
+                                                            priceTextColor,
+                                                            white),
+                                                  ],
+                                                ),
                                               ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 20,
                                       ),
                                     ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                              );
-                            });
+                                  );
+                                });
                       } else if (snapshot.hasError) {
                         return Center(
                             child: customText('${snapshot.error}', red, 20.0));
@@ -527,6 +534,7 @@ class _ShoppingState extends State<Shopping> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
+    showProgress(context);
     final data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -537,5 +545,6 @@ class _ShoppingState extends State<Shopping> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
+    hideProgress(context);
   }
 }

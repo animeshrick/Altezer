@@ -21,7 +21,7 @@ class _OnTapStoreState extends State<OnTapStore> {
 
   Future<List<StoreList>?>? _storefuture;
 
-  String? _groceryStateValue;
+  String? _groceryStateValue, _groceryStateId;
 
   List<StoreList>? list;
 
@@ -30,9 +30,12 @@ class _OnTapStoreState extends State<OnTapStore> {
   @override
   void initState() {
     super.initState();
-    _storefuture = networkcallService.getStoreListAPICall('0', '');
+    // _storefuture = networkcallService.getStoreListAPICall(
+    // _groceryStateId == null ? '0' : _groceryStateId.toString(),
+    // searchController.text != '' ? searchController.text : '');
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
+      storeList();
     });
   }
 
@@ -105,9 +108,12 @@ class _OnTapStoreState extends State<OnTapStore> {
                     items: _groceryStateList.map((value) {
                       return DropdownMenuItem<String>(
                         value: value.groceryStateName,
-                        child: Text(
-                          value.groceryStateName,
-                          style: TextStyle(fontSize: 18),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            value.groceryStateName,
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ),
                       );
                     }).toList(),
@@ -115,6 +121,15 @@ class _OnTapStoreState extends State<OnTapStore> {
                       setState(() {
                         _groceryStateValue = value!;
                       });
+                      _groceryStateId = _groceryStateList
+                          .where((element) =>
+                              element.groceryStateName == _groceryStateValue)
+                          .toList()
+                          .first
+                          .groceryStateId
+                          .toString();
+                      print(' _groceryStateId  $_groceryStateId');
+                      storeList();
                     },
                   ),
                 ),
@@ -125,7 +140,11 @@ class _OnTapStoreState extends State<OnTapStore> {
               SizedBox(
                 height: 0.07.sh,
                 width: 1.sw,
-                child: button(() {}, 'Search', searchBtnColor, white),
+                child: button(() {
+                  showProgress(context);
+                  storeList();
+                  hideProgress(context);
+                }, 'Search', searchBtnColor, white),
               ),
               SizedBox(
                 height: 20,
@@ -146,7 +165,7 @@ class _OnTapStoreState extends State<OnTapStore> {
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
                             ),
-                            itemCount: 10,
+                            itemCount: list!.length,
                             itemBuilder: (context, i) {
                               return Card(
                                 color: grey,
@@ -160,8 +179,8 @@ class _OnTapStoreState extends State<OnTapStore> {
                                       CachedNetworkImage(
                                         imageUrl:
                                             "$imgBaseUrl${list![i].clientLogoURL}",
-                                        height: 0.2.sh,
-                                        width: 0.3.sw,
+                                        height: 0.1.sh,
+                                        width: 0.2.sw,
                                         placeholder: (context, url) => Center(
                                             child: CircularProgressIndicator()),
                                         errorWidget: (context, url, error) =>
@@ -200,5 +219,13 @@ class _OnTapStoreState extends State<OnTapStore> {
         _groceryStateList = groceryStateResult;
       });
     }
+    setState(() {});
+  }
+
+  void storeList() async {
+    _storefuture = networkcallService.getStoreListAPICall(
+        _groceryStateId == null ? '0' : _groceryStateId.toString(),
+        searchController.text != '' ? searchController.text : '');
+    setState(() {});
   }
 }

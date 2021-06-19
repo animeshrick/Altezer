@@ -45,6 +45,7 @@ class _FoodDetailsState extends State<FoodDetails> {
       _getData();
       _getSortData();
       cartBox();
+      _getPrdData();
     });
 
     _listContr.addListener(() {
@@ -54,8 +55,6 @@ class _FoodDetailsState extends State<FoodDetails> {
         _getPrdData();
       }
     });
-
-    _getPrdData();
   }
 
   @override
@@ -92,7 +91,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                                   size: 30,
                                 )),
                             isExpanded: true,
-                            value: _categoriesName, //'Shoping Category',
+                            value: _categoriesName, //'all Category',
                             hint: Text('Select Category'),
                             items: _catList.map((value) {
                               return DropdownMenuItem<String>(
@@ -237,13 +236,11 @@ class _FoodDetailsState extends State<FoodDetails> {
                                   child: Padding(
                                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         CachedNetworkImage(
                                           imageUrl:
                                               "$imgBaseUrl${_prdList[i].productImageUrl}",
-                                          height: 0.3.sh,
+                                          // height: 0.3.sh,
                                           width: 0.3.sw,
                                           placeholder: (context, url) => Center(
                                               child:
@@ -251,29 +248,24 @@ class _FoodDetailsState extends State<FoodDetails> {
                                           errorWidget: (context, url, error) =>
                                               Image.network(imageNotFound),
                                         ),
+                                        SizedBox(
+                                          width: 0.1.sw,
+                                        ),
                                         Flexible(
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text('${_prdList[i].productName}',
                                                   // overflow:
                                                   //     TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 15,
                                                       color: Colors.blue)),
-
-                                              // Text(
-                                              //     '${_prdList[i].sellerName}',
-                                              //     style: TextStyle(
-                                              //         fontSize: 16,
-                                              //         color: greenColor)),
                                               Text(
                                                   '${_prdList[i].size} ${_prdList[i].perks}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 15,
                                                       color: grey)),
                                               RatingBarIndicator(
                                                 rating: _prdList[i]
@@ -289,14 +281,13 @@ class _FoodDetailsState extends State<FoodDetails> {
                                                 direction: Axis.horizontal,
                                               ),
                                               Text('${_prdList[i].price}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: green)),
                                               Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: [
                                                   button(() {
                                                     Get.to(() => ProductDetailsPage(
@@ -305,9 +296,6 @@ class _FoodDetailsState extends State<FoodDetails> {
                                                             '${_prdList[i].yjProductId}'));
                                                   }, 'Details', greenColor,
                                                       white),
-                                                  SizedBox(
-                                                    width: 20,
-                                                  ),
                                                   sp.isLogin() == true
                                                       ? cartButton(() {
                                                           _addToCart(
@@ -339,9 +327,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                                   ),
                                 );
                               })
-                          : CupertinoActivityIndicator(
-                              radius: 25,
-                            ),
+                          : customText('Data not available', red, 20),
                     ),
                   ],
                 ),
@@ -409,6 +395,7 @@ class _FoodDetailsState extends State<FoodDetails> {
   }
 
   void _getPrdData() async {
+    showProgress(context);
     final data = await networkcallService.getprdDetails(
         _catId ?? '0',
         searchController.text,
@@ -416,6 +403,7 @@ class _FoodDetailsState extends State<FoodDetails> {
         _sortId ?? '0',
         _pageIndex.toString(),
         widget.storeId.toString());
+    hideProgress(context);
     if (data != null) {
       _prdList(data);
     }
@@ -431,6 +419,7 @@ class _FoodDetailsState extends State<FoodDetails> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
+    showProgress(context);
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -441,8 +430,6 @@ class _FoodDetailsState extends State<FoodDetails> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
- 
+    hideProgress(context);
   }
-
-
 }

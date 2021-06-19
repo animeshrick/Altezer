@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:altezar/models/RegistryItemListByRegIdModel.dart';
+import 'package:altezar/models/addedRegListModel.dart';
 import 'package:altezar/models/autoPartsListModel.dart';
 import 'package:altezar/models/bannerImage.dart';
 import 'package:altezar/models/getAddBankAccList.dart';
@@ -50,6 +51,172 @@ class Networkcall {
 
   factory Networkcall() {
     return networkcall;
+  }
+
+
+  /// ------------ add registry items -------------------
+    Future<bool> getAddRegistryItems({
+    required String regID,
+    required String userID,
+  }) async {
+    Map<String, dynamic> data = {'RegistryId': regID, 'UserId': userID};
+    final response =
+        await MyClient().post(Uri.parse(addtoCartAll), body: data);
+    var resp = response.body;
+    print('$addtoCartAll $data --- $resp');
+    final myResponse = jsonDecode(resp);
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------------- remove registry products------------------
+  Future<bool> getRemoveRegistryPoductsAPICall({
+    required String registryItemId,
+  }) async {
+    Map<String, dynamic> data = {
+      'RegistryItemId': registryItemId,
+    };
+    final response =
+        await MyClient().post(Uri.parse(deleteRegistryProducts), body: data);
+    var resp = response.body;
+    print('$deleteRegistryProducts $data --- $resp');
+    final myResponse = jsonDecode(resp);
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------------- remove registry ------------------
+  Future<bool> getRemoveRegistryAPICall({
+    required String regID,
+    required String userID,
+  }) async {
+    Map<String, dynamic> data = {'RegistryId': regID, 'UserId': userID};
+    final response =
+        await MyClient().post(Uri.parse(deleteRegistry), body: data);
+    var resp = response.body;
+    print('$deleteRegistry $data --- $resp');
+    final myResponse = jsonDecode(resp);
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ------------- new added registry list ------------
+  Future<List<ListOrRegistry?>> getNewAddedRegListAPICall(
+      {required String registryId,
+      required String pageIndex,
+      required String userID}) async {
+    Map<String, dynamic> data = {
+      'RegistryId': registryId,
+      'pageIndex': pageIndex,
+      'UserId': userID
+    };
+    final response =
+        await MyClient().post(Uri.parse(userListofRegistry), body: data);
+    final resp = response.body;
+    // print('$userListofRegistry --> $data = $resp');
+    final myResponse = AddRegListModel.fromJson(jsonDecode(resp));
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse.listOrRegistry;
+        } else {
+          showToast(myResponse.message, red);
+          return [];
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ----------------- add registry ------------------
+  Future<bool> getAddRegistryAPICall({
+    required String typeID,
+    required String name,
+    required String isPrivate,
+    required String eventDate,
+    required String benifitName,
+    required String add,
+    required String userID,
+  }) async {
+    Map<String, dynamic> data = {
+      'TypeId': typeID,
+      'Name': name,
+      'IsPrivate': isPrivate,
+      'EventDate': eventDate,
+      'BenefitName': benifitName,
+      'ShippingAddress': add,
+      'UserId': userID
+    };
+    final response = await MyClient().post(Uri.parse(addRegistry), body: data);
+    var resp = response.body;
+    final myResponse = jsonDecode(resp);
+    // print('$addRegistry $data --- $resp');
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse['status'] == success) {
+          showToast(myResponse['message'], greenColor);
+          return true;
+        } else {
+          showToast(myResponse['message'], red);
+          return false;
+        }
+      } else {
+        showToast(json.decode(response.body)['message'], red);
+        return false;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
   }
 
   /// -------------------- registry info -------------
@@ -106,7 +273,7 @@ class Networkcall {
 
   /// ------------- registry list ------------
   Future<List<RegistryList?>> getRegistryListAPICall(String registryId) async {
-    Map<String, dynamic> data = {'RegistryId': registryId};
+    Map<String, dynamic> data = {'SearchVal': registryId};
     final response = await MyClient().post(Uri.parse(registryList), body: data);
     final resp = response.body;
     // print('$registryList --> $data = $resp');
@@ -745,8 +912,7 @@ class Networkcall {
         await MyClient().post(Uri.parse(updateUserInfo), body: data);
     var resp = response.body;
     final myResponse = jsonDecode(resp);
-    // print('update profile -- $updateUserInfo');
-    // print(' $data --- $resp');
+    print(' $updateUserInfo $data --- $resp');
     try {
       if (response.statusCode == 200) {
         if (myResponse['status'] == success) {
@@ -790,26 +956,27 @@ class Networkcall {
   }
 
   /// ---------------- get user info -------------------
-  Future<List<UserInfo>?> getUserInfoAPICall(String userId) async {
+  Future<GetUserInfo?> getUserInfoAPICall(String userId) async {
     Map<String, dynamic> data = {'UserId': userId};
     final response = await MyClient().post(Uri.parse(getUserInfo), body: data);
     var resp = response.body;
+    // print('$getUserInfo $data + $resp');
     final myResponse = GetUserInfo.fromJson(jsonDecode(resp));
-    // print('get user info -- $getUserInfo');
-    // print('$data + $resp');
+
     try {
       if (response.statusCode == 200) {
         if (myResponse.status == success) {
-          return myResponse.userInfo;
+          return myResponse;
         } else {
-          return showToast(myResponse.message, red);
+          showToast(myResponse.message, red);
+          return null;
         }
       } else {
-        throw response.body;
+        return null;
       }
     } on SocketException {
       showToast(internetError, red);
-      throw internetError;
+      return null;
     }
   }
 
@@ -820,8 +987,7 @@ class Networkcall {
         await MyClient().post(Uri.parse(getCartOrderDetails), body: data);
     var resp = response.body;
     final myResponse = GetCartOrderDetails.fromJson(jsonDecode(resp));
-    print('get CartOrderDetails -- $getCartOrderDetails');
-    print('$data + $resp');
+    // print('$getCartOrderDetails -- $data + $resp');
     try {
       if (response.statusCode == 200) {
         if (myResponse.status == success) {
@@ -969,7 +1135,6 @@ class Networkcall {
       String sortCode,
       String pageIndex,
       String storeId) async {
-    // print('get all prd details $getDetailsOfPages');
     try {
       Map<String, dynamic> data = {
         'catId': catID.toString(),
@@ -979,18 +1144,18 @@ class Networkcall {
         'pageIndex': pageIndex.toString(),
         'retailClientId': storeId,
       };
-      // print('data $data');
       final response =
           await MyClient().post(Uri.parse(getDetailsOfPages), body: data);
       final resp = response.body;
-      // print('get all prd details $resp');
+      // print(' $getDetailsOfPages $data $resp');
       final myResponse = ProductDetails.fromJson(jsonDecode(resp));
 
       if (response.statusCode == 200) {
         if (myResponse.status == success) {
           return myResponse.productlist;
         } else {
-          showToast('myResponse.message', red);
+          showToast('${myResponse.message}', red);
+          return [];
         }
       } else {
         showToast(myResponse.message, red);
@@ -1013,7 +1178,7 @@ class Networkcall {
       final response =
           await MyClient().post(Uri.parse(getProductDetails), body: data);
       var resp = response.body;
-      print(' get all prd details $getProductDetails -- $data -- $resp');
+      // print(' get all prd details $getProductDetails -- $data -- $resp');
       if (response.statusCode == 200) {
         final myResponse = ProdDetailModel.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -1045,6 +1210,7 @@ class Networkcall {
           return myResponse.sortList;
         } else {
           showToast('myResponse.message', red);
+          return null;
         }
       } else {
         // print('have err');
@@ -1083,7 +1249,6 @@ class Networkcall {
   Future<List<StoreList>?> getStoreListAPICall(
       String stateId, String searchVal) async {
     try {
-      // print('get store list -- $getStoreList');
       Map<String, dynamic> data = {
         'StateId': stateId,
         'searchVal': searchVal,
@@ -1091,7 +1256,7 @@ class Networkcall {
       final response =
           await MyClient().post(Uri.parse(getStoreList), body: data);
       var resp = response.body;
-      // print('store list body -- $resp');
+      // print('$getStoreList - $data - $resp');
       if (response.statusCode == 200) {
         final myResponse = GetStoreList.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -1161,16 +1326,14 @@ class Networkcall {
   Future<List<RestShopList>>? getResListAPICall(
       String stateId, String searchVal, String resturantTypeId) async {
     try {
-      // print('get res list $getResList');
       Map<String, dynamic> data = {
         'StateId': stateId,
         'searchVal': searchVal,
         'resturantTypeId': resturantTypeId,
       };
-      // print('data $data');
       final response = await MyClient().post(Uri.parse(getResList), body: data);
       var resp = response.body;
-      // print('body -- $resp');
+      // print('$getResList - $data - $resp');
       if (response.statusCode == 200) {
         final myResponse = GetRestShopList.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -1239,14 +1402,12 @@ class Networkcall {
   /// ---------------- grocery store list -----------------
   Future<List<GetGroceryStoreList>?> getGroceryStoreListAPICall(
       String stateId, String searchVal) async {
-    // print('grocery state $getGroceryStoreList');
     try {
       Map<String, dynamic> data = {'StateId': stateId, 'searchVal': searchVal};
-      // print('param- $data');
       final response =
           await MyClient().post(Uri.parse(getGroceryStoreList), body: data);
       var resp = response.body;
-      // print(' grocerybody - $resp');
+      // print('$getGroceryStoreList- $data  $resp');
       if (response.statusCode == 200) {
         final myResponse = GetGroceryStore.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -1278,12 +1439,10 @@ class Networkcall {
       'pageIndex': pageIndex.toString(),
     };
     try {
-      print('getProducts $getProducts');
-      print('param $data');
       final response =
           await MyClient().post(Uri.parse(getProducts), body: data);
       var resp = response.body;
-      print('get products resp -- $resp');
+      // print('$getProducts - $data - $resp');
       if (response.statusCode == 200) {
         final myResponse = GetProducts.fromJson(jsonDecode((resp)));
         if (myResponse.status == success) {
