@@ -69,6 +69,7 @@ class _CartPageState extends State<CartPage> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _shippingCountryState();
+      _shippingAddList();
     });
     _getCartPrdDetails();
     _shippingAddList();
@@ -760,6 +761,7 @@ class _CartPageState extends State<CartPage> {
   void _shippingAddList() async {
     _addList.value = (await networkcallService
         .getAddressListAPICall(sp.getUserId().toString()))!;
+ 
   }
 
   void _defaultAddress() async {

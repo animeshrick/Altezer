@@ -212,7 +212,7 @@ class _FoodState extends State<Food> {
                                   child: Card(
                                     child: Padding(
                                       padding:
-                                          EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                          EdgeInsets.fromLTRB(10, 5, 10, 10),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -229,10 +229,13 @@ class _FoodState extends State<Food> {
                                                     error) =>
                                                 Image.network(imageNotFound),
                                           ),
+                                          SizedBox(
+                                            width: 0.1.sw,
+                                          ),
                                           Flexible(
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.end,
                                               children: [
                                                 Text(
                                                     '${list[i].restaurantName}',

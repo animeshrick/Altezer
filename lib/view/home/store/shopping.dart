@@ -126,7 +126,10 @@ class _ShoppingState extends State<Shopping> {
                       onChanged: (String? value) {
                         setState(() {
                           _categoriesName = value!;
+                          list = [];
+                        //  _prodFuture. = null;---------
                         });
+                        
                         _catId = _catList
                             .where(
                                 (element) => element.prdName == _categoriesName)
@@ -136,7 +139,11 @@ class _ShoppingState extends State<Shopping> {
                             .toString();
                         _subCatName = null;
                         _catId == 22.toString()
-                            ? Get.to(() => Grocery())
+                            ? Get.to(() => Grocery())?.then((value) {
+                                _catId = null;
+                                _categoriesName = null;
+                                setState(() {});
+                              })
                             : _getSubCat();
                         print('_catId - $_catId');
                         //_getProductData();
@@ -176,6 +183,8 @@ class _ShoppingState extends State<Shopping> {
                         setState(() {
                           _subCatName = value!;
                         });
+                        list = [];
+                         _prodFuture = null;
                         _subCatId = _subCatList
                             .where((element) => element.prdName == _subCatName)
                             .toList()
@@ -220,6 +229,8 @@ class _ShoppingState extends State<Shopping> {
                         setState(() {
                           _sortingValue = value!;
                         });
+                        list = [];
+                        _prodFuture = null;
                         _sortId = _sortingDataList
                             .where(
                                 (element) => element.sortName == _sortingValue)
@@ -360,7 +371,9 @@ class _ShoppingState extends State<Shopping> {
                 FutureBuilder<List<ProductListData>?>(
                     future: _prodFuture,
                     builder: (context, snapshot) {
+                      // print('data');
                       if (snapshot.hasData) {
+                        print('length- ${list.length}');
                         list.addAll(snapshot.data!);
                         return list.length == 0
                             ? Center(child: Text('Data not available'))
@@ -521,7 +534,9 @@ class _ShoppingState extends State<Shopping> {
         _subCatId ?? '0',
         _sortId ?? '0',
         _pageIndex.toString());
-    setState(() {});
+    setState(() {
+      print('done');
+    });
   }
 
   void _addToCart(

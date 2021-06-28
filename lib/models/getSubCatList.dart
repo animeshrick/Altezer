@@ -9,7 +9,7 @@ class GetSubCatList {
     return GetSubCatList(
       message: myjson['message'],
       status: myjson['status'],
-      dataList: (myjson['SubCategoryList'] as List)
+      dataList: myjson['SubCategoryList']==null?[]: (myjson['SubCategoryList'] as List)
           .map((e) => GetSubCateProductsList.fromJson(e))
           .toList(),
     );

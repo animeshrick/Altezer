@@ -31,14 +31,14 @@ class _AddRegistryState extends State<AddRegistry> {
   TextEditingController addressController = TextEditingController();
 
   DateTime selectedDate = DateTime.now();
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context, StateSetter mState) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate)
-      setState(() {
+      mState(() {
         selectedDate = picked;
       });
   }
@@ -218,7 +218,10 @@ class _AddRegistryState extends State<AddRegistry> {
                                               style: TextButton.styleFrom(
                                                   primary: red),
                                               onPressed: () {
-                                                _deleteRegistry(newAddedRegistryList[i]!.registryId.toString());
+                                                _deleteRegistry(
+                                                    newAddedRegistryList[i]!
+                                                        .registryId
+                                                        .toString());
                                               },
                                               child: Text('Delete'),
                                             ),
@@ -277,9 +280,7 @@ class _AddRegistryState extends State<AddRegistry> {
                           itemCount: registryList.length,
                           itemBuilder: (_, int i) {
                             return registryList.length == 0
-                                ? CupertinoActivityIndicator(
-                                    radius: 25,
-                                  )
+                                ? customText('data not found', red, 20)
                                 : Card(
                                     color: Colors.white24,
                                     child: Padding(
@@ -350,117 +351,120 @@ class _AddRegistryState extends State<AddRegistry> {
             scrollable: true,
             title: Text('Create New List or Registry'),
             content: StatefulBuilder(
-                builder: (context, mState) => SingleChildScrollView(
-                      child: ListBody(
-                        children: <Widget>[
-                          customText('List/Registry Type :', black, 15.0),
-                          Card(
-                            color: Color(0xffEDEDED),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                elevation: 16,
-                                icon: CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: grey,
-                                    child: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: white,
-                                      size: 30,
-                                    )),
-                                isExpanded: true,
-                                hint: Padding(
-                                  padding: const EdgeInsets.only(left: 15.0),
-                                  child: customText('', black, 18.0),
-                                ),
-                                value: _registryType,
-                                items: registryTypeList.map((value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value!.registryTypeName,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Text(
-                                        value.registryTypeName!,
-                                        style: TextStyle(fontSize: 15),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  mState(() {
-                                    _registryType = value!;
-                                  });
-                                  _registryTypeId = registryTypeList
-                                      .where((element) =>
-                                          element!.registryTypeName ==
-                                          _registryType)
-                                      .toList()
-                                      .first!
-                                      .codeId
-                                      .toString();
-                                  print('_registryTypeId - $_registryTypeId');
-                                },
-                              ),
+              builder: (context, mState) {
+                // print('$_registryType \n ${registryTypeList.length}');
+                return SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      customText('List/Registry Type :', black, 15.0),
+                      Card(
+                        color: Color(0xffEDEDED),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            elevation: 16,
+                            icon: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: grey,
+                                child: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: white,
+                                  size: 30,
+                                )),
+                            isExpanded: true,
+                            hint: Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: customText('', black, 18.0),
                             ),
+                            value: _registryType,
+                            items: registryTypeList.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value!.registryTypeName,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Text(
+                                    value.registryTypeName!,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              mState(() {
+                                _registryType = value!;
+                              });
+                              _registryTypeId = registryTypeList
+                                  .where((element) =>
+                                      element!.registryTypeName ==
+                                      _registryType)
+                                  .toList()
+                                  .first!
+                                  .codeId
+                                  .toString();
+                              print('_registryTypeId - $_registryTypeId');
+                            },
                           ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      customText('List/Registry Name :', black, 15.0),
+                      searchField(listNameController, 'List/Registry Name'),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          customText('Make it private :', black, 15.0),
                           SizedBox(
-                            height: 15,
+                            width: 0.23.sw,
                           ),
-                          customText('List/Registry Name :', black, 15.0),
-                          searchField(listNameController, 'List/Registry Name'),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              customText('Make it private :', black, 15.0),
-                              SizedBox(
-                                width: 0.23.sw,
-                              ),
-                              Checkbox(
-                                onChanged: (val) {
-                                  mState(() {
-                                    valueFirst = val!;
-                                  });
-                                },
-                                value: valueFirst,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          customText('Benefit name :', black, 15.0),
-                          searchField(
-                              benefitNameController, 'List/Registry Name'),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              customText('Event Date :', black, 15.0),
-                              SizedBox(
-                                width: 40,
-                              ),
-                              Text("${selectedDate.toLocal()}".split(' ')[0]),
-                              IconButton(
-                                onPressed: () => _selectDate(context),
-                                icon: Icon(Icons.calendar_today),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          customText('Shipping Address :', black, 15.0),
-                          searchField(addressController, 'List/Registry Name'),
-                          SizedBox(
-                            height: 15,
+                          Checkbox(
+                            onChanged: (val) {
+                              mState(() {
+                                valueFirst = val!;
+                              });
+                            },
+                            value: valueFirst,
                           ),
                         ],
                       ),
-                    )),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      customText('Benefit name :', black, 15.0),
+                      searchField(benefitNameController, 'List/Registry Name'),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          customText('Event Date :', black, 15.0),
+                          SizedBox(
+                            width: 40,
+                          ),
+                          Text("${selectedDate.toLocal()}".split(' ')[0]),
+                          IconButton(
+                            onPressed: () => _selectDate(context, mState),
+                            icon: Icon(Icons.calendar_today),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      customText('Shipping Address :', black, 15.0),
+                      searchField(addressController, 'List/Registry Name'),
+                      SizedBox(
+                        height: 15,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
             actions: <Widget>[
               TextButton(
                 child: Text('Save and Close'),
@@ -512,11 +516,11 @@ class _AddRegistryState extends State<AddRegistry> {
     var resullt = await networkcallService.getAddRegistryAPICall(
       add: addressController.text,
       benifitName: benefitNameController.text,
-      eventDate: '1/1/21',
+      eventDate: selectedDate.toString(),
       isPrivate: valueFirst == false ? '0' : '1',
       name: listNameController.text,
       typeID: _registryTypeId.toString(),
-      userID: '302',
+      userID: sp.getUserId().toString(),
     );
     _newRegList();
     hideProgress(context);
@@ -525,6 +529,10 @@ class _AddRegistryState extends State<AddRegistry> {
       addressController.clear();
       benefitNameController.clear();
       listNameController.clear();
+      _registryTypeId = null;
+      _registryType = null;
+      selectedDate = DateTime.now();
+      valueFirst = false;
     }
   }
 
@@ -533,7 +541,8 @@ class _AddRegistryState extends State<AddRegistry> {
     var result = await networkcallService.getRemoveRegistryAPICall(
         regID: regiD, userID: sp.getUserId().toString());
     hideProgress(context);
-    if(result){_newRegList();}
-    
+    if (result) {
+      _newRegList();
+    }
   }
 }

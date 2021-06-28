@@ -16,25 +16,24 @@ class Deals extends StatefulWidget {
 }
 
 class _DealsState extends State<Deals> {
-  @override
-  Future<List<DealsListData>?>? _dealsFuture;
-
+  final _listContr = ScrollController();
   String? _categoriesName; //value
   String _catId = '0';
   List<CategoriesList> _catList = [];
   int _pageIndex = 0;
-  final _listContr = ScrollController();
-
+  var list = <DealsListData?>[].obs;
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
+      _getDealList(_catId);
     });
-    _getDealList(_catId);
     _listContr.addListener(() {
-      if (_listContr.position.atEdge && _catId != null) {
+      // if (_listContr.position.atEdge) {
+      if (_listContr.position.pixels == _listContr.position.maxScrollExtent) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
+        print(_pageIndex);
         _getDealList(_catId);
       }
     });
@@ -132,96 +131,73 @@ class _DealsState extends State<Deals> {
               SizedBox(
                 height: 10,
               ),
-              FutureBuilder<List<DealsListData>?>(
-                  future: _dealsFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      List<DealsListData>? list = snapshot.data!;
-                      return list.length != 0
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: list.length,
-                              itemBuilder: (_, i) {
-                                return InkWell(
-                                  onTap: () {
-                                    Get.to(() => ProductDetailsPage(
-                                        prdTypeId: '1',
-                                        prdId: '${list[i].yJProductID}'));
-                                  },
-                                  child: Card(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(5, 0, 10, 10),
-                                      child: Row(
+              Obx(() => ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: list.length,
+                  itemBuilder: (_, i) {
+                    return list.length != 0
+                        ? InkWell(
+                            onTap: () {
+                              Get.to(() => ProductDetailsPage(
+                                  prdTypeId: '1',
+                                  prdId: '${list[i]!.yJProductID}'));
+                            },
+                            child: Card(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(5, 0, 10, 10),
+                                child: Row(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          "$imgBaseUrl${list[i]!.productImageURL}",
+                                      height: 0.2.sh,
+                                      width: 0.3.sw,
+                                      placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Image.network(imageNotFound),
+                                    ),
+                                    SizedBox(
+                                      width: 0.22.sw,
+                                    ),
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          CachedNetworkImage(
-                                            imageUrl:
-                                                "$imgBaseUrl${list[i].productImageURL}",
-                                            height: 0.2.sh,
-                                            width: 0.3.sw,
-                                            placeholder: (context, url) => Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                            errorWidget: (context, url,
-                                                    error) =>
-                                                Image.network(imageNotFound),
-                                          ),
-                                          SizedBox(
-                                            width: 0.22.sw,
-                                          ),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text('${list[i].productName}',
-                                                    // overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 18,
-                                                        color:
-                                                            Colors.blueAccent)),
-                                                Text('${list[i].price}',
-                                                    // overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: red)),
-                                                Text('${list[i].sellerName}',
-                                                    // overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: grey)),
-                                                list[i].perks != ''
-                                                    ? Text(
-                                                        'Shipping --- ${list[i].perks}',
-                                                        // overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: grey))
-                                                    : SizedBox(),
-                                              ],
-                                            ),
-                                          ),
+                                          Text('${list[i]!.productName}',
+                                              // overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                  color: Colors.blueAccent)),
+                                          Text('${list[i]!.price}',
+                                              // overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 15, color: red)),
+                                          Text('${list[i]!.sellerName}',
+                                              // overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 15, color: grey)),
+                                          list[i]!.perks != ''
+                                              ? Text(
+                                                  'Shipping --- ${list[i]!.perks}',
+                                                  // overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: grey))
+                                              : SizedBox(),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                );
-                              })
-                          : customText(
-                              'Currently no products avaiable', red, 16.0);
-                    } else if (snapshot.hasError) {
-                      return Center(
-                          child: customText('${snapshot.error}', red, 20.0));
-                    } else
-                      return Center(
-                        child: CupertinoActivityIndicator(
-                          radius: 25,
-                        ),
-                      );
-                  })
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        : customText('Data not avaiable', red, 20);
+                  }))
             ],
           ),
         ),
@@ -239,8 +215,9 @@ class _DealsState extends State<Deals> {
   }
 
   void _getDealList(catId) async {
-    _dealsFuture =
-        networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
-    setState(() {});
+    showProgress(context);
+    list.value =
+        await networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
+    hideProgress(context);
   }
 }

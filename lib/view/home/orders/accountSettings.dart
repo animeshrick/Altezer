@@ -52,8 +52,46 @@ class _AccountSettingsState extends State<AccountSettings> {
   String currentPhone = '';
   String currentEmail = '';
 
+  RxBool isShow = false.obs;
   var _addBankList = <AddBanklist>[].obs;
-  var _userInfo = <UserInfo>[].obs;
+  var _userInfo = GetUserInfo(
+      message: '',
+      status: '',
+      userInfo: UserInfo(
+        address1: '',
+        address2: '',
+        city: '',
+        countryId: '',
+        countryName: '',
+        dayName: '',
+        dob: '',
+        dobDay: '',
+        dobMonth: '',
+        dobYear: '',
+        firstName: '',
+        firstQuestion: '',
+        firstQuestionAnswer: '',
+        firstQuestionId: '',
+        genderName: '',
+        lastName: '',
+        monthName: '',
+        password: '',
+        phoneNumber: '',
+        postalCode: '',
+        requiredResetFlag: '',
+        secondQuestion: '',
+        secondQuestionAnswer: '',
+        secondQuestionId: '',
+        sexCode: '',
+        stateName: '',
+        stateParishCode: '',
+        thirdQuestion: '',
+        thirdQuestionAnswer: '',
+        thirdQuestionId: '',
+        userId: '',
+        userName: '',
+        yearName: '',
+      )).obs;
   var _bankData = <Banklist>[].obs;
   var _branchData = <Branchlist>[].obs;
   var _questions = GetQuestions(
@@ -89,18 +127,16 @@ class _AccountSettingsState extends State<AccountSettings> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
-      await _getData();
-      _getUserInfo();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      _getData();
       _getQuestions();
       _getBanks();
       _getState();
+      _bankList();
+      // _userInfo();
+      // _userInfoUpdate();
       // _saveBank();
     });
-
-    ////////////////////////////////////////
-    _bankList();
-    // _editBank();
   }
 
   @override
@@ -108,200 +144,250 @@ class _AccountSettingsState extends State<AccountSettings> {
     return Padding(
         padding: const EdgeInsets.fromLTRB(15, 15, 15, 20),
         child: Obx(() {
-          // print('userinfo- ');
-          if (_userInfo.length == 0)
-            return CupertinoActivityIndicator(
-              radius: 30,
-            );
-          else {
-            // print('month- ${dropdownValueMonth}');
-            // print('size- ${_monthNumberList.length}');
-            return SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    customText(
-                        'Your Bank Account(s) Details', greenColor, 25.0),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    customText(
-                        'We will transfer the money from the sale of your items to your bank account',
-                        black,
-                        18.0),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    _addBankList.length > 0
-                        ? SizedBox(
-                            width: 1.sw,
-                            child: ListView.separated(
-                                primary: false,
-                                shrinkWrap: true,
-                                separatorBuilder: (_, __) => SizedBox(
-                                      height: 15,
-                                    ),
-                                itemCount: _addBankList.length,
-                                itemBuilder: (_, int index) {
-                                  var data = _addBankList[index];
-                                  // print('hello');
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        title: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            data.accountInfo != null
-                                                ? Text('${data.accountInfo}')
-                                                : customText(
-                                                    'Your bank account have some issues !',
-                                                    red,
-                                                    16),
-                                            if (data.accountInfo != null)
-                                              TextButton(
-                                                  onPressed: () {
-                                                    addBank(data);
-                                                  },
-                                                  child: customText(
-                                                      'Edit your account',
-                                                      blue,
-                                                      16))
-                                          ],
-                                        ),
-                                        leading: Radio(
-                                          onChanged: (val) {
-                                            _defaultBank.value = val as int;
-                                            print('id- ${_defaultBank.value}');
-                                            setState(() {});
-                                          },
-                                          groupValue: _defaultBank.value,
-                                          value: data.customerBankAccountId,
-                                        ),
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  customText('Your Bank Account(s) Details', greenColor, 25.0),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  customText(
+                      'We will transfer the money from the sale of your items to your bank account',
+                      black,
+                      18.0),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  isShow.value
+                      ? SizedBox(
+                          width: 1.sw,
+                          child: ListView.separated(
+                              primary: false,
+                              shrinkWrap: true,
+                              separatorBuilder: (_, __) => SizedBox(
+                                    height: 15,
+                                  ),
+                              itemCount: _addBankList.length,
+                              itemBuilder: (_, int index) {
+                                var data = _addBankList[index];
+                                // print('hello');
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListTile(
+                                      title: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          data.accountInfo != null
+                                              ? Text('${data.accountInfo}')
+                                              : customText(
+                                                  'Your bank account have some issues !',
+                                                  red,
+                                                  16),
+                                          if (data.accountInfo != null)
+                                            TextButton(
+                                                onPressed: () {
+                                                  addBank(data);
+                                                },
+                                                child: customText(
+                                                    'Edit your account',
+                                                    blue,
+                                                    16))
+                                        ],
                                       ),
-                                      // Text('${data.accountInfo}'),
-                                    ],
-                                  );
-                                }),
-                          )
-                        : customText(
-                            'You Currently Do Not Have Any Bank Account On File',
-                            red,
-                            18,
-                            fontWeight: FontWeight.bold),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        addBank(null);
-                      },
-                      child: Text(
-                        'Add bank Account(s)',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: red,
-                            fontSize: 18),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    customText('Your Information', greenColor, 18.0),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      "First Name:",
+                                      leading: Radio(
+                                        onChanged: (val) {
+                                          _defaultBank.value = val as int;
+                                          print('id- ${_defaultBank.value}');
+                                          setState(() {});
+                                        },
+                                        groupValue: _defaultBank.value,
+                                        value: data.customerBankAccountId,
+                                      ),
+                                    ),
+                                    // Text('${data.accountInfo}'),
+                                  ],
+                                );
+                              }),
+                        )
+                      : customText(
+                          'You Currently Do Not Have Any Bank Account On File',
+                          red,
+                          18,
+                          fontWeight: FontWeight.bold),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      addBank(null);
+                    },
+                    child: Text(
+                      'Add bank Account(s)',
                       style: TextStyle(
-                        fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: red,
+                          fontSize: 18),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  customText('Your Information', greenColor, 18.0),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    "First Name:",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: firstNameController,
+                    autofocus: false,
+                    // obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: 'First Name',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Last Name:",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: lastNameController,
+                    autofocus: false,
+                    // obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: 'Last Name:',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Email:",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: emailcontroller,
+                    autofocus: false,
+                    // obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: 'Email',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Phone Number:",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: phoneController,
+                    autofocus: false,
+                    // obscureText: false,
+                    decoration: InputDecoration(
+                      hintText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  // ----------------------- country -----------------------
+                  Text(
+                    'Country',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  Card(
+                    color: Colors.grey[300],
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: dropdownValueCountry,
+                          isExpanded: true,
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: grey,
+                                child: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: white,
+                                )),
+                          ),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: black),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownValueCountry = newValue!;
+                            });
+                            countryId = _countryList
+                                .where((element) =>
+                                    element.countryName == dropdownValueCountry)
+                                .toList()[0]
+                                .countryId
+                                .toString();
+                            print('country id = $countryId');
+                          },
+                          items: _countryList.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.countryName,
+                              child: Text(
+                                value.countryName,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ),
-                    TextFormField(
-                      controller: firstNameController,
-                      autofocus: false,
-                      // obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: 'First Name',
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  // ----------------------- dOB -----------------------
+                  Text(
+                    'DOB',
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    Text(
-                      "Last Name:",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    TextFormField(
-                      controller: lastNameController,
-                      autofocus: false,
-                      // obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: 'Last Name:',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    Text(
-                      "Email:",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    TextFormField(
-                      controller: emailcontroller,
-                      autofocus: false,
-                      // obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    Text(
-                      "Phone Number:",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    TextFormField(
-                      controller: phoneController,
-                      autofocus: false,
-                      // obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: 'Phone Number',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    // ----------------------- country -----------------------
-                    Text(
-                      'Country',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    Card(
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                        child: DropdownButtonHideUnderline(
+                  ),
+                  Card(
+                    color: Colors.grey[300],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: dropdownValueCountry,
-                            isExpanded: true,
+                            value: dropdownValueDate,
                             icon: Padding(
                               padding: EdgeInsets.only(right: 8.0),
                               child: CircleAvatar(
@@ -314,196 +400,35 @@ class _AccountSettingsState extends State<AccountSettings> {
                             ),
                             iconSize: 24,
                             elevation: 16,
-                            style: TextStyle(color: black),
+                            style: const TextStyle(color: Colors.black),
                             onChanged: (String? newValue) {
                               setState(() {
-                                dropdownValueCountry = newValue!;
+                                dropdownValueDate = newValue!;
                               });
-                              countryId = _countryList
+                              dateId = _monthDayList
                                   .where((element) =>
-                                      element.countryName ==
-                                      dropdownValueCountry)
-                                  .toList()[0]
-                                  .countryId
+                                      element.monthDay == dropdownValueDate)
+                                  .toList()
+                                  .first
+                                  .monthDay
                                   .toString();
-                              print('country id = $countryId');
                             },
-                            items: _countryList.map((value) {
+                            items: _monthDayList.map((value) {
                               return DropdownMenuItem<String>(
-                                value: value.countryName,
+                                value: value.monthDay,
                                 child: Text(
-                                  value.countryName,
+                                  value.monthDay,
                                   style: TextStyle(fontSize: 18),
                                 ),
                               );
                             }).toList(),
                           ),
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
 
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    // ----------------------- dOB -----------------------
-                    Text(
-                      'DOB',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    Card(
-                      color: Colors.grey[300],
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: dropdownValueDate,
-                              icon: Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: grey,
-                                    child: Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: white,
-                                    )),
-                              ),
-                              iconSize: 24,
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.black),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropdownValueDate = newValue!;
-                                });
-                                dateId = _monthDayList
-                                    .where((element) =>
-                                        element.monthDay == dropdownValueDate)
-                                    .toList()
-                                    .first
-                                    .monthDay
-                                    .toString();
-                              },
-                              items: _monthDayList.map((value) {
-                                return DropdownMenuItem<String>(
-                                  value: value.monthDay,
-                                  child: Text(
-                                    value.monthDay,
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-
-                          /// -------------- month --------------
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: dropdownValueMonth,
-                              icon: Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: grey,
-                                    child: Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: white,
-                                    )),
-                              ),
-                              iconSize: 24,
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.black),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropdownValueMonth = newValue!;
-                                });
-                                monthId = _monthNumberList
-                                    .where((element) =>
-                                        element.monthNumber ==
-                                        dropdownValueMonth)
-                                    .toList()
-                                    .first
-                                    .monthNumber
-                                    .toString();
-                                print('month id  -- $monthId');
-                              },
-                              items: _monthNumberList.map((value) {
-                                // print(
-                                //     'value- ${value.monthNumber}\n length- ${_monthNumberList.length}');
-                                return DropdownMenuItem<String>(
-                                  value: value.monthNumber,
-                                  child: Text(
-                                    value.monthNumber,
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: dropdownValueYear,
-                              icon: Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: grey,
-                                    child: Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: white,
-                                    )),
-                              ),
-                              iconSize: 24,
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.black),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropdownValueYear = newValue!;
-                                });
-                                yearId = _yearList
-                                    .where((element) =>
-                                        element.year == dropdownValueYear)
-                                    .toList()
-                                    .first
-                                    .yearId
-                                    .toString();
-                                print("year id == $yearId");
-                              },
-                              items: _yearList.map((value) {
-                                return DropdownMenuItem<String>(
-                                  value: value.year,
-                                  child: Text(
-                                    value.year,
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    // ----------------------- Gender -----------------------
-                    Text(
-                      'Gender',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    Card(
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                        child: DropdownButtonHideUnderline(
+                        /// -------------- month --------------
+                        DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: dropdownValueGender,
+                            value: dropdownValueMonth,
                             icon: Padding(
                               padding: EdgeInsets.only(right: 8.0),
                               child: CircleAvatar(
@@ -516,405 +441,538 @@ class _AccountSettingsState extends State<AccountSettings> {
                             ),
                             iconSize: 24,
                             elevation: 16,
-                            isExpanded: true,
                             style: const TextStyle(color: Colors.black),
                             onChanged: (String? newValue) {
                               setState(() {
-                                dropdownValueGender = newValue!;
+                                dropdownValueMonth = newValue!;
                               });
-                              genderID = _genderList
+                              monthId = _monthNumberList
                                   .where((element) =>
-                                      element.gender == dropdownValueGender)
+                                      element.monthNumber == dropdownValueMonth)
                                   .toList()
                                   .first
-                                  .genderId
+                                  .monthNumber
                                   .toString();
-                              print('gender id = $genderID');
+                              print('month id  -- $monthId');
                             },
-                            items: _genderList.map((value) {
+                            items: _monthNumberList.map((value) {
+                              // print(
+                              //     'value- ${value.monthNumber}\n length- ${_monthNumberList.length}');
                               return DropdownMenuItem<String>(
-                                value: value.gender,
+                                value: value.monthNumber,
                                 child: Text(
-                                  value.gender,
+                                  value.monthNumber,
                                   style: TextStyle(fontSize: 18),
                                 ),
                               );
                             }).toList(),
                           ),
                         ),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: dropdownValueYear,
+                            icon: Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: white,
+                                  )),
+                            ),
+                            iconSize: 24,
+                            elevation: 16,
+                            style: const TextStyle(color: Colors.black),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownValueYear = newValue!;
+                              });
+                              yearId = _yearList
+                                  .where((element) =>
+                                      element.year == dropdownValueYear)
+                                  .toList()
+                                  .first
+                                  .yearId
+                                  .toString();
+                              print("year id == $yearId");
+                            },
+                            items: _yearList.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value.year,
+                                child: Text(
+                                  value.year,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  // ----------------------- Gender -----------------------
+                  Text(
+                    'Gender',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  Card(
+                    color: Colors.grey[300],
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: dropdownValueGender,
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: grey,
+                                child: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: white,
+                                )),
+                          ),
+                          iconSize: 24,
+                          elevation: 16,
+                          isExpanded: true,
+                          style: const TextStyle(color: Colors.black),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownValueGender = newValue!;
+                            });
+                            genderID = _genderList
+                                .where((element) =>
+                                    element.gender == dropdownValueGender)
+                                .toList()
+                                .first
+                                .genderId
+                                .toString();
+                            print('gender id = $genderID');
+                          },
+                          items: _genderList.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.gender,
+                              child: Text(
+                                value.gender,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
 
-                    // ------------ qa ----------------
-                    Text(
-                      'Question 1 :',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
+                  // ------------ qa ----------------
+                  Text(
+                    'Question 1 :',
+                    style: TextStyle(
+                      fontSize: 16,
                     ),
-                    Card(
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            value: qs1Value,
-                            icon: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: grey,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: white,
-                                  )),
-                            ),
-                            iconSize: 24,
-                            elevation: 16,
-                            hint: Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Text('Question No 1'),
-                            ),
-                            style: const TextStyle(color: Colors.black),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                qs1Value = newValue!;
-                              });
-                              qs1Id = _qs1List
-                                  .where(
-                                      (element) => element.question == qs1Value)
-                                  .toList()
-                                  .first
-                                  .questionId
-                                  .toString();
-                              print('qs1 id = $qs1Id');
-                            },
-                            items: _qs1List.map((value) {
-                              return DropdownMenuItem<String>(
-                                value: value.question,
-                                child: Text(
-                                  value.question,
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              );
-                            }).toList(),
+                  ),
+                  Card(
+                    color: Colors.grey[300],
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: qs1Value,
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: grey,
+                                child: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: white,
+                                )),
                           ),
+                          iconSize: 24,
+                          elevation: 16,
+                          hint: Padding(
+                            padding: EdgeInsets.only(left: 20.0),
+                            child: Text('Question No 1'),
+                          ),
+                          style: const TextStyle(color: Colors.black),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              qs1Value = newValue!;
+                            });
+                            qs1Id = _qs1List
+                                .where(
+                                    (element) => element.question == qs1Value)
+                                .toList()
+                                .first
+                                .questionId
+                                .toString();
+                            print('qs1 id = $qs1Id');
+                          },
+                          items: _qs1List.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.question,
+                              child: Text(
+                                value.question,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Answer :",
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    Text(
-                      "Answer :",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                  ),
+                  TextFormField(
+                    controller: ans1Controller,
+                    autofocus: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                     ),
-                    TextFormField(
-                      controller: ans1Controller,
-                      autofocus: false,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    'Question 2 :',
+                    style: TextStyle(
+                      fontSize: 16,
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    Text(
-                      'Question 2 :',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    Card(
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            value: qs2Value,
-                            icon: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: grey,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: white,
-                                  )),
-                            ),
-                            iconSize: 24,
-                            elevation: 16,
-                            hint: Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Text('Question No 2'),
-                            ),
-                            style: const TextStyle(color: Colors.black),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                qs2Value = newValue!;
-                              });
-                              qs2Id = _qs2List
-                                  .where(
-                                      (element) => element.question == qs2Value)
-                                  .toList()
-                                  .first
-                                  .questionId
-                                  .toString();
-                              print('qs2 id = $qs2Id');
-                            },
-                            items: _qs2List.map((value) {
-                              return DropdownMenuItem<String>(
-                                value: value.question,
-                                child: Text(
-                                  value.question,
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              );
-                            }).toList(),
+                  ),
+                  Card(
+                    color: Colors.grey[300],
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: qs2Value,
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: grey,
+                                child: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: white,
+                                )),
                           ),
+                          iconSize: 24,
+                          elevation: 16,
+                          hint: Padding(
+                            padding: EdgeInsets.only(left: 20.0),
+                            child: Text('Question No 2'),
+                          ),
+                          style: const TextStyle(color: Colors.black),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              qs2Value = newValue!;
+                            });
+                            qs2Id = _qs2List
+                                .where(
+                                    (element) => element.question == qs2Value)
+                                .toList()
+                                .first
+                                .questionId
+                                .toString();
+                            print('qs2 id = $qs2Id');
+                          },
+                          items: _qs2List.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.question,
+                              child: Text(
+                                value.question,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Answer :",
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    Text(
-                      "Answer :",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                  ),
+                  TextFormField(
+                    controller: ans2Controller,
+                    autofocus: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                     ),
-                    TextFormField(
-                      controller: ans2Controller,
-                      autofocus: false,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    'Question 3 :',
+                    style: TextStyle(
+                      fontSize: 16,
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    Text(
-                      'Question 3 :',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    Card(
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            value: qs3Value,
-                            icon: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: grey,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: white,
-                                  )),
-                            ),
-                            iconSize: 24,
-                            elevation: 16,
-                            hint: Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Text('Question No 3'),
-                            ),
-                            style: const TextStyle(color: Colors.black),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                qs3Value = newValue!;
-                              });
-                              qs3Id = _qs3List
-                                  .where(
-                                      (element) => element.question == qs3Value)
-                                  .toList()
-                                  .first
-                                  .questionId
-                                  .toString();
-                              print('qs3 id = $qs3Id');
-                            },
-                            items: _qs3List.map((value) {
-                              return DropdownMenuItem<String>(
-                                value: value.question,
-                                child: Text(
-                                  value.question,
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              );
-                            }).toList(),
+                  ),
+                  Card(
+                    color: Colors.grey[300],
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: qs3Value,
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: grey,
+                                child: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: white,
+                                )),
                           ),
+                          iconSize: 24,
+                          elevation: 16,
+                          hint: Padding(
+                            padding: EdgeInsets.only(left: 20.0),
+                            child: Text('Question No 3'),
+                          ),
+                          style: const TextStyle(color: Colors.black),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              qs3Value = newValue!;
+                            });
+                            qs3Id = _qs3List
+                                .where(
+                                    (element) => element.question == qs3Value)
+                                .toList()
+                                .first
+                                .questionId
+                                .toString();
+                            print('qs3 id = $qs3Id');
+                          },
+                          items: _qs3List.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value.question,
+                              child: Text(
+                                value.question,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Answer :",
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    Text(
-                      "Answer :",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                  ),
+                  TextFormField(
+                    controller: ans3Controller,
+                    autofocus: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                     ),
-                    TextFormField(
-                      controller: ans3Controller,
-                      autofocus: false,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    SizedBox(
-                        height: 0.07.sh,
-                        width: 1.sw,
-                        child: button(() {
-                          if (_formKey.currentState!.validate()) {
-                            if (firstNameController.text.isEmpty) {
-                              showToast("Enter first name", red);
-                            } else if (lastNameController.text.isEmpty) {
-                              showToast("Enter last name", red);
-                            } else if (emailcontroller.text.isEmpty) {
-                              showToast("Enter email", red);
-                            } else if (phoneController.text.isEmpty) {
-                              showToast("Enter phone number", red);
-                            } else if (ans1Controller.text.isEmpty) {
-                              showToast("Enter answer1", red);
-                            } else if (ans2Controller.text.isEmpty) {
-                              showToast("Enter answer2", red);
-                            } else if (ans3Controller.text.isEmpty) {
-                              showToast("Enter answer3", red);
-                            } else if (dropdownValueCountry == null) {
-                              showToast("Enter answer3", red);
-                            } else if (dropdownValueDate == null) {
-                              showToast("Enter answer3", red);
-                            } else if (dropdownValueMonth == null) {
-                              showToast("Enter answer3", red);
-                            } else if (dropdownValueYear == null) {
-                              showToast("Enter answer3", red);
-                            } else if (dropdownValueGender == null) {
-                              showToast("Enter answer3", red);
-                            } else {
-                              _userInfoUpdate();
-                            }
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  SizedBox(
+                      height: 0.07.sh,
+                      width: 1.sw,
+                      child: button(() {
+                        if (_formKey.currentState!.validate()) {
+                          if (firstNameController.text.isEmpty) {
+                            showToast("Enter first name", red);
+                          } else if (lastNameController.text.isEmpty) {
+                            showToast("Enter last name", red);
+                          } else if (emailcontroller.text.isEmpty) {
+                            showToast("Enter email", red);
+                          } else if (phoneController.text.isEmpty) {
+                            showToast("Enter phone number", red);
+                          } else if (ans1Controller.text.isEmpty) {
+                            showToast("Enter answer1", red);
+                          } else if (ans2Controller.text.isEmpty) {
+                            showToast("Enter answer2", red);
+                          } else if (ans3Controller.text.isEmpty) {
+                            showToast("Enter answer3", red);
+                          } else if (dropdownValueCountry == null) {
+                            showToast("Enter answer3", red);
+                          } else if (dropdownValueDate == null) {
+                            showToast("Enter answer3", red);
+                          } else if (dropdownValueMonth == null) {
+                            showToast("Enter answer3", red);
+                          } else if (dropdownValueYear == null) {
+                            showToast("Enter answer3", red);
+                          } else if (dropdownValueGender == null) {
+                            showToast("Enter answer3", red);
+                          } else {
+                            _userInfoUpdate();
                           }
-                        }, 'Update Info', greenColor, white)),
-                    SizedBox(
-                      height: 0.02.sh,
+                        }
+                      }, 'Update Info', greenColor, white)),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Current Password :",
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    Text(
-                      "Current Password :",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                  ),
+                  TextFormField(
+                    controller: passwordcontroller,
+                    autofocus: false,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: '* * * * * *',
+                      border: OutlineInputBorder(),
                     ),
-                    TextFormField(
-                      controller: passwordcontroller,
-                      autofocus: false,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: '* * * * * *',
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "New Password :",
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
+                  ),
+                  TextFormField(
+                    controller: newPasswordController,
+                    autofocus: false,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: '* * * * * *',
+                      border: OutlineInputBorder(),
                     ),
-                    Text(
-                      "New Password :",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  Text(
+                    "Confirm New Password :",
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    TextFormField(
-                      controller: newPasswordController,
-                      autofocus: false,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: '* * * * * *',
-                        border: OutlineInputBorder(),
-                      ),
+                  ),
+                  TextFormField(
+                    controller: confnewPasswordController,
+                    autofocus: false,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: '* * * * * *',
+                      border: OutlineInputBorder(),
                     ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    Text(
-                      "Confirm New Password :",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    TextFormField(
-                      controller: confnewPasswordController,
-                      autofocus: false,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: '* * * * * *',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 0.02.sh,
-                    ),
-                    SizedBox(
-                        height: 0.07.sh,
-                        width: 1.sw,
-                        child: button(() {
-                          if (_formKey.currentState!.validate()) {
-                            if (passwordcontroller.text.isEmpty) {
-                              showToast("Enter current password", red);
-                            } else if (newPasswordController.text.isEmpty) {
-                              showToast("Enter new password", red);
-                            } else if (confnewPasswordController.text.isEmpty) {
-                              showToast("Enter confirm new password", red);
-                            } else {
-                              _updatePwd(
-                                  sp.getUserId().toString(),
-                                  passwordcontroller.text,
-                                  newPasswordController.text,
-                                  confnewPasswordController.text,
-                                  emailcontroller.text,
-                                  currentEmail,
-                                  currentPhone);
-                            }
+                  ),
+                  SizedBox(
+                    height: 0.02.sh,
+                  ),
+                  SizedBox(
+                      height: 0.07.sh,
+                      width: 1.sw,
+                      child: button(() {
+                        if (_formKey.currentState!.validate()) {
+                          if (passwordcontroller.text.isEmpty) {
+                            showToast("Enter current password", red);
+                          } else if (newPasswordController.text.isEmpty) {
+                            showToast("Enter new password", red);
+                          } else if (confnewPasswordController.text.isEmpty) {
+                            showToast("Enter confirm new password", red);
+                          } else {
+                            _updatePwd(
+                                sp.getUserId().toString(),
+                                passwordcontroller.text,
+                                newPasswordController.text,
+                                confnewPasswordController.text,
+                                emailcontroller.text,
+                                currentEmail,
+                                currentPhone);
                           }
-                        }, 'Update Password', greenColor, white)),
-                  ],
-                ),
+                        }
+                      }, 'Update Password', greenColor, white)),
+                ],
               ),
-            );
-          }
+            ),
+          );
         }));
   }
 
   void _getUserInfo() async {
-    _userInfo.value = (await networkcallService
-        .getUserInfoAPICall(sp.getUserId().toString()))!;
-    if (_userInfo.length != 0) {
-      var data = _userInfo.first;
+    var result =
+        await networkcallService.getUserInfoAPICall(sp.getUserId().toString());
+    if (result != null) {
+      _userInfo.value = result;
+      var data = _userInfo.value.userInfo;
+
       ans1Controller.text = data.firstQuestionAnswer;
       ans2Controller.text = data.secondQuestionAnswer;
       ans3Controller.text = data.thirdQuestionAnswer;
       phoneController.text = data.phoneNumber;
       currentPhone = data.phoneNumber;
       currentEmail = data.userName;
+/*
+      print('countryName -${data.countryName}');
+      print('dayName -${data.dayName}');
+      print('monthName -${data.monthName}');
+      print('yearName -${data.yearName}');
+      print('genderName -${data.genderName}');
+      print('firstQuestion -${data.firstQuestion}');
+      print('secondQuestion -${data.secondQuestion}');
+      print('thirdQuestion -${data.thirdQuestion}');
+
+      print('countryId -${data.countryId}');
+      print('dobDay -${data.dobDay}');
+      print('dobMonth -${data.dobMonth}');
+      print('dobYear -${data.dobYear}');
+      print('sexCode -${data.sexCode}');
+      print('firstQuestionId -${data.firstQuestionId}');
+      print('secondQuestionId -${data.secondQuestionId}');
+      print('thirdQuestionId -${data.thirdQuestionId}');
+*/
       dropdownValueCountry = data.countryName;
-      dropdownValueDate = data.dobDay.toString();
-      dropdownValueMonth = '0' + data.dobMonth.toString();
+      dropdownValueDate = data.dayName.toString();
+      dropdownValueMonth = data.monthName.toString();
       dropdownValueYear = data.yearName;
       dropdownValueGender = data.genderName;
+      qs1Value = data.firstQuestion;
+      qs2Value = data.secondQuestion;
+      qs3Value = data.thirdQuestion;
+
+      countryId = data.countryId;
+      dateId = data.dobDay;
+      monthId = data.dobMonth;
+      yearId = data.dobYear;
+      genderID = data.sexCode;
+      qs1Id = data.firstQuestionId;
+      qs2Id = data.secondQuestionId;
+      qs3Id = data.thirdQuestionId;
+
+      setState(() {});
     }
   }
 
@@ -927,6 +985,7 @@ class _AccountSettingsState extends State<AccountSettings> {
     _monthNumberList = response.monthNumberList;
     _yearList = response.yearList;
     _genderList = response.genderList;
+    _getUserInfo();
     setState(() {});
   }
 
@@ -939,6 +998,9 @@ class _AccountSettingsState extends State<AccountSettings> {
 
   void _userInfoUpdate() async {
     showProgress(context);
+    print(qs3Id.toString());
+    print(qs2Id.toString());
+    print(qs1Id.toString());
     var _updateInfo = await networkcallService.getUpdateUserInfoAPICall(
       sp.getUserId().toString(),
       firstNameController.text,
@@ -1031,12 +1093,16 @@ class _AccountSettingsState extends State<AccountSettings> {
   // }
 
   Future _bankList() async {
-    _addBankList.value = (await networkcallService
-        .getAddBankListAPICall(sp.getUserId().toString()))!;
-
+    showProgress(context);
+    _addBankList.value = await networkcallService
+        .getAddBankListAPICall(sp.getUserId().toString());
+hideProgress(context);
     if (_addBankList.length > 0) {
       _addBankList.value =
           _addBankList.where((element) => element.accountInfo != null).toList();
+      isShow.value = true;
+    } else {
+      isShow.value = false;
     }
   }
 

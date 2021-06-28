@@ -240,7 +240,7 @@ class _SignUpState extends State<SignUp> {
                                   .toList()[0]
                                   .countryId
                                   .toString();
-
+                              print('countryId $countryId');
                               _stateValue = null;
                               _getState(countryId!);
                             },
@@ -302,6 +302,7 @@ class _SignUpState extends State<SignUp> {
                                   .first
                                   .stateId
                                   .toString();
+                              print('stateId $stateId');
                             },
                             items: _stateList!
                                 .map<DropdownMenuItem<String>>((value) {
@@ -359,8 +360,9 @@ class _SignUpState extends State<SignUp> {
                                       element.monthDay == _monthDayValue)
                                   .toList()
                                   .first
-                                  .monthDay
+                                  .monthDayId
                                   .toString();
+                                  print('dateId $dateId');
                             },
                             items: _monthDayList.map((value) {
                               return DropdownMenuItem<String>(
@@ -410,8 +412,9 @@ class _SignUpState extends State<SignUp> {
                                       element.monthNumber == _monthNumberValue)
                                   .toList()
                                   .first
-                                  .monthNumber
+                                  .monthNumberId
                                   .toString();
+                                  print('monthId $monthId');
                             },
                             items: _monthNumberList.map((value) {
                               return DropdownMenuItem<String>(
@@ -463,6 +466,7 @@ class _SignUpState extends State<SignUp> {
                                   .first
                                   .yearId
                                   .toString();
+                                  print('yearId $yearId');
                             },
                             items: _yearList.map((value) {
                               return DropdownMenuItem<String>(
@@ -522,6 +526,7 @@ class _SignUpState extends State<SignUp> {
                                   .first
                                   .genderId
                                   .toString();
+                                  print('genderID $genderID');
                             },
                             items: _genderList.map((value) {
                               return DropdownMenuItem<String>(

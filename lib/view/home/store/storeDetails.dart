@@ -356,7 +356,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   ],
                                 );
                               })
-                          : Text('no data found'),
+                          : Text('No data found'),
                     )
                   ],
                 ),

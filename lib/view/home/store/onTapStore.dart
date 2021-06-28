@@ -17,14 +17,10 @@ class OnTapStore extends StatefulWidget {
 }
 
 class _OnTapStoreState extends State<OnTapStore> {
+  RxBool isShowMessage = false.obs;
   TextEditingController searchController = TextEditingController();
-
-  Future<List<StoreList>?>? _storefuture;
-
   String? _groceryStateValue, _groceryStateId;
-
-  List<StoreList>? list;
-
+  var list = <StoreList>[].obs;
   List<GetGroceryStateList> _groceryStateList = [];
 
   @override
@@ -149,61 +145,47 @@ class _OnTapStoreState extends State<OnTapStore> {
               SizedBox(
                 height: 20,
               ),
-              FutureBuilder<List<StoreList>?>(
-                  future: _storefuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      list = snapshot.data;
-                      return SizedBox(
-                        // height: 1.0.sh,
-                        child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                            ),
-                            itemCount: list!.length,
-                            itemBuilder: (context, i) {
-                              return Card(
-                                color: grey,
-                                child: InkWell(
-                                  onTap: () => Get.to(() => StoreDetailsPage(
-                                        storeId: list![i].clientId,
-                                      )),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            "$imgBaseUrl${list![i].clientLogoURL}",
-                                        height: 0.1.sh,
-                                        width: 0.2.sw,
-                                        placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            Image.network(imageNotFound),
-                                      ),
-                                      customText(
-                                          '${list![i].clientName}', black, 18),
-                                    ],
-                                  ),
+              SizedBox(
+                // height: 1.0.sh,
+                child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: list.length,
+                    itemBuilder: (context, i) {
+                      return list.length > 0
+                          ? Card(
+                              color: grey,
+                              child: InkWell(
+                                onTap: () => Get.to(() => StoreDetailsPage(
+                                      storeId: list[i].clientId,
+                                    )),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          "$imgBaseUrl${list[i].clientLogoURL}",
+                                      height: 0.1.sh,
+                                      width: 0.2.sw,
+                                      placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Image.network(imageNotFound),
+                                    ),
+                                    customText(
+                                        '${list[i].clientName}', black, 18),
+                                  ],
                                 ),
-                              );
-                            }),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(
-                          child: customText('${snapshot.error}', red, 20.0));
-                    } else
-                      return Center(
-                        child: CupertinoActivityIndicator(
-                          radius: 25,
-                        ),
-                      );
-                  }),
+                              ),
+                            )
+                          : customText('No data available now', red, 20);
+                    }),
+              )
             ],
           ),
         ),
@@ -212,8 +194,10 @@ class _OnTapStoreState extends State<OnTapStore> {
   }
 
   void _getData() async {
+    showProgress(context);
     final groceryStateResult =
         await networkcallService.getGroceryStateListAPICall();
+    hideProgress(context);
     if (groceryStateResult != null) {
       setState(() {
         _groceryStateList = groceryStateResult;
@@ -223,9 +207,12 @@ class _OnTapStoreState extends State<OnTapStore> {
   }
 
   void storeList() async {
-    _storefuture = networkcallService.getStoreListAPICall(
+    showProgress(context);
+    // print('ll ${list.length}');
+    list.value = await networkcallService.getStoreListAPICall(
         _groceryStateId == null ? '0' : _groceryStateId.toString(),
         searchController.text != '' ? searchController.text : '');
     setState(() {});
+    hideProgress(context);
   }
 }

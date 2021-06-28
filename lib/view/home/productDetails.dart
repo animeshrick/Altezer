@@ -575,6 +575,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
+    showProgress(context);
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -585,6 +586,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         mtoDelivaryDate,
         mtoImgPath,
         userId);
+    hideProgress(context);
   }
 
   // void _cartBox() async {

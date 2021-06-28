@@ -37,7 +37,7 @@ class ShippingOptionDeliverToHome {
   final double rateOverBasePerPound;
   final String serviceName;
   final double totalWeight;
-  final double shippingCost;
+  final double? shippingCost;
   final String leadTime;
 
   factory ShippingOptionDeliverToHome.fromJson(Map<String, dynamic> json) =>
