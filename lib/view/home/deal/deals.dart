@@ -49,20 +49,6 @@ class _DealsState extends State<Deals> {
           children: [
             IconButton(
                 onPressed: () => Get.back(), icon: Icon(Icons.arrow_back)),
-            // FlatButton.icon(
-            //     padding: EdgeInsets.zero,
-            //     onPressed: () {
-            //       Get.back();
-            //     },
-            //     color: white,
-            //     icon: CircleAvatar(
-            //         radius: 15,
-            //         backgroundColor: grey,
-            //         child: Icon(
-            //           Icons.home,
-            //           color: white,
-            //         )),
-            //     label: customText("Home", black, 15.0)),
             SizedBox(
               width: 0.2.sw,
             ),

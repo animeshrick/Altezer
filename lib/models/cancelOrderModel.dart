@@ -32,10 +32,10 @@ class CancelOrders {
     final String phoneNumber;
 
     factory CancelOrders.fromJson(Map<String, dynamic> json) => CancelOrders(
-        productOrderId: json["Product_Order_Id"],
-        userId: json["User_Id"],
-        firstName: json["First_name"],
-        userName: json["User_name"],
-        phoneNumber: json["Phone_Number"],
+        productOrderId: json["Product_Order_Id"]??0,
+        userId: json["User_Id"]??0,
+        firstName: json["First_name"]??'',
+        userName: json["User_name"]??'',
+        phoneNumber: json["Phone_Number"]??'',
     );
 }

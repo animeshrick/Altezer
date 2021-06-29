@@ -194,6 +194,7 @@ final String getCancelOrders = '$_baseUrl/CancelByOrderCustomerByOrderId.ashx';
 final String getOrderDetails = '$_baseUrl/GetMyOrderDetails.ashx';
 final String orderTracking = '$_baseUrl/GetOrderTrackingInfoByOrderId.ashx';
 final String orderCancelByItemId = '$_baseUrl/OrderCancelByLineItemId.ashx';
+final String orderInvoice = '$_baseUrl/ViewInvoiceOrderDetailsByOrderID.ashx';
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
