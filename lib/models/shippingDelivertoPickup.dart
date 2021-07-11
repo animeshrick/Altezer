@@ -17,7 +17,7 @@ class DeliverToPickup {
         status: json["status"],
         shippingOptionsPickup: json["ShippingOptions"] != ''?(json["ShippingOptions"] as List)
                 .map((x) => ShippingOptionDeliverToPickup.fromJson(x)).toList():null,
-        infoPickup: json["Info"] == null ? '' :json["Info"],
+        infoPickup: json["Info"],
       );
 }
 
@@ -42,10 +42,10 @@ class ShippingOptionDeliverToPickup {
   factory ShippingOptionDeliverToPickup.fromJson(Map<String, dynamic> json) =>
       ShippingOptionDeliverToPickup(
         customerPickupLocationId: json["Customer_Pickup_Location_Id"],
-        serviceName: json["Service_Name"],
+        serviceName: json["Service_Name"]??'',
         customerPickUpLocation: json["CustomerPickUpLocation"],
         totalWeight: json["Total_Weight"],
-        deliveryCompanyId: json["delivery_company_Id"],
+        deliveryCompanyId: json["delivery_company_Id"]??0,
         shippingCost: json["Shipping_Cost"],
       );
 }

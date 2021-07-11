@@ -1,15 +1,18 @@
 import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/cancelOrderModel.dart';
-import 'package:altezar/models/invoiceModel.dart';
+import 'package:altezar/models/getLists.dart';
+import 'package:altezar/models/getStateList.dart';
 import 'package:altezar/models/myOrderModel.dart';
 import 'package:altezar/models/orderDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
-import 'package:altezar/view/home/orders/invoice.dart';
+import 'package:altezar/view/widgets/searchField.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'invoice.dart';
 
 class OnlineOrder extends StatefulWidget {
   @override
@@ -24,12 +27,32 @@ class _OnlineOrderState extends State<OnlineOrder> {
   var _orderList = <MyOrderList>[].obs;
   RxBool isShow = false.obs;
   RxBool cancelBtnHide = false.obs;
-  //  var _orderDetails = _orderResullt.value.orderDetails;
+
+  TextEditingController fNameCtrl = TextEditingController();
+  TextEditingController compCtrl = TextEditingController();
+  TextEditingController add1Ctrl = TextEditingController();
+  TextEditingController add2Ctrl = TextEditingController();
+  TextEditingController cityCtrl = TextEditingController();
+  TextEditingController areaCtrl = TextEditingController();
+  TextEditingController zipCtrl = TextEditingController();
+  TextEditingController phnCtrl = TextEditingController();
+  TextEditingController insCtrl = TextEditingController();
+
+  String? _countryValue, _stateValue;
+  String? stateId, countryId;
+
+  List<CountryList> _countryList = [];
+  List<StateList>? _stateList = [];
+  bool valueFirst = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       getMyOrders();
+      _getData();
+      print('hi');
+      _getState();
     });
   }
 
@@ -128,6 +151,22 @@ class _OnlineOrderState extends State<OnlineOrder> {
         ));
   }
 
+  void _getData() async {
+    // showProgress(context);
+    final response = await networkcallService.getAllDropdownValue();
+    // hideProgress(context);
+    _countryList = response!.countryList;
+    setState(() {});
+  }
+
+  void _getState() async {
+    // showProgress(context);
+    _stateList = await networkcallService.getStateValue('668');
+    // hideProgress(context);
+    print('len --- ${_stateList!.length}');
+    setState(() {});
+  }
+
   void getMyOrders() async {
     showProgress(context);
     _orderList.value =
@@ -150,7 +189,8 @@ class _OnlineOrderState extends State<OnlineOrder> {
 
   void _orderCancel(orderNo) async {
     showProgress(context);
-    _cancelOrders.value = await networkcallService.getCancelOrder(orderNo);
+    _cancelOrders.value =
+        await networkcallService.getCancelOrder(orderNo.toString());
     hideProgress(context);
     getMyOrders();
   }
@@ -162,6 +202,41 @@ class _OnlineOrderState extends State<OnlineOrder> {
     hideProgress(context);
     if (res) {
       cancelBtnHide.value = true;
+      Get.back();
+    }
+  }
+
+  void saveDeliAdd() async {
+    showProgress(context);
+    var res = await networkcallService.getAddDeliveryAddres(
+        add1: add1Ctrl.text,
+        add2: add2Ctrl.text,
+        area: areaCtrl.text,
+        city: cityCtrl.text,
+        compName: compCtrl.text,
+        countryCode: '668',
+        delivaryPhone: phnCtrl.text,
+        firstName: fNameCtrl.text,
+        instruction: insCtrl.text,
+        isDefault: valueFirst == false ? '0' : '1',
+        parishCode: stateId.toString(),
+        userId: sp.getUserId().toString(),
+        zippostalCode: zipCtrl.text);
+    hideProgress(context);
+    if (res) {
+      add1Ctrl.clear();
+      add2Ctrl.clear();
+      areaCtrl.clear();
+      cityCtrl.clear();
+      compCtrl.clear();
+      phnCtrl.clear();
+      fNameCtrl.clear();
+      insCtrl.clear();
+      zipCtrl.clear();
+      countryId = null;
+      _countryValue = null;
+      stateId = null;
+      _stateValue = null;
       Get.back();
     }
   }
@@ -224,7 +299,9 @@ class _OnlineOrderState extends State<OnlineOrder> {
                           greenColor,
                           15),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          _addDeliveryAddress();
+                        },
                         child: customUnderlineText(
                             'Add a Delivery Address', blue, 15),
                       ),
@@ -363,5 +440,183 @@ class _OnlineOrderState extends State<OnlineOrder> {
         );
       },
     );
+  }
+
+  Future<void> _addDeliveryAddress() {
+    return showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: Text('Save Address'),
+            content: StatefulBuilder(
+              builder: (context, mState) {
+                return Container(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        textField(fNameCtrl, 'Enter First-Name'),
+                        textField(compCtrl, 'Enter Company-Name'),
+                        textField(add1Ctrl, 'Enter Address1'),
+                        textField(add2Ctrl, 'Enter Address2'),
+                        textField(cityCtrl, 'Enter City'),
+                        textField(areaCtrl, 'Enter Area'),
+                        textField(zipCtrl, 'Enter Postal or Zip-Code'),
+                        textField(phnCtrl, 'Enter Phone-Number'),
+                        // ----------------------- country -----------------------
+                        Text(
+                          'Country',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                        Card(
+                          color: Colors.grey[300],
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButtonFormField<String>(
+                                validator: (value) =>
+                                    value == null ? 'Enter your Country' : null,
+                                value: _countryValue,
+                                hint: Padding(
+                                  padding: EdgeInsets.only(left: 15.0),
+                                  child: Text('Jamaica'),
+                                ),
+                                isExpanded: true,
+                                icon: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CircleAvatar(
+                                      radius: 15,
+                                      backgroundColor: grey,
+                                      child: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: white,
+                                      )),
+                                ),
+                                style: const TextStyle(color: Colors.black),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _countryValue = newValue!;
+                                  });
+                                  countryId = _countryList
+                                      .where((element) =>
+                                          element.countryName == _countryValue)
+                                      .toList()[0]
+                                      .countryId
+                                      .toString();
+                                  print('countryId $countryId');
+                                  _stateValue = null;
+                                  _getState();
+                                },
+                                items: []),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 0.02.sh,
+                        ),
+                        // ----------------------- State -----------------------
+                        Text(
+                          'State',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                        Card(
+                          color: Colors.grey[300],
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButtonFormField<String>(
+                              validator: (value) =>
+                                  value == null ? 'Enter your State' : null,
+                              value: _stateValue,
+                              isExpanded: true,
+                              hint: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 15.0,
+                                ),
+                                child: Text('Choose your State'),
+                              ),
+                              icon: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: CircleAvatar(
+                                    radius: 15,
+                                    backgroundColor: grey,
+                                    child: Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: white,
+                                    )),
+                              ),
+                              style: const TextStyle(color: Colors.black),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _stateValue = newValue!;
+                                });
+                                stateId = _stateList!
+                                    .where((element) =>
+                                        element.stateName == _stateValue)
+                                    .toList()
+                                    .first
+                                    .stateId
+                                    .toString();
+                                print('stateId $stateId');
+                              },
+                              items: _stateList!
+                                  .map<DropdownMenuItem<String>>((value) {
+                                return DropdownMenuItem<String>(
+                                  value: value.stateName,
+                                  child: Text(
+                                    value.stateName,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 0.02.sh,
+                        ),
+                        textField(insCtrl, 'Enter Instructions'),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: customText(
+                                  'Check to make this your current order shipping address :',
+                                  red,
+                                  15.0),
+                            ),
+                            SizedBox(
+                              width: 0.23.sw,
+                            ),
+                            Checkbox(
+                              onChanged: (val) {
+                                mState(() {
+                                  valueFirst = val!;
+                                });
+                              },
+                              value: valueFirst,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Save and Close'),
+                onPressed: () {
+                  saveDeliAdd();
+                },
+              ),
+              TextButton(
+                child: Text('Close'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }

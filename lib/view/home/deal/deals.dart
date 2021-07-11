@@ -122,67 +122,62 @@ class _DealsState extends State<Deals> {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: list.length,
                   itemBuilder: (_, i) {
-                    return list.length != 0
-                        ? InkWell(
-                            onTap: () {
-                              Get.to(() => ProductDetailsPage(
-                                  prdTypeId: '1',
-                                  prdId: '${list[i]!.yJProductID}'));
-                            },
-                            child: Card(
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(5, 0, 10, 10),
-                                child: Row(
+                    return InkWell(
+                      onTap: () {
+                        Get.to(() => ProductDetailsPage(
+                            prdTypeId: '1', prdId: '${list[i]!.yJProductID}'));
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(5, 0, 10, 10),
+                          child: Row(
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl:
+                                    "$imgBaseUrl${list[i]!.productImageURL}",
+                                height: 0.2.sh,
+                                width: 0.3.sw,
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    Image.network(imageNotFound),
+                              ),
+                              SizedBox(
+                                width: 0.22.sw,
+                              ),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CachedNetworkImage(
-                                      imageUrl:
-                                          "$imgBaseUrl${list[i]!.productImageURL}",
-                                      height: 0.2.sh,
-                                      width: 0.3.sw,
-                                      placeholder: (context, url) => Center(
-                                          child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) =>
-                                          Image.network(imageNotFound),
-                                    ),
-                                    SizedBox(
-                                      width: 0.22.sw,
-                                    ),
-                                    Flexible(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('${list[i]!.productName}',
-                                              // overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
-                                                  color: Colors.blueAccent)),
-                                          Text('${list[i]!.price}',
-                                              // overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontSize: 15, color: red)),
-                                          Text('${list[i]!.sellerName}',
-                                              // overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontSize: 15, color: grey)),
-                                          list[i]!.perks != ''
-                                              ? Text(
-                                                  'Shipping --- ${list[i]!.perks}',
-                                                  // overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: grey))
-                                              : SizedBox(),
-                                        ],
-                                      ),
-                                    ),
+                                    Text('${list[i]!.productName}',
+                                        // overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.blueAccent)),
+                                    Text('${list[i]!.price}',
+                                        // overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 15, color: red)),
+                                    Text('${list[i]!.sellerName}',
+                                        // overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 15, color: grey)),
+                                    list[i]!.perks != ''
+                                        ? Text('${list[i]!.perks}',
+                                            // overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: greenColor))
+                                        : SizedBox(),
                                   ],
                                 ),
                               ),
-                            ),
-                          )
-                        : customText('Data not avaiable', red, 20);
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
                   }))
             ],
           ),
@@ -202,8 +197,9 @@ class _DealsState extends State<Deals> {
 
   void _getDealList(catId) async {
     showProgress(context);
-    list.value =
+    var result =
         await networkcallService.getDealsAPICall(_catId, _pageIndex.toString());
+    list.addAll(result);
     hideProgress(context);
   }
 }

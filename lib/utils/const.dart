@@ -34,8 +34,8 @@ Widget customRichText(String text1, String text2, Color color1, Color color2) {
   return RichText(
     text: TextSpan(
       children: <TextSpan>[
-        TextSpan(text: text1, style: TextStyle(color: color1, fontSize: 25)),
-        TextSpan(text: text2, style: TextStyle(color: color2, fontSize: 25)),
+        TextSpan(text: text1, style: TextStyle(color: color1, fontSize: 30)),
+        TextSpan(text: text2, style: TextStyle(color: color2, fontSize: 30)),
       ],
     ),
     textScaleFactor: 0.5,
@@ -54,6 +54,7 @@ Widget customUnderlineText(String text, Color color, double size,
 }
 
 /*-------------------------images-------------------------*/
+final yj = 'assets/yj.png';
 final logoImage = 'assets/logo.png';
 final altezerLogoImage = 'assets/AltezerLogo.png';
 final appbarImg = 'assets/appbarImg.png';
@@ -195,6 +196,12 @@ final String getOrderDetails = '$_baseUrl/GetMyOrderDetails.ashx';
 final String orderTracking = '$_baseUrl/GetOrderTrackingInfoByOrderId.ashx';
 final String orderCancelByItemId = '$_baseUrl/OrderCancelByLineItemId.ashx';
 final String orderInvoice = '$_baseUrl/ViewInvoiceOrderDetailsByOrderID.ashx';
+final String addAddressInOrder =
+    '$_baseUrl/AddDeliveryAddressOfOrderDetails.ashx';
+final String regListDD = '$_baseUrl/GetUserRegistryListById.ashx';
+final String addItemtoDD = '$_baseUrl/AddItemToListOfRegstryUser.ashx';
+final String payment = '$_baseUrl/PurchaseOnlineOrderWithOffline.ashx';
+final String confpayment = '$_baseUrl/GetOnlineOrderConfirmationByOrderId.ashx';
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";

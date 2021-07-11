@@ -230,7 +230,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                       'Add bank Account(s)',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: red,
+                          color: blue,
                           fontSize: 18),
                     ),
                   ),
@@ -410,8 +410,9 @@ class _AccountSettingsState extends State<AccountSettings> {
                                       element.monthDay == dropdownValueDate)
                                   .toList()
                                   .first
-                                  .monthDay
+                                  .monthDayId
                                   .toString();
+                              print('dateId --$dateId');
                             },
                             items: _monthDayList.map((value) {
                               return DropdownMenuItem<String>(
@@ -451,7 +452,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                                       element.monthNumber == dropdownValueMonth)
                                   .toList()
                                   .first
-                                  .monthNumber
+                                  .monthNumberId
                                   .toString();
                               print('month id  -- $monthId');
                             },
@@ -955,8 +956,10 @@ class _AccountSettingsState extends State<AccountSettings> {
       print('thirdQuestionId -${data.thirdQuestionId}');
 */
       dropdownValueCountry = data.countryName;
-      dropdownValueDate = data.dayName.toString();
-      dropdownValueMonth = data.monthName.toString();
+      dropdownValueDate =
+          data.dayName.toString(); // == '' ? '01' : data.dayName.toString();
+      dropdownValueMonth = data.monthName
+          .toString(); // == '' ? '01' : data.monthName.toString();
       dropdownValueYear = data.yearName;
       dropdownValueGender = data.genderName;
       qs1Value = data.firstQuestion;
@@ -1002,31 +1005,30 @@ class _AccountSettingsState extends State<AccountSettings> {
     print(qs2Id.toString());
     print(qs1Id.toString());
     var _updateInfo = await networkcallService.getUpdateUserInfoAPICall(
-      sp.getUserId().toString(),
-      firstNameController.text,
-      lastNameController.text,
-      emailcontroller.text,
-      genderID.toString(),
-      phoneController.text,
-      countryId.toString(),
-      dateId.toString(),
-      monthId.toString(),
-      yearId.toString(),
-      qs1Id.toString(),
-      qs2Id.toString(),
-      qs3Id.toString(),
-      ans1Controller.text,
-      ans2Controller.text,
-      ans3Controller.text,
-      currentEmail,
-      currentPhone,
+      a1: ans1Controller.text,
+      a2: ans2Controller.text,
+      a3: ans3Controller.text,
+      country: countryId.toString(),
+      currentEmail: currentEmail,
+      currentPhoneNo: currentPhone,
+      date: dateId.toString(),
+      email: emailcontroller.text,
+      fname: firstNameController.text,
+      lnamae: lastNameController.text,
+      month: monthId.toString(),
+      phoneNo: phoneController.text,
+      q1Id: qs1Id.toString(),
+      q2Id: qs2Id.toString(),
+      q3Id: qs3Id.toString(),
+      sex: genderID.toString(),
+      userId: sp.getUserId().toString(),
+      year: yearId.toString(),
     );
     hideProgress(context);
     if (_updateInfo!) {
       sp.setUserEmail(emailcontroller.text);
       sp.setLastName(lastNameController.text);
       sp.setFirstName(firstNameController.text);
-      Get.back();
     }
   }
 
@@ -1062,7 +1064,6 @@ class _AccountSettingsState extends State<AccountSettings> {
   }
 
   void _saveBank({required String custBankId}) async {
-    print('brah --  ${branchID.toString()}');
     showProgress(context);
     var result = await networkcallService.saveBankDetailsAPICall(
         accNickNameController.text,
@@ -1096,7 +1097,7 @@ class _AccountSettingsState extends State<AccountSettings> {
     showProgress(context);
     _addBankList.value = await networkcallService
         .getAddBankListAPICall(sp.getUserId().toString());
-hideProgress(context);
+    hideProgress(context);
     if (_addBankList.length > 0) {
       _addBankList.value =
           _addBankList.where((element) => element.accountInfo != null).toList();
@@ -1259,7 +1260,7 @@ hideProgress(context);
                                   .first
                                   .customerBankBranchId
                                   .toString();
-                              print('customerBankBranchId = $bankBranchValue');
+                              print('customerBankBranchId = $branchID');
                             },
                             items: _branchData.map((value) {
                               return DropdownMenuItem<String>(
@@ -1419,10 +1420,27 @@ hideProgress(context);
             TextButton(
               child: const Text('Save and Close'),
               onPressed: () {
-                if (data == null)
+                /*if (data == null) {
+                  print('null ?');
+                  print('data $data');
                   _saveBank(custBankId: '0');
-                else
-                  _saveBank(custBankId: data.customerBankAccountId.toString());
+                } else */
+                // print('else ${data!.customerBankAccountId.toString()}');
+                if (accNumberController.text != repetaccNumberController.text) {
+                  showToast('The bank account numbers not matched', red);
+                } else if (branchID == null) {
+                  showToast('Select a bank branch', red);
+                } else if (bankID == null) {
+                  showToast('Select a bank', red);
+                } else if (stateId == null) {
+                  showToast('Select a state', red);
+                } else {
+                  // print('else ${data.customerBankAccountId.toString()}');
+                  _saveBank(
+                      custBankId: data == null
+                          ? '0'
+                          : data.customerBankAccountId.toString());
+                }
               },
             ),
             TextButton(

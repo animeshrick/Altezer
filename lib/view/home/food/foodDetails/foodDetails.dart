@@ -1,4 +1,5 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/bannerImage.dart';
 import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getGategoryForStores.dart';
 import 'package:altezar/models/getSortByData.dart';
@@ -35,6 +36,8 @@ class _FoodDetailsState extends State<FoodDetails> {
   List<GetSortByData> _sortingDataList = [];
 
   var _prdList = <Productlist>[].obs;
+  var result =
+      BannerImage(message: '', imgCover: '', imgLogo: '', status: '').obs;
 
   int _pageIndex = 0;
   final _listContr = ScrollController();
@@ -46,6 +49,7 @@ class _FoodDetailsState extends State<FoodDetails> {
       _getSortData();
       cartBox();
       _getPrdData();
+      _getBannerImage();
     });
 
     _listContr.addListener(() {
@@ -55,6 +59,11 @@ class _FoodDetailsState extends State<FoodDetails> {
         _getPrdData();
       }
     });
+  }
+
+  void _getBannerImage() async {
+    result.value = (await networkcallService
+        .getBannerImageAPICall(widget.storeId.toString()))!;
   }
 
   @override
@@ -71,7 +80,14 @@ class _FoodDetailsState extends State<FoodDetails> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Image.asset(banner7),
+                    //Image.asset(banner7),
+                    CachedNetworkImage(
+                      imageUrl: "$imgBaseUrl${result.value.imgCover}",
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) =>
+                          Image.network(imageNotFound),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
@@ -262,11 +278,11 @@ class _FoodDetailsState extends State<FoodDetails> {
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       color: Colors.blue)),
-                                              Text(
-                                                  '${_prdList[i].size} ${_prdList[i].perks}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: grey)),
+                                              customRichText(
+                                                  '${_prdList[i].size} ',
+                                                  '${_prdList[i].perks}',
+                                                  grey,
+                                                  greenColor),
                                               RatingBarIndicator(
                                                 rating: _prdList[i]
                                                     .ratingCount

@@ -1,119 +1,97 @@
 class InvoiceModel {
-  InvoiceModel({
-    required this.message,
-    required this.status,
-    required this.orderInvoiceInfo,
-    required this.orderInvoiceLineItem,
-  });
+    InvoiceModel({
+        required this.message,
+        required this.status,
+        required this.orderInvoiceInfo,
+        required this.orderInvoiceLineItem,
+    });
 
-  final String message;
-  final String status;
-  final List<OrderInvoiceInfo> orderInvoiceInfo;
-  final List<OrderInvoiceLineItem> orderInvoiceLineItem;
+    final String message;
+    final String status;
+    final List<OrderInvoiceInfo> orderInvoiceInfo;
+    final List<OrderInvoiceLineItem> orderInvoiceLineItem;
 
-  factory InvoiceModel.fromJson(Map<String, dynamic> json) => InvoiceModel(
+    factory InvoiceModel.fromJson(Map<String, dynamic> json) => InvoiceModel(
         message: json["message"],
         status: json["status"],
-        orderInvoiceInfo: List<OrderInvoiceInfo>.from(
-            json["OrderInvoiceInfo"].map((x) => OrderInvoiceInfo.fromJson(x))),
-        orderInvoiceLineItem: List<OrderInvoiceLineItem>.from(
-            json["OrderInvoiceLineItem"]
-                .map((x) => OrderInvoiceLineItem.fromJson(x))),
-      );
+        orderInvoiceInfo: List<OrderInvoiceInfo>.from(json["OrderInvoiceInfo"].map((x) => OrderInvoiceInfo.fromJson(x))),
+        orderInvoiceLineItem: List<OrderInvoiceLineItem>.from(json["OrderInvoiceLineItem"].map((x) => OrderInvoiceLineItem.fromJson(x))),
+    );
 }
 
 class OrderInvoiceInfo {
-  OrderInvoiceInfo({
-    required this.paymentMethod,
-    required this.invoiceId,
-    required this.invoiceDate,
-    required this.orderDate,
-    required this.total,
-    required this.tax,
-    required this.invoiceTotal,
-    required this.shippingAddress,
-    required this.invoiceSubTotal,
-    required this.shippingAndHandlingCost,
-    required this.invoiceTotal1,
-    required this.orderNumber,
-    required this.serviceFee,
-    required this.couponDiscount,
-  });
+    OrderInvoiceInfo({
+        required this.paymentMethod,
+        required this.invoiceId,
+        required this.invoiceDate,
+        required this.orderDate,
+        required this.total,
+        required this.tax,
+        required this.invoiceTotal,
+        required this.shippingAddress,
+        required this.invoiceSubTotal,
+        required this.shippingAndHandlingCost,
+        required this.invoiceTotal1,
+        required this.orderNumber,
+        required this.serviceFee,
+        required this.couponDiscount,
+    });
 
-  final String paymentMethod;
-  final int invoiceId;
-  final String invoiceDate;
-  final String orderDate;
-  final double total;
-  final double tax;
-  final double invoiceTotal;
-  final String shippingAddress;
-  final double invoiceSubTotal;
-  final double shippingAndHandlingCost;
-  final double invoiceTotal1;
-  final int orderNumber;
-  final double serviceFee;
-  final int couponDiscount;
+    final String paymentMethod;
+    final int invoiceId;
+    final String invoiceDate;
+    final String orderDate;
+    final double total;
+    final double tax;
+    final double invoiceTotal;
+    final String shippingAddress;
+    final double invoiceSubTotal;
+    final double shippingAndHandlingCost;
+    final double invoiceTotal1;
+    final int orderNumber;
+    final double serviceFee;
+    final double couponDiscount;
 
-  factory OrderInvoiceInfo.fromJson(Map<String, dynamic> json) =>
-      OrderInvoiceInfo(
+    factory OrderInvoiceInfo.fromJson(Map<String, dynamic> json) => OrderInvoiceInfo(
         paymentMethod: json["Payment_Method"],
         invoiceId: json["Invoice_Id"],
         invoiceDate: json["InvoiceDate"],
         orderDate: json["OrderDate"],
-        total: json["Total"].toDouble(),
+        total: json["Total"],
         tax: json["Tax"],
-        invoiceTotal: json["Invoice_Total"].toDouble(),
+        invoiceTotal: json["Invoice_Total"],
         shippingAddress: json["Shipping_Address"],
         invoiceSubTotal: json["Invoice_SubTotal"],
         shippingAndHandlingCost: json["Shipping_And_Handling_Cost"],
-        invoiceTotal1: json["Invoice_Total1"].toDouble(),
+        invoiceTotal1: json["Invoice_Total1"],
         orderNumber: json["Order_Number"],
-        serviceFee: json["Service_Fee"].toDouble(),
+        serviceFee: json["Service_Fee"],
         couponDiscount: json["Coupon_Discount"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "Payment_Method": paymentMethod,
-        "Invoice_Id": invoiceId,
-        "InvoiceDate": invoiceDate,
-        "OrderDate": orderDate,
-        "Total": total,
-        "Tax": tax,
-        "Invoice_Total": invoiceTotal,
-        "Shipping_Address": shippingAddress,
-        "Invoice_SubTotal": invoiceSubTotal,
-        "Shipping_And_Handling_Cost": shippingAndHandlingCost,
-        "Invoice_Total1": invoiceTotal1,
-        "Order_Number": orderNumber,
-        "Service_Fee": serviceFee,
-        "Coupon_Discount": couponDiscount,
-      };
+    );
 }
 
 class OrderInvoiceLineItem {
-  OrderInvoiceLineItem({
-    required this.quantity,
-    required this.productName,
-    required this.productPurchasePrice,
-    required this.clientId,
-    required this.individualSellerUserId,
-    required this.productOrderId,
-    required this.isItemBagged,
-    required this.orderedQuantity,
-  });
+    OrderInvoiceLineItem({
+        required this.quantity,
+        required this.productName,
+        required this.productPurchasePrice,
+        required this.clientId,
+        required this.individualSellerUserId,
+        required this.productOrderId,
+        required this.isItemBagged,
+        required this.orderedQuantity,
+    });
 
-  final int quantity;
-  final String productName;
-  final int productPurchasePrice;
-  final int clientId;
-  final int individualSellerUserId;
-  final int productOrderId;
-  final int isItemBagged;
-  final int orderedQuantity;
+    final int quantity;
+    final String productName;
+    final double productPurchasePrice;
+    final int clientId;
+    final int individualSellerUserId;
+    final int productOrderId;
+    final int isItemBagged;
+    final int orderedQuantity;
 
-  factory OrderInvoiceLineItem.fromJson(Map<String, dynamic> json) =>
-      OrderInvoiceLineItem(
+    factory OrderInvoiceLineItem.fromJson(Map<String, dynamic> json) => OrderInvoiceLineItem(
         quantity: json["Quantity"],
         productName: json["product_name"],
         productPurchasePrice: json["Product_Purchase_Price"],
@@ -122,5 +100,5 @@ class OrderInvoiceLineItem {
         productOrderId: json["Product_Order_Id"],
         isItemBagged: json["is_Item_bagged"],
         orderedQuantity: json["ordered_quantity"],
-      );
+    );
 }

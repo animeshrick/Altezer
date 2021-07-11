@@ -82,7 +82,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                       errorWidget: (context, url, error) =>
                           Image.network(imageNotFound),
                     ),
-                    // Image.asset(banner5),
                     SizedBox(
                       height: 15,
                     ),
@@ -278,18 +277,20 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                                     fontSize: 16,
                                                     color: Colors.blue),
                                               ),
-                                              _prdList[i].size == '' &&
-                                                      _prdList[i].perks == ''
-                                                  ? Text(
-                                                      '${_prdList[i].size} ${_prdList[i].perks}',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: grey),
-                                                    )
-                                                  : customText(
-                                                      'Size & Perks not available',
-                                                      grey,
-                                                      16),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              customRichText(
+                                                  '${_prdList[i].size}',
+                                                  '${_prdList[i].perks}',
+                                                  grey,
+                                                  greenColor),
+
+                                              // Text(
+                                              //   '${_prdList[i].size} ${_prdList[i].perks}',
+                                              //   style: TextStyle(
+                                              //       fontSize: 16, color: grey),
+                                              // ),
                                               RatingBarIndicator(
                                                 rating: _prdList[i]
                                                     .ratingCount

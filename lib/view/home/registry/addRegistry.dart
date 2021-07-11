@@ -469,7 +469,15 @@ class _AddRegistryState extends State<AddRegistry> {
               TextButton(
                 child: Text('Save and Close'),
                 onPressed: () {
-                  _saveNewRegistry();
+                  if (listNameController.text.isEmpty) {
+                    showToast('Please enter a Name', red);
+                  } else if (benefitNameController.text.isEmpty) {
+                    showToast('Please enter benefit Name', red);
+                  } else if (_registryTypeId == null) {
+                    showToast('Please select a Type', red);
+                  } else {
+                    _saveNewRegistry();
+                  }
                 },
               ),
               TextButton(
@@ -516,7 +524,7 @@ class _AddRegistryState extends State<AddRegistry> {
     var resullt = await networkcallService.getAddRegistryAPICall(
       add: addressController.text,
       benifitName: benefitNameController.text,
-      eventDate: selectedDate.toString(),
+      eventDate: '12/12/2012',//selectedDate.toString(),
       isPrivate: valueFirst == false ? '0' : '1',
       name: listNameController.text,
       typeID: _registryTypeId.toString(),

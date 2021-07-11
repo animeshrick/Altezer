@@ -22,6 +22,7 @@ class _OnTapStoreState extends State<OnTapStore> {
   String? _groceryStateValue, _groceryStateId;
   var list = <StoreList>[].obs;
   List<GetGroceryStateList> _groceryStateList = [];
+  
 
   @override
   void initState() {
@@ -145,20 +146,20 @@ class _OnTapStoreState extends State<OnTapStore> {
               SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                // height: 1.0.sh,
-                child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: list.length,
-                    itemBuilder: (context, i) {
-                      return list.length > 0
-                          ? Card(
+                  Obx(()=> SizedBox(
+                      // height: 1.0.sh,
+                      child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: list.length,
+                          itemBuilder: (context, i) {
+                            return Card(
                               color: grey,
                               child: InkWell(
                                 onTap: () => Get.to(() => StoreDetailsPage(
@@ -182,10 +183,9 @@ class _OnTapStoreState extends State<OnTapStore> {
                                   ],
                                 ),
                               ),
-                            )
-                          : customText('No data available now', red, 20);
-                    }),
-              )
+                            );
+                          }),
+                    ))
             ],
           ),
         ),
@@ -208,11 +208,9 @@ class _OnTapStoreState extends State<OnTapStore> {
 
   void storeList() async {
     showProgress(context);
-    // print('ll ${list.length}');
     list.value = await networkcallService.getStoreListAPICall(
         _groceryStateId == null ? '0' : _groceryStateId.toString(),
         searchController.text != '' ? searchController.text : '');
-    setState(() {});
     hideProgress(context);
   }
 }

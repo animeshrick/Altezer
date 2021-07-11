@@ -31,9 +31,10 @@ class _ShoppingState extends State<Shopping> {
   List<CategoriesList> _catList = [];
   List<GetSubCateProductsList> _subCatList = [];
   List<GetSortByData> _sortingDataList = [];
-  List<ProductListData> list = [];
+  // List<ProductListData> list = [];
 
-  Future<List<ProductListData>?>? _prodFuture;
+  var _prdList = <ProductListData>[].obs;
+  // Future<List<ProductListData>?>? _prodFuture;
   Future<List<LatestDealsList>?>? _latestDealsFuture;
   final _listContr = ScrollController();
   int _pageIndex = 0;
@@ -58,7 +59,7 @@ class _ShoppingState extends State<Shopping> {
     });
 
     _listContr.addListener(() {
-      if (_listContr.position.atEdge && _catId != null) {
+      if (_listContr.position.pixels==_listContr.position.maxScrollExtent && _catId != null) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
         _getProductData();
@@ -126,10 +127,10 @@ class _ShoppingState extends State<Shopping> {
                       onChanged: (String? value) {
                         setState(() {
                           _categoriesName = value!;
-                          list = [];
-                        //  _prodFuture. = null;---------
+                          // list = [];
+                          //  _prodFuture. = null;---------
                         });
-                        
+
                         _catId = _catList
                             .where(
                                 (element) => element.prdName == _categoriesName)
@@ -138,7 +139,8 @@ class _ShoppingState extends State<Shopping> {
                             .prdId
                             .toString();
                         _subCatName = null;
-                        _catId == 22.toString()
+                        _subCatId = null;
+                        _catId == '22'
                             ? Get.to(() => Grocery())?.then((value) {
                                 _catId = null;
                                 _categoriesName = null;
@@ -183,8 +185,6 @@ class _ShoppingState extends State<Shopping> {
                         setState(() {
                           _subCatName = value!;
                         });
-                        list = [];
-                         _prodFuture = null;
                         _subCatId = _subCatList
                             .where((element) => element.prdName == _subCatName)
                             .toList()
@@ -229,8 +229,6 @@ class _ShoppingState extends State<Shopping> {
                         setState(() {
                           _sortingValue = value!;
                         });
-                        list = [];
-                        _prodFuture = null;
                         _sortId = _sortingDataList
                             .where(
                                 (element) => element.sortName == _sortingValue)
@@ -263,7 +261,10 @@ class _ShoppingState extends State<Shopping> {
                   height: 0.07.sh,
                   width: 1.sw,
                   child: button(() async {
-                    list.clear();
+                    // list.clear();
+                    if (_catId == null) {
+                      _catId = '0';
+                    }
                     showProgress(context);
                     await _getProductData();
                     hideProgress(context);
@@ -367,132 +368,102 @@ class _ShoppingState extends State<Shopping> {
               SizedBox(
                 height: 10,
               ),
-              if (_catId != null || searchController.text != '')
-                FutureBuilder<List<ProductListData>?>(
-                    future: _prodFuture,
-                    builder: (context, snapshot) {
-                      // print('data');
-                      if (snapshot.hasData) {
-                        print('length- ${list.length}');
-                        list.addAll(snapshot.data!);
-                        return list.length == 0
-                            ? Center(child: Text('Data not available'))
-                            : ListView.separated(
-                                separatorBuilder: (_, __) => SizedBox(
-                                      height: 5,
-                                    ),
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: list.length,
-                                itemBuilder: (_, i) {
-                                  return Column(
+              if (_catId != null)
+                Obx(() {
+                  return ListView.separated(
+                      separatorBuilder: (_, __) => SizedBox(
+                            height: 5,
+                          ),
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: _prdList.length,
+                      itemBuilder: (_, i) {
+                        return Column(
+                          children: [
+                            Row(
+                              // mainAxisAlignment:
+                              //     MainAxisAlignment.spaceBetween,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: "$imgBaseUrl${_prdList[i].prdImg}",
+                                  width: 0.3.sw,
+                                  height: 0.2.sh,
+                                  placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator()),
+                                  errorWidget: (context, url, error) =>
+                                      Image.network(imageNotFound),
+                                ),
+                                SizedBox(
+                                  width: 0.15.sw,
+                                ),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        // mainAxisAlignment:
-                                        //     MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          CachedNetworkImage(
-                                            imageUrl:
-                                                "$imgBaseUrl${list[i].prdImg}",
-                                            width: 0.3.sw,
-                                            height: 0.2.sh,
-                                            placeholder: (context, url) => Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                            errorWidget: (context, url,
-                                                    error) =>
-                                                Image.network(imageNotFound),
-                                          ),
-                                          SizedBox(
-                                            width: 0.15.sw,
-                                          ),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${list[i].prdFullName}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: blue),
-                                                ),
-                                                Text(
-                                                  'Price - ${list[i].price}',
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: green),
-                                                ),
-                                                list[i].size == null
-                                                    ? Text(
-                                                        'Size not available | Seller- ${list[i].sellerName}')
-                                                    : Text(
-                                                        'Size- ${list[i].size} | Seller- ${list[i].sellerName} ',
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: grey),
-                                                      ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    button(() {
-                                                      Get.to(() =>
-                                                          ProductDetailsPage(
-                                                              prdTypeId: '1',
-                                                              prdId:
-                                                                  '${list[i].yjprdId}'));
-                                                    }, 'Details', green, white),
-                                                    sp.isLogin() == true
-                                                        ? cartButton(() {
-                                                            _addToCart(
-                                                                '${list[i].yjprdId}',
-                                                                '${list[i].clientId}',
-                                                                'Products',
-                                                                '',
-                                                                '',
-                                                                1.toString(),
-                                                                '',
-                                                                '',
-                                                                sp
-                                                                    .getUserId()
-                                                                    .toString());
-                                                          },
-                                                            'Add',
-                                                            priceTextColor,
-                                                            white)
-                                                        : cartButton(
-                                                            () => Get.to(
-                                                                () => SignUp()),
-                                                            'Add',
-                                                            priceTextColor,
-                                                            white),
-                                                  ],
-                                                ),
-                                              ],
+                                      Text(
+                                        '${_prdList[i].prdFullName}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: blue),
+                                      ),
+                                      Text(
+                                        'Price - ${_prdList[i].price}',
+                                        style: TextStyle(
+                                            fontSize: 14, color: green),
+                                      ),
+                                      _prdList[i].size == null
+                                          ? Text(' | ${_prdList[i].sellerName}')
+                                          : Text(
+                                              '${_prdList[i].size} | ${_prdList[i].sellerName} ',
+                                              style: TextStyle(
+                                                  fontSize: 14, color: grey),
                                             ),
-                                          ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          button(() {
+                                            Get.to(() => ProductDetailsPage(
+                                                prdTypeId: '1',
+                                                prdId:
+                                                    '${_prdList[i].yjprdId}'));
+                                          }, 'Details', green, white),
+                                          sp.isLogin() == true
+                                              ? cartButton(() {
+                                                  _addToCart(
+                                                      '${_prdList[i].yjprdId}',
+                                                      '${_prdList[i].clientId}',
+                                                      'Products',
+                                                      '',
+                                                      '',
+                                                      1.toString(),
+                                                      '',
+                                                      '',
+                                                      sp
+                                                          .getUserId()
+                                                          .toString());
+                                                }, 'Add', priceTextColor, white)
+                                              : cartButton(
+                                                  () => Get.to(() => SignUp()),
+                                                  'Add',
+                                                  priceTextColor,
+                                                  white),
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
                                     ],
-                                  );
-                                });
-                      } else if (snapshot.hasError) {
-                        return Center(
-                            child: customText('${snapshot.error}', red, 20.0));
-                      } else
-                        return Center(
-                          child: CupertinoActivityIndicator(
-                            radius: 25,
-                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
                         );
-                    })
+                      });
+                })
             ],
           ),
         ),
@@ -511,8 +482,10 @@ class _ShoppingState extends State<Shopping> {
 
   void _getSubCat() async {
     showProgress(context);
+
     _subCatList = (await networkcallService.getSubCatAPICall(_catId!))!;
     hideProgress(context);
+    // print("${_subCatList.length} oo");
     // setState(() {});
     _getProductData();
   }
@@ -528,15 +501,15 @@ class _ShoppingState extends State<Shopping> {
   }
 
   Future _getProductData() async {
-    _prodFuture = networkcallService.getProductsAPICall(
+    showProgress(context);
+    _prdList.value = (await networkcallService.getProductsAPICall(
         _catId ?? '0',
         searchController.text,
         _subCatId ?? '0',
         _sortId ?? '0',
-        _pageIndex.toString());
-    setState(() {
-      print('done');
-    });
+        _pageIndex.toString()))!;
+    setState(() {});
+    hideProgress(context);
   }
 
   void _addToCart(

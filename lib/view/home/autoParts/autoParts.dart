@@ -39,8 +39,8 @@ class _AutoPartsState extends State<AutoParts> {
   @override
   void initState() {
     super.initState();
-    // _autoPartsFuture =
-    //     networkcallService.getAutoPartList('', '0', '0', '0', '0');
+    _autoPartsFuture =
+        networkcallService.getAutoPartList('', '0', '0', '0', '0');
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
@@ -313,25 +313,25 @@ class _AutoPartsState extends State<AutoParts> {
                                                             .ellipsis,
                                                         style: TextStyle(
                                                             fontSize: 16,
-                                                            color:
-                                                                Colors.green))
+                                                            color: grey))
                                                     : Text(
-                                                        'Size not available | By: ${list[i].sellerName}',
+                                                        ' | By: ${list[i].sellerName}',
                                                         // overflow: TextOverflow
                                                         //     .ellipsis,
                                                         style: TextStyle(
                                                             fontSize: 16,
-                                                            color:
-                                                                Colors.green)),
+                                                            color: grey)),
                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
                                                     button(() {
+                                                      // print(
+                                                      //     'frf ${list[i].yjProductId}');
                                                       Get.to(() =>
                                                           ProductDetailsPage(
-                                                            prdTypeId: '1',
+                                                            prdTypeId: '2',
                                                             prdId:
                                                                 '${list[i].yjProductId}',
                                                           ));

@@ -1,4 +1,5 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/bannerImage.dart';
 import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/getGategoryForStores.dart';
 import 'package:altezar/models/getSortByData.dart';
@@ -36,6 +37,8 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
   final _listContr = ScrollController();
   int _pageIndex = 0;
 
+  var result =
+      BannerImage(message: '', imgCover: '', imgLogo: '', status: '').obs;
   // Future<List<Productlist>>? _storeDetailFuture;
   @override
   void initState() {
@@ -44,7 +47,8 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
       _getData();
       _getSortData();
       cartBox();
-       _getPrdData();
+      _getPrdData();
+      _getBannerImage();
     });
 
     _listContr.addListener(() {
@@ -54,8 +58,6 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
         _getPrdData();
       }
     });
-
-   
   }
 
   @override
@@ -72,7 +74,14 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Image.asset(banner5),
+                    CachedNetworkImage(
+                      imageUrl: "$imgBaseUrl${result.value.imgCover}",
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) =>
+                          Image.network(imageNotFound),
+                    ),
                     SizedBox(
                       height: 15,
                     ),
@@ -268,17 +277,11 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.blue)),
-                                              _prdList[i].size != ''
-                                                  ? Text(
-                                                      '${_prdList[i].size} ${_prdList[i].perks}',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: grey))
-                                                  : Text(
-                                                      'Size not available ${_prdList[i].perks}',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: grey)),
+                                              customRichText(
+                                                  '${_prdList[i].size}',
+                                                  '${_prdList[i].perks}',
+                                                  grey,
+                                                  greenColor),
                                               RatingBarIndicator(
                                                 rating: _prdList[i]
                                                     .ratingCount
@@ -409,6 +412,11 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
         _sortingDataList = sortResult;
       });
     }
+  }
+
+  void _getBannerImage() async {
+    result.value = (await networkcallService
+        .getBannerImageAPICall(widget.storeId.toString()))!;
   }
 
   void _getPrdData() async {

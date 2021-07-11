@@ -1,4 +1,5 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/RegistryListDropdownModel.dart';
 import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/productDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
@@ -30,7 +31,8 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool pressed = false;
   TextEditingController quantityController = TextEditingController();
-  // var _cartData = <CartBoxData>[].obs;
+  String? _regListVal, _regListId;
+  List<RegistryListData> _regList = [];
 
   Future<ProdDetailModel?>? _dealDetailFuture;
   void initState() {
@@ -39,12 +41,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         networkcallService.getAllPrdDetails(widget.prdTypeId, widget.prdId);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       cartBox();
+      registry();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('ProductDetailsPage build');
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(50.0), child: detailsPageAppBar()),
@@ -119,32 +121,30 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text(
-                              '${detail.inStockOrOutOfStock} - ${detail.inStock}',
-                              style: TextStyle(
-                                  color: Colors.green[700], fontSize: 19)),
+                          detail.inStock != null
+                              ? Text(
+                                  '${detail.inStockOrOutOfStock} - ${detail.inStock}',
+                                  style: TextStyle(
+                                      color: Colors.green[700], fontSize: 19))
+                              : Text('${detail.inStockOrOutOfStock}',
+                                  style: TextStyle(
+                                      color: Colors.green[700], fontSize: 19)),
                           SizedBox(
                             height: 10,
                           ),
                           detail.size != null
-                              ? detail.size != ''
-                                  ? Text('Size - ${detail.size}',
-                                      style: TextStyle(fontSize: 19))
-                                  : Text('Size not available for that item',
-                                      style: TextStyle(fontSize: 19))
-                              : Text('Size not available for that item',
+                              ? Text('Size - ${detail.size}',
+                                  style: TextStyle(fontSize: 19))
+                              : Text('Size - All Size(s)',
                                   style: TextStyle(fontSize: 19)),
                           SizedBox(
                             height: 10,
                           ),
-                          detail.productColorStyleType != ''
-                              ? detail.productColorStyleType != null
-                                  ? Text(
-                                      'Color - ${detail.productColorStyleType}',
-                                      style: TextStyle(fontSize: 19))
-                                  : Text('Color not available for that item',
-                                      style: TextStyle(fontSize: 19))
-                              : Text('Color not available for that item',
+                          detail.productColorStyleType != null &&
+                                  detail.productColorStyleType != ''
+                              ? Text('Color - ${detail.productColorStyleType}',
+                                  style: TextStyle(fontSize: 19))
+                              : Text('Colors - ',
                                   style: TextStyle(fontSize: 19)),
                           SizedBox(
                             height: 20,
@@ -235,6 +235,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         ColoredBox(
                                           color: white,
                                           child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Select List or Regitry and click add item',
@@ -256,8 +258,75 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              dropDownWidget(
-                                                  'Select Your List or Regitry'),
+                                              Card(
+                                                color: Colors.grey[300],
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child:
+                                                      DropdownButtonFormField<
+                                                          String>(
+                                                    validator: (value) => value ==
+                                                            null
+                                                        ? 'Enter your List or Registry'
+                                                        : null,
+                                                    value: _regListVal,
+                                                    isExpanded: true,
+                                                    hint: Padding(
+                                                      padding: EdgeInsets.only(
+                                                        left: 15.0,
+                                                      ),
+                                                      child: Text(
+                                                          'Choose your List or Registry'),
+                                                    ),
+                                                    icon: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 8.0),
+                                                      child: CircleAvatar(
+                                                          radius: 15,
+                                                          backgroundColor: grey,
+                                                          child: Icon(
+                                                            Icons
+                                                                .keyboard_arrow_down,
+                                                            color: white,
+                                                          )),
+                                                    ),
+                                                    style: const TextStyle(
+                                                        color: Colors.black),
+                                                    onChanged:
+                                                        (String? newValue) {
+                                                      setState(() {
+                                                        _regListVal = newValue!;
+                                                      });
+                                                      _regListId = _regList
+                                                          .where((element) =>
+                                                              element
+                                                                  .registryName ==
+                                                              _regListVal)
+                                                          .toList()
+                                                          .first
+                                                          .registryId
+                                                          .toString();
+                                                      print(
+                                                          'stateId $_regListId');
+                                                    },
+                                                    items: _regList.map<
+                                                        DropdownMenuItem<
+                                                            String>>((value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value:
+                                                            value.registryName,
+                                                        child: Text(
+                                                          value.registryName,
+                                                          style: TextStyle(
+                                                              fontSize: 18),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ),
+                                              ),
                                               SizedBox(
                                                 height: 10,
                                               ),
@@ -310,8 +379,21 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                   SizedBox(
                                                       height: 0.05.sh,
                                                       width: 0.3.sw,
-                                                      child: button(
-                                                          () {},
+                                                      child: button(() {
+                                                        // print(
+                                                        //     'dd ${detail.yjProductId.toString()}');
+                                                        if (_regListId ==
+                                                            null) {
+                                                          showToast(
+                                                              'Choose your List/Registry',
+                                                              red);
+                                                        } else {
+                                                          addItemToReg(
+                                                              pID: detail
+                                                                  .yjProductId
+                                                                  .toString());
+                                                        }
+                                                      },
                                                           'Add item',
                                                           Color(0xffE3EDF3),
                                                           black)),
@@ -589,10 +671,27 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     hideProgress(context);
   }
 
-  // void _cartBox() async {
-  //   if (sp.getUserId() != null)
-  //     _cartData.value = (await networkcallService
-  //         .getCartBoxAPICall(sp.getUserId().toString()))!;
-  //   print('l ${_cartData.length}');
-  // }
+  void registry() async {
+    showProgress(context);
+    var res = await networkcallService
+        .getRegistryListDropdown(sp.getUserId().toString());
+    _regList = res;
+    setState(() {});
+    hideProgress(context);
+  }
+
+  void addItemToReg({required String pID}) async {
+    showProgress(context);
+    var res = await networkcallService.getAddPrdToRegList(
+      listId: _regListId.toString(),
+      prdId: pID,
+      qty: quantityController.text,
+    );
+    hideProgress(context);
+    if (res) {
+      quantityController.clear();
+      _regListId = null;
+      _regListVal = null;
+    }
+  }
 }

@@ -79,8 +79,8 @@ class OrderDetail {
   final double orderTaxTotal;
   final String timeStamp;
   final String orderStatus;
-  final double estimatedTotal;
-  final double shippingTotal;
+  final double? estimatedTotal;
+  final double? shippingTotal;
   final double serviceFee;
   final double orderFinalTotal;
   final double subTotal;
@@ -88,7 +88,7 @@ class OrderDetail {
   final String lastName;
   final String phoneNumber;
   final String userName;
-  final String deliveryOption;
+  final String? deliveryOption;
   final String pickUpAddress;
   final String pickupLocationAddress1;
   final String pickupLocationAddress2;
@@ -125,8 +125,8 @@ class OrderDetail {
         orderTaxTotal: json["Order_Tax_Total"],
         timeStamp: json["Time_Stamp"],
         orderStatus: json["Order_Status"],
-        estimatedTotal: json["Estimated_Total"],
-        shippingTotal: json["Shipping_Total"],
+        estimatedTotal: json["Estimated_Total"]??0.0,
+        shippingTotal: json["Shipping_Total"]??0.0,
         serviceFee: json["Service_Fee"].toDouble(),
         orderFinalTotal: json["Order_Final_Total"].toDouble(),
         subTotal: json["Sub_Total"],
@@ -134,7 +134,7 @@ class OrderDetail {
         lastName: json["last_name"],
         phoneNumber: json["phone_number"],
         userName: json["user_name"],
-        deliveryOption: json["Delivery_Option"],
+        deliveryOption: json["Delivery_Option"]??'',
         pickUpAddress: json["PickUp_Address"] ?? '',
         pickupLocationAddress1: json["Pickup_Location_Address1"] ?? '',
         pickupLocationAddress2: json["Pickup_Location_Address2"] ?? '',
@@ -152,8 +152,8 @@ class OrderDetail {
         shippingArea: json["Shipping_Area"] ?? '',
         shippingCity: json["Shipping_City"] ?? '',
         shippingZipPostalCode: json["Shipping_Zip_Postal_Code"] ?? '',
-        userAddressId: json["user_address_id"],
-        deliveryOptionCode: json["Delivery_Option_Code"],
+        userAddressId: json["user_address_id"]??0,
+        deliveryOptionCode: json["Delivery_Option_Code"]??0,
         paymentMethodCode: json["Payment_Method_Code"],
         orderStatusCode1: json["order_status_code1"],
         shippingStateOrParish: json["Shipping_State_Or_Parish"] ?? '',
@@ -235,7 +235,7 @@ class OrderInfo {
         productTypeId: json["product_Type_Id"],
         orderStatusCode: json["Order_Status_Code"],
         paymentMethodCode: json["Payment_Method_Code"],
-        itemStatusCode: json["Item_Status_Code"],
+        itemStatusCode: json["Item_Status_Code"]??0,
         itemOrderStatus: json["Item_Order_Status"],
         orderStatusCodeForLineItem: json["Order_Status_Code_For_Line_Item"],
         daysAfterDelivered: json["Days_After_Delivered"],
