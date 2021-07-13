@@ -39,6 +39,8 @@ dependencies:
   flutter_card_swipper: ^0.4.0
   fluttertoast: ^8.0.6
   intl: ^0.17.0
+  http_auth: ^1.0.0
+  webview_flutter: ^2.0.9
 
 
 dev_dependencies:

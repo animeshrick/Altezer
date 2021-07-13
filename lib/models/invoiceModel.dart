@@ -57,7 +57,7 @@ class OrderInvoiceInfo {
         invoiceId: json["Invoice_Id"],
         invoiceDate: json["InvoiceDate"],
         orderDate: json["OrderDate"],
-        total: json["Total"],
+        total: json["Total"]??0.0,
         tax: json["Tax"],
         invoiceTotal: json["Invoice_Total"],
         shippingAddress: json["Shipping_Address"],

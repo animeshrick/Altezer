@@ -202,6 +202,7 @@ final String regListDD = '$_baseUrl/GetUserRegistryListById.ashx';
 final String addItemtoDD = '$_baseUrl/AddItemToListOfRegstryUser.ashx';
 final String payment = '$_baseUrl/PurchaseOnlineOrderWithOffline.ashx';
 final String confpayment = '$_baseUrl/GetOnlineOrderConfirmationByOrderId.ashx';
+final String saveUpdateCheckoutShippig = '$_baseUrl/SaveOrUpdateCheckOutShipping.ashx';
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";

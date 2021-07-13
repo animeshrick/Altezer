@@ -8,6 +8,7 @@ import 'package:altezar/models/getLists.dart';
 import 'package:altezar/models/shippingCountryStateList.dart';
 import 'package:altezar/models/shippingDeliverToHome.dart';
 import 'package:altezar/models/shippingDelivertoPickup.dart';
+import 'package:altezar/payment/PaypalPayment.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
 import 'package:altezar/view/widgets/button.dart';
@@ -88,7 +89,6 @@ class _CartPageState extends State<CartPage> {
         body: Form(
           key: _formKey,
           child: Obx(() {
-            print('hi2');
             if (_cartData.value.status == '')
               return Center(
                 child: CupertinoActivityIndicator(
@@ -144,8 +144,20 @@ class _CartPageState extends State<CartPage> {
                                           .toLowerCase()
                                           .contains('deliver to'))
                                         isAddressShow = true;
-                                      else
+                                      else {
+                                        _shippingDataUpdate(
+                                          customerDeliveryAddressID: _defAdd[0]
+                                              .userAddressId
+                                              .toString(),
+                                          customerPickupLocationID: '0',
+                                          deliveryCompanyServiceId: '0',
+                                          deliveryOptionCodeID: '1523',
+                                          weightCost: '0',
+                                          weightlbs: '0',
+                                        );
+
                                         isAddressShow = false;
+                                      }
 
                                       setState(() {
                                         _optionValue = value;
@@ -255,11 +267,51 @@ class _CartPageState extends State<CartPage> {
                                               children: [
                                                 Radio(
                                                   onChanged: (val) {
-                                                    homeRadio.value =
-                                                        val as int;
-                                                    print(
-                                                        'id3- ${homeRadio.value}');
-                                                    setState(() {});
+                                                    setState(() {
+                                                      homeRadio.value =
+                                                          val as int;
+                                                    });
+                                                    print('${homeRadio.value}');
+                                                    // print(
+                                                    //     'customerDeliveryAddressID -> ${_defAdd[i].userAddressId}');
+                                                    // print(
+                                                    //     'deliveryCompanyServiceId -> ${_shippingHomeData.value.shippingOptionsHome[i].deliveryCompanyServiceId}');
+                                                    // print(
+                                                    //     'weightCost -> ${_shippingHomeData.value.shippingOptionsHome[i].totalWeight}');
+                                                    // print(
+                                                    //     'weightLBS -> ${_shippingHomeData.value.shippingOptionsHome[i].rateOverBasePerPound}');
+                                                    // print(
+                                                    //     'uid -${sp.getUserId().toString()}');
+
+                                                    _shippingDataUpdate(
+                                                      customerDeliveryAddressID:
+                                                          _defAdd[0]
+                                                              .userAddressId
+                                                              .toString(),
+                                                      customerPickupLocationID:
+                                                          '0',
+                                                      deliveryCompanyServiceId:
+                                                          _shippingHomeData
+                                                              .value
+                                                              .shippingOptionsHome[
+                                                                  i]
+                                                              .deliveryCompanyServiceId
+                                                              .toString(),
+                                                      deliveryOptionCodeID:
+                                                          '1524',
+                                                      weightCost: _shippingHomeData
+                                                          .value
+                                                          .shippingOptionsHome[
+                                                              i]
+                                                          .totalWeight
+                                                          .toString(),
+                                                      weightlbs: _shippingHomeData
+                                                          .value
+                                                          .shippingOptionsHome[
+                                                              i]
+                                                          .rateOverBasePerPound
+                                                          .toString(),
+                                                    );
                                                   },
                                                   groupValue: homeRadio.value,
                                                   value: _shippingHomeData
@@ -402,11 +454,40 @@ class _CartPageState extends State<CartPage> {
                                                     children: [
                                                       Radio(
                                                         onChanged: (val) {
-                                                          print('id44- $val');
                                                           pickupRadio.value =
                                                               val as int;
                                                           print(
                                                               'id4- ${pickupRadio.value}');
+                                                          _shippingDataUpdate(
+                                                            customerDeliveryAddressID:
+                                                                _defAdd[0]
+                                                                    .userAddressId
+                                                                    .toString(),
+                                                            customerPickupLocationID:
+                                                                _shippingPickupData
+                                                                    .value
+                                                                    .shippingOptionsPickup![
+                                                                        i]
+                                                                    .customerPickupLocationId
+                                                                    .toString(),
+                                                            deliveryCompanyServiceId:
+                                                                _shippingPickupData
+                                                                    .value
+                                                                    .shippingOptionsPickup![
+                                                                        i]
+                                                                    .deliveryCompanyId
+                                                                    .toString(),
+                                                            deliveryOptionCodeID:
+                                                                '1525',
+                                                            weightCost:
+                                                                _shippingPickupData
+                                                                    .value
+                                                                    .shippingOptionsPickup![
+                                                                        i]
+                                                                    .totalWeight
+                                                                    .toString(),
+                                                            weightlbs: '0',
+                                                          );
                                                           setState(() {});
                                                         },
                                                         groupValue:
@@ -749,11 +830,16 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     width: 0.8.sw,
                                     height: 0.09.sh,
-                                    child: button(
-                                        () {},
-                                        'Logon to xyz.com to pay with card',
-                                        Colors.blue,
-                                        white),
+                                    child: button(() {
+                                      Get.to(() => PaypalPayment(
+                                            amount: "10",
+                                            userName: "bcbc",
+                                            onFinish: (id) {
+                                              print('paypal -- $id');
+                                            },
+                                          ));
+                                    }, 'Logon to xyz.com to pay with card',
+                                        Colors.blue, white),
                                   ),
                                   TextButton(
                                     onPressed: () {},
@@ -1001,10 +1087,17 @@ class _CartPageState extends State<CartPage> {
         delCode: '1556',
         userID: sp.getUserId().toString(),
         addID: '${_pickAddress.value}');
-
     if (result != null) {
       Get.to(() => CheckOut(orderNo: result.orderId.toString()))!.then((value) {
         _getCartPrdDetails();
+        _shippingDataUpdate(
+          customerDeliveryAddressID: _defAdd[0].userAddressId.toString(),
+          customerPickupLocationID: '0',
+          deliveryCompanyServiceId: '0',
+          deliveryOptionCodeID: '1523',
+          weightCost: '0',
+          weightlbs: '0',
+        );
       });
     }
   }
@@ -1017,6 +1110,14 @@ class _CartPageState extends State<CartPage> {
     if (result != null) {
       Get.to(() => CheckOut(orderNo: result.orderId.toString()))!.then((value) {
         _getCartPrdDetails();
+        _shippingDataUpdate(
+          customerDeliveryAddressID: _defAdd[0].userAddressId.toString(),
+          customerPickupLocationID: '0',
+          deliveryCompanyServiceId: '0',
+          deliveryOptionCodeID: '1523',
+          weightCost: '0',
+          weightlbs: '0',
+        );
       });
     }
   }
@@ -1494,5 +1595,25 @@ class _CartPageState extends State<CartPage> {
         );
       },
     );
+  }
+
+  void _shippingDataUpdate(
+      {required String customerDeliveryAddressID,
+      required String customerPickupLocationID,
+      required String deliveryCompanyServiceId,
+      required String deliveryOptionCodeID,
+      required String weightCost,
+      required String weightlbs}) async {
+    showProgress(context);
+    var res = await networkcallService.getSaveUpdateCheckoutShipping(
+        customerDeliveryAddressId: customerDeliveryAddressID,
+        customerPickupLocationId: customerPickupLocationID,
+        deliveryCompanyServiceID: deliveryCompanyServiceId,
+        deliveryOptionCode: deliveryOptionCodeID,
+        userID: sp.getUserId().toString(),
+        weightTotalCost: weightCost,
+        weightTotallbs: weightlbs);
+    hideProgress(context);
+    if (res) print('normal');
   }
 }

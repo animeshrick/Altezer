@@ -76,7 +76,9 @@ class _OnlineOrderState extends State<OnlineOrder> {
                       ),
                       itemCount: _orderList.length,
                       itemBuilder: (_, int i) {
-                        // print('code ${_orderList[i].productOrderId}');
+                        /*_orderList[i].totalItems == 0
+                            ? Text('')
+                            :  */
                         return Card(
                           child: Padding(
                             padding: const EdgeInsets.all(18.0),
@@ -125,21 +127,34 @@ class _OnlineOrderState extends State<OnlineOrder> {
                                         _orderCancel(
                                             _orderList[i].productOrderId);
                                       }, 'Cancel order', blue, 15),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // _seeDetails();
-                                    _orderDetails(
-                                        _orderList[i].productOrderId.toString(),
-                                        _orderList[i].orderStatus);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      primary: red,
-                                      onPrimary: white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  child: Text('Details'),
-                                ),
+                                _orderList[i].totalItems == 0
+                                    ? ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                            primary: red,
+                                            onPrimary: white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10))),
+                                        child: Text('Details'),
+                                      )
+                                    : ElevatedButton(
+                                        onPressed: () {
+                                          // _seeDetails();
+                                          _orderDetails(
+                                              _orderList[i]
+                                                  .productOrderId
+                                                  .toString(),
+                                              _orderList[i].orderStatus);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            primary: red,
+                                            onPrimary: white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10))),
+                                        child: Text('Details'),
+                                      ),
                               ],
                             ),
                           ),
