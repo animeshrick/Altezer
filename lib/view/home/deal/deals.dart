@@ -100,7 +100,6 @@ class _DealsState extends State<Deals> {
                       setState(() {
                         _categoriesName = value!;
                       });
-
                       _catId = _catList
                           .where(
                               (element) => element.prdName == _categoriesName)
@@ -109,6 +108,7 @@ class _DealsState extends State<Deals> {
                           .prdId
                           .toString();
                       print('_catId $_catId');
+                      list.clear();
                       _getDealList(_catId);
                     },
                   ),

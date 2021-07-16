@@ -91,100 +91,96 @@ class _InvoicePageState extends State<InvoicePage> {
                         SizedBox(
                           height: 15,
                         ),
-                        // Table(
-                        //   border: TableBorder.all(),
-                        //   columnWidths: const <int, TableColumnWidth>{
-                        //     0: IntrinsicColumnWidth(),
-                        //     1: FlexColumnWidth(),
-                        //     2: FixedColumnWidth(64),
-                        //   },
-                        //   defaultVerticalAlignment:
-                        //       TableCellVerticalAlignment.middle,
-                        //   children: <TableRow>[
-                        //     TableRow(
-                        //       children: <Widget>[
-                        //         Container(
-                        //           height: 32,
-                        //           color: Colors.green,
-                        //           child: Center(child: Text('1')),
-                        //         ),
-                        //         TableCell(
-                        //           verticalAlignment:
-                        //               TableCellVerticalAlignment.middle,
-                        //           child: Container(
-                        //             height: 32,
-                        //             width: 32,
-                        //             color: Colors.red,
-                        //           ),
-                        //         ),
-                        //         Container(
-                        //           height: 64,
-                        //           color: Colors.blue,
-                        //         ),
-                        //       ],
-                        //     ),
-                        //     TableRow(
-                        //       decoration: const BoxDecoration(
-                        //         color: Colors.grey,
-                        //       ),
-                        //       children: <Widget>[
-                        //         Container(
-                        //           height: 64,
-                        //           width: 128,
-                        //           color: Colors.purple,
-                        //         ),
-                        //         Container(
-                        //           height: 32,
-                        //           color: Colors.yellow,
-                        //         ),
-                        //         Center(
-                        //           child: Container(
-                        //             height: 32,
-                        //             width: 32,
-                        //             color: Colors.orange,
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ],
-                        // ),
-                       
-                        Divider(),
                         _orderedPrdInvoive.length == 0
                             ? customText('No item available', red, 20)
-                            : SizedBox(
-                                width: 1.sw,
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  primary: false,
-                                  separatorBuilder: (_, __) => SizedBox(
-                                    height: 10,
+                            : Table(
+                                border: TableBorder.all(),
+                                columnWidths: const <int, TableColumnWidth>{
+                                  0: IntrinsicColumnWidth(),
+                                  1: FlexColumnWidth(),
+                                  2: FixedColumnWidth(64),
+                                },
+                                defaultVerticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                children: <TableRow>[
+                                  TableRow(
+                                    children: <Widget>[
+                                      Container(
+                                        height: 0.1.sh,
+                                        child: Center(child: Text('  Qty  ')),
+                                      ),
+                                      Container(
+                                        height: 0.1.sh,
+                                        child:
+                                            Center(child: Text('Product Name')),
+                                      ),
+                                      Container(
+                                        height: 0.1.sh,
+                                        child: Center(child: Text('Price')),
+                                      ),
+                                    ],
                                   ),
-                                  itemCount: _orderedPrdInvoive.length,
-                                  itemBuilder: (_, int i) {
-                                    return Row(
-                                      children: [
-                                        customText(
-                                            '${_orderedPrdInvoive[0]!.quantity}',
-                                            grey,
-                                            15),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Flexible(
-                                            child: customText(
-                                                '${_orderedPrdInvoive[0]!.productName}',
-                                                grey,
-                                                15)),
-                                        customText(
-                                            'JMD\$${_orderedPrdInvoive[0]!.productPurchasePrice}',
-                                            grey,
-                                            15),
-                                      ],
-                                    );
-                                  },
-                                ),
+                                  TableRow(
+                                    children: <Widget>[
+                                      Container(
+                                        height: 0.1.sh,
+                                        child: Center(
+                                            child: Text(
+                                                '${_orderedPrdInvoive[0]!.quantity}')),
+                                      ),
+                                      Container(
+                                        height: 0.1.sh,
+                                        child: Center(
+                                            child: Text(
+                                                '${_orderedPrdInvoive[0]!.productName}')),
+                                      ),
+                                      Container(
+                                        height: 0.1.sh,
+                                        child: Center(
+                                            child: Text(
+                                                'JMD\$${_orderedPrdInvoive[0]!.productPurchasePrice}')),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
+                        Divider(),
+                        // _orderedPrdInvoive.length == 0
+                        //     ? customText('No item available', red, 20)
+                        //     : SizedBox(
+                        //         width: 1.sw,
+                        //         child: ListView.separated(
+                        //           shrinkWrap: true,
+                        //           primary: false,
+                        //           separatorBuilder: (_, __) => SizedBox(
+                        //             height: 10,
+                        //           ),
+                        //           itemCount: _orderedPrdInvoive.length,
+                        //           itemBuilder: (_, int i) {
+                        //             return Row(
+                        //               children: [
+                        //                 customText(
+                        //                     '${_orderedPrdInvoive[0]!.quantity}',
+                        //                     grey,
+                        //                     15),
+                        //                 SizedBox(
+                        //                   width: 10,
+                        //                 ),
+                        //                 Flexible(
+                        //                     child: customText(
+                        //                         '${_orderedPrdInvoive[0]!.productName}',
+                        //                         grey,
+                        //                         15)),
+                        //                 customText(
+                        //                     'JMD\$${_orderedPrdInvoive[0]!.productPurchasePrice}',
+                        //                     grey,
+                        //                     15),
+                        //               ],
+                        //             );
+                        //           },
+                        //         ),
+                        //       ),
+
                         Divider(),
                         customText(
                             'Sub-Total: JMD\$${_orderInvoive[0]!.invoiceSubTotal}',

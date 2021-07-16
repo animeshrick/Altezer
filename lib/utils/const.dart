@@ -203,6 +203,7 @@ final String addItemtoDD = '$_baseUrl/AddItemToListOfRegstryUser.ashx';
 final String payment = '$_baseUrl/PurchaseOnlineOrderWithOffline.ashx';
 final String confpayment = '$_baseUrl/GetOnlineOrderConfirmationByOrderId.ashx';
 final String saveUpdateCheckoutShippig = '$_baseUrl/SaveOrUpdateCheckOutShipping.ashx';
+final String getCartSubtotalAndItemCountAPI = '$_baseUrl/getCartSubtotalAndItemCount.ashx';
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";

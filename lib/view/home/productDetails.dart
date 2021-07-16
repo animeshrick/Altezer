@@ -692,6 +692,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       quantityController.clear();
       _regListId = null;
       _regListVal = null;
+      // _regList = [];
     }
   }
 }

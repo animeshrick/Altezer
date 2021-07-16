@@ -1,4 +1,5 @@
 import 'package:altezar/api/apiCall.dart';
+import 'package:altezar/models/CartUpdateModel.dart';
 import 'package:altezar/models/editedBankAcc.dart';
 import 'package:altezar/models/getAddressList.dart';
 import 'package:altezar/models/getCartOrderDetailsModel.dart';
@@ -61,6 +62,8 @@ class _CartPageState extends State<CartPage> {
   var _shippingPickupData = DeliverToPickup(
           message: '', shippingOptionsPickup: [], status: '', infoPickup: "")
       .obs;
+  var _cartList = <MyOrderDetail>[].obs;
+  var _orderDetails = MyOrderDetail().obs;
   // var x = PaymentModel(status:"",message:'',orderId:0).obs;
   var _pickAddress = 0.obs;
   var homeRadio = 0.obs;
@@ -97,7 +100,7 @@ class _CartPageState extends State<CartPage> {
               );
             else {
               var _prdDetailsList = _cartData.value.cartProductList;
-              var _orderDetails = _cartData.value.orderDetails.first;
+
               return SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.all(10.0),
@@ -580,9 +583,9 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  _orderDetails.subtotal != null
+                                  _orderDetails.value.subtotal != null
                                       ? customText(
-                                          'Subtotal for ${_orderDetails.orderCartCount} items: JMD\$${_orderDetails.subtotal}',
+                                          'Subtotal for ${_orderDetails.value.orderCartCount} items: JMD\$${_orderDetails.value.subtotal}',
                                           black,
                                           18.0,
                                           fontWeight: FontWeight.w400)
@@ -593,9 +596,9 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  _orderDetails.subtotal != null
+                                  _orderDetails.value.subtotal != null
                                       ? customText(
-                                          'Service fees: JMD\$${_orderDetails.serviceFee}',
+                                          'Service fees: JMD\$${_orderDetails.value.serviceFee}',
                                           black,
                                           14.0,
                                           fontWeight: FontWeight.bold)
@@ -605,7 +608,7 @@ class _CartPageState extends State<CartPage> {
                                     height: 5,
                                   ),
                                   customText(
-                                      'Shipping and handling: JMD\$${_orderDetails.shippingCost}',
+                                      'Shipping and handling: JMD\$${_orderDetails.value.shippingCost}',
                                       black,
                                       18.0,
                                       fontWeight: FontWeight.w400),
@@ -613,16 +616,16 @@ class _CartPageState extends State<CartPage> {
                                     height: 5,
                                   ),
                                   customText(
-                                      'All taxes: JMD\$${_orderDetails.salesTax}',
+                                      'All taxes: JMD\$${_orderDetails.value.salesTax}',
                                       black,
                                       18.0,
                                       fontWeight: FontWeight.w400),
                                   SizedBox(
                                     height: 15,
                                   ),
-                                  _orderDetails.totalCost != null
+                                  _orderDetails.value.totalCost != null
                                       ? customText(
-                                          'Total Order: JMD\$${_orderDetails.totalCost}',
+                                          'Total Order: JMD\$${_orderDetails.value.totalCost}',
                                           Color(0xffFF0000),
                                           20.0,
                                           fontWeight: FontWeight.bold)
@@ -632,9 +635,9 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  _orderDetails.totalCostInUsd != null
+                                  _orderDetails.value.totalCostInUsd != null
                                       ? customText(
-                                          'Total in USD: \$${_orderDetails.totalCostInUsd}',
+                                          'Total in USD: \$${_orderDetails.value.totalCostInUsd}',
                                           black,
                                           18.0,
                                           fontWeight: FontWeight.w400)
@@ -671,14 +674,21 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     width: 0.8.sw,
                                     height: 0.09.sh,
-                                    child: button(
-                                        () {},
-                                        'Logon to xyz.com to pay with card',
-                                        Colors.blue,
-                                        white),
+                                    child: button(() {
+                                     Get.to(() => PaypalPayment(
+                                            amount: "${_orderDetails.value.totalCostInUsd}",
+                                            userName: sp.getFirstName(),
+                                            onFinish: (id) {
+                                              print('paypal -- $id');
+                                            },
+                                          ));
+                                    }, 'Logon to xyz.com to pay with card',
+                                        Colors.blue, white),
                                   ),
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _why();
+                                    },
                                     child: Text('Why ?',
                                         style: TextStyle(
                                           fontSize: 19,
@@ -686,7 +696,9 @@ class _CartPageState extends State<CartPage> {
                                         )),
                                   ),
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _learnMore();
+                                    },
                                     child: Text('Learn More',
                                         style: TextStyle(
                                           fontSize: 19,
@@ -739,9 +751,9 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  _orderDetails.subtotal != null
+                                  _orderDetails.value.subtotal != null
                                       ? customText(
-                                          'Subtotal for ${_orderDetails.orderCartCount} items: JMD\$${_orderDetails.subtotal}',
+                                          'Subtotal for ${_orderDetails.value.orderCartCount} items: JMD\$${_orderDetails.value.subtotal}',
                                           black,
                                           18.0,
                                           fontWeight: FontWeight.w400)
@@ -752,9 +764,9 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  _orderDetails.subtotal != null
+                                  _orderDetails.value.subtotal != null
                                       ? customText(
-                                          'Service fees: JMD\$${_orderDetails.serviceFee}',
+                                          'Service fees: JMD\$${_orderDetails.value.serviceFee}',
                                           black,
                                           14.0,
                                           fontWeight: FontWeight.bold)
@@ -764,7 +776,7 @@ class _CartPageState extends State<CartPage> {
                                     height: 5,
                                   ),
                                   customText(
-                                      'Shipping and handling: JMD\$${_orderDetails.shippingCost}',
+                                      'Shipping and handling: JMD\$${_orderDetails.value.shippingCost}',
                                       black,
                                       18.0,
                                       fontWeight: FontWeight.w400),
@@ -772,16 +784,16 @@ class _CartPageState extends State<CartPage> {
                                     height: 5,
                                   ),
                                   customText(
-                                      'All taxes: JMD\$${_orderDetails.salesTax}',
+                                      'All taxes: JMD\$${_orderDetails.value.salesTax}',
                                       black,
                                       18.0,
                                       fontWeight: FontWeight.w400),
                                   SizedBox(
                                     height: 15,
                                   ),
-                                  _orderDetails.totalCost != null
+                                  _orderDetails.value.totalCost != null
                                       ? customText(
-                                          'Total Order: JMD\$${_orderDetails.totalCost}',
+                                          'Total Order: JMD\$${_orderDetails.value.totalCost}',
                                           Color(0xffFF0000),
                                           20.0,
                                           fontWeight: FontWeight.bold)
@@ -791,9 +803,9 @@ class _CartPageState extends State<CartPage> {
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  _orderDetails.totalCostInUsd != null
+                                  _orderDetails.value.totalCostInUsd != null
                                       ? customText(
-                                          'Total in USD: \$${_orderDetails.totalCostInUsd}',
+                                          'Total in USD: \$${_orderDetails.value.totalCostInUsd}',
                                           black,
                                           18.0,
                                           fontWeight: FontWeight.w400)
@@ -832,8 +844,8 @@ class _CartPageState extends State<CartPage> {
                                     height: 0.09.sh,
                                     child: button(() {
                                       Get.to(() => PaypalPayment(
-                                            amount: "10",
-                                            userName: "bcbc",
+                                            amount: "${_orderDetails.value.totalCostInUsd}",
+                                            userName: sp.getFirstName(),
                                             onFinish: (id) {
                                               print('paypal -- $id');
                                             },
@@ -842,7 +854,9 @@ class _CartPageState extends State<CartPage> {
                                         Colors.blue, white),
                                   ),
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _why();
+                                    },
                                     child: Text('Why ?',
                                         style: TextStyle(
                                           fontSize: 19,
@@ -899,7 +913,9 @@ class _CartPageState extends State<CartPage> {
                                               white),
                                         ),
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _learnMore();
+                                    },
                                     child: Text('Learn More',
                                         style: TextStyle(
                                           fontSize: 19,
@@ -1050,6 +1066,8 @@ class _CartPageState extends State<CartPage> {
   void _getCartPrdDetails() async {
     _cartData.value = (await networkcallService
         .getCartOrderDetailsAPICall(sp.getUserId().toString()))!;
+
+    _orderDetails.value = _cartData.value.orderDetails.first;
   }
 
   void _shippingCountryState() async {
@@ -1499,11 +1517,13 @@ class _CartPageState extends State<CartPage> {
                     SizedBox(
                       height: 0.02.sh,
                     ),
-                    searchField(zipCtrl, 'ZIP Code'),
+                    searchField(zipCtrl, 'ZIP Code',
+                        keyboardType: TextInputType.number),
                     SizedBox(
                       height: 0.02.sh,
                     ),
-                    searchField(phnCtrl, 'Enter Phone Number'),
+                    searchField(phnCtrl, 'Enter Phone Number',
+                        keyboardType: TextInputType.number),
                     SizedBox(
                       height: 0.02.sh,
                     ),
@@ -1614,6 +1634,161 @@ class _CartPageState extends State<CartPage> {
         weightTotalCost: weightCost,
         weightTotallbs: weightlbs);
     hideProgress(context);
-    if (res) print('normal');
+    if (res) {
+      updatedCart(delCode: deliveryOptionCodeID);
+    }
+  }
+
+  void updatedCart({required String delCode}) async {
+    showProgress(context);
+    _cartList.value = (await networkcallService.getCartSubtotalAndItemCount(
+        deliveryCode: delCode, userId: sp.getUserId().toString()))!;
+    hideProgress(context);
+    _orderDetails.value = _cartList.first;
+  }
+
+  Future<void> _why() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Reason for Logon To YeahJamaica.com To Pay With Card'),
+          content: StatefulBuilder(
+            builder: (context, mState) {
+              return SingleChildScrollView(
+                child: Container(
+                  height: 0.2.sh,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      customText(
+                        'All Debit and Credit card payments will need to be processed from our YeahJamaica.com Website because of its security and Stripe PCI compliance',
+                        black,
+                        14.0,
+                      ),
+                      customText(
+                          'Please login using the same username and password for Altezer.com.',
+                          black,
+                          14),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _learnMore() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Learn More About \'Order And Pickup In-Store\' feature'),
+          content: StatefulBuilder(
+            builder: (context, mState) {
+              return SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      customText(
+                          'How "Pick-Up and Pay In-Store Or Cash On Delivery(C.O.D)" Works',
+                          blue,
+                          18),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        'The “Order and Pick-Up and Pay In-Store” is a feature of YeahJamaicaShop.com which allows you to order products or services form your favorite stores and pick-up and pay at the store. This allows you to save time, eliminate longline, save on delivery and reserve high demand products. The following are some example of how you can use the “Order and Pick-Up and Pay In-Store” feature:',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        '1. Save time walking around in-store and waiting in line to check out. Example: order grocery online, auto parts, home improvement and building material, food and restaurant to-go',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        '2. C.O.D means Cash On Delivery. This feature allows customers to order online and pay with cash an have their purchase delivered. NB: customers will have to pay for delivery as well',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        '3. Save on delivery cost by simply pick-up and pay for your purchase ',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        '4. Beat the holiday rush by ordering online ',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        '5. Reserve high demand items to avoid sold-out!',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        '6. Reserve that Hot Deals &amp; Specials',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      customText(
+                        '7. And more',
+                        black,
+                        16.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

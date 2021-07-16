@@ -117,16 +117,24 @@ class _OnlineOrderState extends State<OnlineOrder> {
                                     'Payment Method: ${_orderList[i].paymentMethod}',
                                     black,
                                     15.0),
-                                customInkWellText(
-                                    () {}, 'Track Delivary', blue, 15.0),
-                                _orderList[i].orderStatusCode == 1511
-                                    ? customText('${_orderList[i].orderStatus}',
-                                        grey, 15.0,
-                                        fontWeight: FontWeight.bold)
-                                    : customInkWellText(() {
-                                        _orderCancel(
-                                            _orderList[i].productOrderId);
-                                      }, 'Cancel order', blue, 15),
+                                _orderList[i].totalItems == 0
+                                    ? customInkWellText(
+                                        () {}, 'Track Delivary', blue, 15.0)
+                                    : customInkWellText(
+                                        () {}, 'Track Delivary', blue, 15.0),
+                                _orderList[i].totalItems != 0
+                                    ? _orderList[i].orderStatusCode == 1511
+                                        ? customText(
+                                            '${_orderList[i].orderStatus}',
+                                            grey,
+                                            15.0,
+                                            fontWeight: FontWeight.bold)
+                                        : customInkWellText(() {
+                                            _orderCancel(
+                                                _orderList[i].productOrderId);
+                                          }, 'Cancel order', blue, 15)
+                                    : customText('Cancel order', blue, 15.0,
+                                        fontWeight: FontWeight.bold),
                                 _orderList[i].totalItems == 0
                                     ? ElevatedButton(
                                         onPressed: () {},

@@ -141,6 +141,7 @@ class _CheckOutState extends State<CheckOut> {
     showProgress(context);
     _result.value =
         (await networkcallService.getConfPayment(orderNumber: widget.orderNo))!;
+    cartBox();
     hideProgress(context);
   }
 }

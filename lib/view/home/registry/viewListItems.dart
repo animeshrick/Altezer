@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../productDetails.dart';
+
 class ViewListItems extends StatefulWidget {
   final int registryID;
 
@@ -173,105 +175,116 @@ class _ViewListItemsState extends State<ViewListItems> {
                               ),
                               itemCount: _regListInfoList.length,
                               itemBuilder: (_, int i) {
-                                return Card(
-                                  // color: grey,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 5, 10, 10),
-                                    child: Row(
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl:
-                                              "$imgBaseUrl${_regListInfoList[i]!.productImageUrl}",
-                                          height: 0.25.sh,
-                                          width: 0.25.sw,
-                                          // width: 1.sw,
-                                          placeholder: (context, url) => Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              Image.network(imageNotFound),
-                                        ),
-                                        SizedBox(
-                                          width: 0.07.sw,
-                                        ),
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              customText(
-                                                  '${_regListInfoList[i]!.productName}',
-                                                  buttonColor,
-                                                  16.0),
-                                              customText(
-                                                  '${_regListInfoList[i]!.price} | ${_regListInfoList[i]!.inStockOrOutOfStock}',
-                                                  greenColor,
-                                                  16.0),
-                                              customText(
-                                                  'By : ${_regListInfoList[i]!.sellerName}',
-                                                  grey,
-                                                  16.0),
-                                              customText(
-                                                  'Qty: ${_regListInfoList[i]!.qty}',
-                                                  black,
-                                                  16.0),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      _removeRegistryItems(
-                                                          pid: _regListInfoList[
-                                                                  i]!
-                                                              .registryItemId
-                                                              .toString());
-                                                    },
-                                                    style: ElevatedButton.styleFrom(
-                                                        primary: removeBtnColor,
-                                                        onPrimary: white,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10))),
-                                                    child: Text('Remove'),
-                                                  ),
-                                                  ElevatedButton.icon(
-                                                    label: Text('Add'),
-                                                    icon: Icon(Icons
-                                                        .shopping_cart_outlined),
-                                                    onPressed: () {
-                                                      _addToCart(
-                                                          '${_regListInfoList[i]!.yjProductId}',
-                                                          '${_regListInfoList[i]!.clientId}',
-                                                          'Products',
-                                                          '',
-                                                          '',
-                                                          1.toString(),
-                                                          '',
-                                                          '',
-                                                          sp
-                                                              .getUserId()
-                                                              .toString());
-                                                    },
-                                                    style: ElevatedButton.styleFrom(
-                                                        primary: red,
-                                                        onPrimary: white,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10))),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(() => ProductDetailsPage(
+                                          prdTypeId: '2',
+                                          prdId:
+                                              '${_regListInfoList[i]!.yjProductId}',
+                                        ));
+                                  },
+                                  child: Card(
+                                    // color: grey,
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 5, 10, 10),
+                                      child: Row(
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "$imgBaseUrl${_regListInfoList[i]!.productImageUrl}",
+                                            height: 0.25.sh,
+                                            width: 0.25.sw,
+                                            // width: 1.sw,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.network(imageNotFound),
                                           ),
-                                        )
-                                      ],
+                                          SizedBox(
+                                            width: 0.07.sw,
+                                          ),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                customText(
+                                                    '${_regListInfoList[i]!.productName}',
+                                                    buttonColor,
+                                                    16.0),
+                                                customText(
+                                                    '${_regListInfoList[i]!.price} | ${_regListInfoList[i]!.inStockOrOutOfStock}',
+                                                    greenColor,
+                                                    16.0),
+                                                customText(
+                                                    'By : ${_regListInfoList[i]!.sellerName}',
+                                                    grey,
+                                                    16.0),
+                                                customText(
+                                                    'Qty: ${_regListInfoList[i]!.qty}',
+                                                    black,
+                                                    16.0),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        _removeRegistryItems(
+                                                            pid: _regListInfoList[
+                                                                    i]!
+                                                                .registryItemId
+                                                                .toString());
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                          primary:
+                                                              removeBtnColor,
+                                                          onPrimary: white,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10))),
+                                                      child: Text('Remove'),
+                                                    ),
+                                                    ElevatedButton.icon(
+                                                      label: Text('Add'),
+                                                      icon: Icon(Icons
+                                                          .shopping_cart_outlined),
+                                                      onPressed: () {
+                                                        _addToCart(
+                                                            '${_regListInfoList[i]!.yjProductId}',
+                                                            '${_regListInfoList[i]!.clientId}',
+                                                            'Products',
+                                                            '',
+                                                            '',
+                                                            1.toString(),
+                                                            '',
+                                                            '',
+                                                            sp
+                                                                .getUserId()
+                                                                .toString());
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                          primary: red,
+                                                          onPrimary: white,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10))),
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );

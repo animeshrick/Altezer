@@ -238,6 +238,9 @@ class _FoodDetailsState extends State<FoodDetails> {
                         child: button(() {
                           _getPrdData();
                         }, 'Search', Color(0xffF0AD4E), white)),
+                    SizedBox(
+                      height: 15,
+                    ),
                     Obx(
                       () => _prdList.length != 0
                           ? ListView.separated(
@@ -248,97 +251,114 @@ class _FoodDetailsState extends State<FoodDetails> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: _prdList.length,
                               itemBuilder: (_, i) {
-                                return Card(
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    child: Row(
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl:
-                                              "$imgBaseUrl${_prdList[i].productImageUrl}",
-                                          // height: 0.3.sh,
-                                          width: 0.3.sw,
-                                          placeholder: (context, url) => Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              Image.network(imageNotFound),
-                                        ),
-                                        SizedBox(
-                                          width: 0.1.sw,
-                                        ),
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('${_prdList[i].productName}',
-                                                  // overflow:
-                                                  //     TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.blue)),
-                                              customRichText(
-                                                  '${_prdList[i].size} ',
-                                                  '${_prdList[i].perks}',
-                                                  grey,
-                                                  greenColor),
-                                              RatingBarIndicator(
-                                                rating: _prdList[i]
-                                                    .ratingCount
-                                                    .toDouble(),
-                                                itemBuilder: (context, index) =>
-                                                    Icon(
-                                                  Icons.star,
-                                                  color: Colors.amber,
-                                                ),
-                                                itemCount: 5,
-                                                itemSize: 25.0,
-                                                direction: Axis.horizontal,
-                                              ),
-                                              Text('${_prdList[i].price}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: green)),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  button(() {
-                                                    Get.to(() => ProductDetailsPage(
-                                                        prdTypeId: '1',
-                                                        prdId:
-                                                            '${_prdList[i].yjProductId}'));
-                                                  }, 'Details', greenColor,
-                                                      white),
-                                                  sp.isLogin() == true
-                                                      ? cartButton(() {
-                                                          _addToCart(
-                                                              '${_prdList[i].yjProductId}',
-                                                              '${_prdList[i].clientId}',
-                                                              'Products',
-                                                              '',
-                                                              '',
-                                                              1.toString(),
-                                                              '',
-                                                              '',
-                                                              sp
-                                                                  .getUserId()
-                                                                  .toString());
-                                                        }, 'Add',
-                                                          priceTextColor, white)
-                                                      : cartButton(
-                                                          () => gotoLoginPage(),
-                                                          'Add',
-                                                          priceTextColor,
-                                                          white),
-                                                ],
-                                              ),
-                                            ],
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(() => ProductDetailsPage(
+                                        prdTypeId: '1',
+                                        prdId: '${_prdList[i].yjProductId}'));
+                                  },
+                                  child: Card(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      child: Row(
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "$imgBaseUrl${_prdList[i].productImageUrl}",
+                                            // height: 0.3.sh,
+                                            width: 0.3.sw,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.network(imageNotFound),
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(
+                                            width: 0.1.sw,
+                                          ),
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(
+                                                    '${_prdList[i].productName}',
+                                                    // overflow:
+                                                    //     TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.blue)),
+                                                customRichText(
+                                                    '${_prdList[i].size} ',
+                                                    '${_prdList[i].perks}',
+                                                    grey,
+                                                    greenColor),
+                                                RatingBarIndicator(
+                                                  rating: _prdList[i]
+                                                      .ratingCount
+                                                      .toDouble(),
+                                                  itemBuilder:
+                                                      (context, index) => Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  itemCount: 5,
+                                                  itemSize: 25.0,
+                                                  direction: Axis.horizontal,
+                                                ),
+                                                Text('${_prdList[i].price}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: green)),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    button(() {
+                                                      Get.to(() =>
+                                                          ProductDetailsPage(
+                                                              prdTypeId: '1',
+                                                              prdId:
+                                                                  '${_prdList[i].yjProductId}'));
+                                                    }, 'Details', greenColor,
+                                                        white),
+                                                    sp.isLogin() == true
+                                                        ? cartButton(() {
+                                                            _addToCart(
+                                                                '${_prdList[i].yjProductId}',
+                                                                '${_prdList[i].clientId}',
+                                                                'Products',
+                                                                '',
+                                                                '',
+                                                                1.toString(),
+                                                                '',
+                                                                '',
+                                                                sp
+                                                                    .getUserId()
+                                                                    .toString());
+                                                          },
+                                                            'Add',
+                                                            priceTextColor,
+                                                            white)
+                                                        : cartButton(
+                                                            () =>
+                                                                gotoLoginPage(),
+                                                            'Add',
+                                                            priceTextColor,
+                                                            white),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );

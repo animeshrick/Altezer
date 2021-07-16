@@ -33,26 +33,25 @@ class _AutoPartsState extends State<AutoParts> {
   List<GetSortByData> _sortingDataList = [];
   final _listContr = ScrollController();
   int _pageIndex = 0;
-
-  Future<List<AutoPartsList>?>? _autoPartsFuture;
+  var _autoPartsList = <AutoPartsList>[].obs;
 
   @override
   void initState() {
     super.initState();
-    _autoPartsFuture =
-        networkcallService.getAutoPartList('', '0', '0', '0', '0');
+
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
       cartBox();
-      _getProductData();
+      _autoPartsData();
     });
 
     _listContr.addListener(() {
-      if (_listContr.position.atEdge && _autoCatId != null) {
+      if (_listContr.position.pixels == _listContr.position.maxScrollExtent &&
+          _autoCatId != null) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
-        _getProductData();
+        _autoPartsData();
       }
     });
   }
@@ -60,364 +59,357 @@ class _AutoPartsState extends State<AutoParts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: appbarColor,
-        title: Row(
-          children: [
-            IconButton(
-                onPressed: () => Get.back(), icon: Icon(Icons.arrow_back)),
-            // FlatButton.icon(
-            //     padding: EdgeInsets.zero,
-            //     onPressed: () {
-            //       Get.back();
-            //     },
-            //     color: white,
-            //     icon: CircleAvatar(
-            //         radius: 15,
-            //         backgroundColor: grey,
-            //         child: Icon(
-            //           Icons.home,
-            //           color: white,
-            //         )),
-            //     label: customText("Home", black, 15.0)),
-            SizedBox(
-              width: 0.2.sw,
-            ),
-            Image.asset(
-              appbarImg,
-              height: 0.1.sh,
-            ),
-          ],
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: appbarColor,
+          title: Row(
+            children: [
+              IconButton(
+                  onPressed: () => Get.back(), icon: Icon(Icons.arrow_back)),
+              // FlatButton.icon(
+              //     padding: EdgeInsets.zero,
+              //     onPressed: () {
+              //       Get.back();
+              //     },
+              //     color: white,
+              //     icon: CircleAvatar(
+              //         radius: 15,
+              //         backgroundColor: grey,
+              //         child: Icon(
+              //           Icons.home,
+              //           color: white,
+              //         )),
+              //     label: customText("Home", black, 15.0)),
+              SizedBox(
+                width: 0.2.sw,
+              ),
+              Image.asset(
+                appbarImg,
+                height: 0.1.sh,
+              ),
+            ],
+          ),
         ),
-      ),
-      body: Container(
-        padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-        child: Column(
-          children: [
-            Expanded(
-                child: SingleChildScrollView(
-              controller: _listContr,
-              child: Column(
-                children: [
-                  Image.asset(autoParts),
-                  Card(
-                    color: Color(0xffEDEDED),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          elevation: 16,
-                          icon: CircleAvatar(
-                              radius: 15,
-                              backgroundColor: grey,
-                              child: Icon(
-                                Icons.arrow_drop_down,
-                                color: white,
-                                size: 30,
-                              )),
-                          isExpanded: true,
-                          value: _autoCatVal,
-                          hint: Text('Parts Category'),
-                          items: _autoPartsCategoryList?.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.name,
-                              child: Text(
-                                value.name,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              _autoCatVal = value!;
-                            });
-                            _autoCatId = _autoPartsCategoryList!
-                                .where((element) => element.name == _autoCatVal)
-                                .toList()
-                                .first
-                                .productCategorySub1Id
-                                .toString();
-                            print('_autoCatId  $_autoCatId');
-                            _getSubAutoCat(_autoCatId!);
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  Card(
-                    color: Color(0xffEDEDED),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          elevation: 16,
-                          icon: CircleAvatar(
-                              radius: 15,
-                              backgroundColor: grey,
-                              child: Icon(
-                                Icons.arrow_drop_down,
-                                color: white,
-                                size: 30,
-                              )),
-                          isExpanded: true,
-                          value: _autoSubCatVal,
-                          hint: Text('Parts Sub-Category'),
-                          items: _autoPartsSubCategoryList?.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.subname,
-                              child: Text(
-                                value.subname,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              _autoSubCatVal = value!;
-                            });
-                            _autoSubCatId = _autoPartsSubCategoryList!
-                                .where((element) =>
-                                    element.subname == _autoSubCatVal)
-                                .toList()
-                                .first
-                                .productCategorySub2Id
-                                .toString();
-                            print('_autoSubCatId  $_autoSubCatId');
-                            _getProductData();
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  Card(
-                    color: Color(0xffEDEDED),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          elevation: 16,
-                          icon: CircleAvatar(
-                              radius: 15,
-                              backgroundColor: grey,
-                              child: Icon(
-                                Icons.arrow_drop_down,
-                                color: white,
-                                size: 30,
-                              )),
-                          isExpanded: true,
-                          value: _sortingValue, //'Sort By',
-                          hint: Text('Choose a sorting option'),
-                          items: _sortingDataList.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value.sortName,
-                              child: Text(
-                                value.sortName,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              _sortingValue = value!;
-                            });
-                            _sortId = _sortingDataList
-                                .where((element) =>
-                                    element.sortName == _sortingValue)
-                                .toList()
-                                .first
-                                .sortId
-                                .toString();
-                            print('_sortId  $_sortId');
-                            _getProductData();
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  searchField(
-                      searchController, 'Search Product Name, Brand etc ...'),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                      height: 0.07.sh,
-                      width: 1.sw,
-                      child: button(() {
-                        print('x');
-                        _getProductData();
-                      }, 'Search', Color(0xffEC971F), white)),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  FutureBuilder<List<AutoPartsList>?>(
-                      future: _autoPartsFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          var list = snapshot.data;
-                          return ListView.separated(
-                              separatorBuilder: (_, __) => SizedBox(
-                                    height: 5,
+        body: Obx(
+          () => Container(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+            child: Column(
+              children: [
+                Expanded(
+                    child: SingleChildScrollView(
+                  controller: _listContr,
+                  child: Column(
+                    children: [
+                      Image.asset(autoParts),
+                      Card(
+                        color: Color(0xffEDEDED),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              elevation: 16,
+                              icon: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: white,
+                                    size: 30,
+                                  )),
+                              isExpanded: true,
+                              value: _autoCatVal,
+                              hint: Text('Parts Category'),
+                              items: _autoPartsCategoryList?.map((value) {
+                                return DropdownMenuItem<String>(
+                                  value: value.name,
+                                  child: Text(
+                                    value.name,
+                                    style: TextStyle(fontSize: 18),
                                   ),
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: list!.length,
-                              itemBuilder: (_, i) {
-                                return InkWell(
-                                  onTap: () {},
-                                  child: Card(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                      child: Row(
-                                        children: [
-                                          CachedNetworkImage(
-                                            imageUrl:
-                                                "$imgBaseUrl${list[i].productImageUrl}",
-                                            width: 0.3.sw,
-                                            height: 0.2.sh,
-                                            placeholder: (context, url) => Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                            errorWidget: (context, url,
-                                                    error) =>
-                                                Image.network(imageNotFound),
-                                          ),
-                                          SizedBox(
-                                            width: 0.07.sw,
-                                          ),
-                                          Flexible(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text('${list[i].productName}',
-                                                    // overflow:
-                                                    //     TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.blue)),
-                                                Text('${list[i].price}',
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _autoCatVal = value!;
+                                });
+                                _autoCatId = _autoPartsCategoryList!
+                                    .where((element) =>
+                                        element.name == _autoCatVal)
+                                    .toList()
+                                    .first
+                                    .productCategorySub1Id
+                                    .toString();
+                                print('_autoCatId  $_autoCatId');
+                                _autoPartsList.clear();
+                                _getSubAutoCat(_autoCatId!);
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        color: Color(0xffEDEDED),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              elevation: 16,
+                              icon: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: white,
+                                    size: 30,
+                                  )),
+                              isExpanded: true,
+                              value: _autoSubCatVal,
+                              hint: Text('Parts Sub-Category'),
+                              items: _autoPartsSubCategoryList?.map((value) {
+                                return DropdownMenuItem<String>(
+                                  value: value.subname,
+                                  child: Text(
+                                    value.subname,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _autoSubCatVal = value!;
+                                });
+                                _autoSubCatId = _autoPartsSubCategoryList!
+                                    .where((element) =>
+                                        element.subname == _autoSubCatVal)
+                                    .toList()
+                                    .first
+                                    .productCategorySub2Id
+                                    .toString();
+                                print('_autoSubCatId  $_autoSubCatId');
+                                _autoPartsList.clear();
+                                _autoPartsData();
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        color: Color(0xffEDEDED),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              elevation: 16,
+                              icon: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: grey,
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: white,
+                                    size: 30,
+                                  )),
+                              isExpanded: true,
+                              value: _sortingValue, //'Sort By',
+                              hint: Text('Choose a sorting option'),
+                              items: _sortingDataList.map((value) {
+                                return DropdownMenuItem<String>(
+                                  value: value.sortName,
+                                  child: Text(
+                                    value.sortName,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _sortingValue = value!;
+                                });
+                                _sortId = _sortingDataList
+                                    .where((element) =>
+                                        element.sortName == _sortingValue)
+                                    .toList()
+                                    .first
+                                    .sortId
+                                    .toString();
+                                print('_sortId  $_sortId');
+                                _autoPartsList.clear();
+                                _autoPartsData();
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      searchField(searchController,
+                          'Search Product Name, Brand etc ...'),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                          height: 0.07.sh,
+                          width: 1.sw,
+                          child: button(() {
+                            // print('x');
+                            _autoPartsList.clear();
+                            _autoPartsData();
+                          }, 'Search', Color(0xffEC971F), white)),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: 1.sw,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          primary: false,
+                          separatorBuilder: (_, __) => SizedBox(
+                            height: 5,
+                          ),
+                          itemCount: _autoPartsList.length,
+                          itemBuilder: (_, int i) {
+                            return InkWell(
+                              onTap: () {
+                                Get.to(() => ProductDetailsPage(
+                                      prdTypeId: '2',
+                                      prdId: '${_autoPartsList[i].yjProductId}',
+                                    ));
+                              },
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  child: Row(
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl:
+                                            "$imgBaseUrl${_autoPartsList[i].productImageUrl}",
+                                        width: 0.3.sw,
+                                        height: 0.2.sh,
+                                        placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) =>
+                                            Image.network(imageNotFound),
+                                      ),
+                                      SizedBox(
+                                        width: 0.07.sw,
+                                      ),
+                                      Flexible(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                '${_autoPartsList[i].productName}',
+                                                // overflow:
+                                                //     TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.blue)),
+                                            Text('${_autoPartsList[i].price}',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: priceTextColor)),
+                                            _autoPartsList[i].size != null
+                                                ? Text(
+                                                    '${_autoPartsList[i].size} | By: ${_autoPartsList[i].sellerName}',
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
                                                         fontSize: 16,
-                                                        color: priceTextColor)),
-                                                list[i].size != null
-                                                    ? Text(
-                                                        '${list[i].size} | By: ${list[i].sellerName}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: grey))
-                                                    : Text(
-                                                        ' | By: ${list[i].sellerName}',
-                                                        // overflow: TextOverflow
-                                                        //     .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: grey)),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    button(() {
-                                                      // print(
-                                                      //     'frf ${list[i].yjProductId}');
-                                                      Get.to(() =>
-                                                          ProductDetailsPage(
+                                                        color: grey))
+                                                : Text(
+                                                    ' | By: ${_autoPartsList[i].sellerName}',
+                                                    // overflow: TextOverflow
+                                                    //     .ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: grey)),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                button(() {
+                                                  // print(
+                                                  //     'frf ${list[i].yjProductId}');
+                                                  Get.to(
+                                                      () => ProductDetailsPage(
                                                             prdTypeId: '2',
                                                             prdId:
-                                                                '${list[i].yjProductId}',
+                                                                '${_autoPartsList[i].yjProductId}',
                                                           ));
-                                                    }, 'Details', greenColor,
+                                                }, 'Details', greenColor,
+                                                    white),
+                                                sp.isLogin() == true
+                                                    ? cartButton(() {
+                                                        _addToCart(
+                                                            '${_autoPartsList[i].yjProductId}',
+                                                            '${_autoPartsList[i].clientId}',
+                                                            'AutoParts',
+                                                            '',
+                                                            '',
+                                                            1.toString(),
+                                                            '',
+                                                            '',
+                                                            sp
+                                                                .getUserId()
+                                                                .toString());
+                                                      }, 'Add', priceTextColor,
+                                                        white)
+                                                    : cartButton(
+                                                        () => gotoLoginPage(),
+                                                        'Add',
+                                                        priceTextColor,
                                                         white),
-                                                    sp.isLogin() == true
-                                                        ? cartButton(() {
-                                                            _addToCart(
-                                                                '${list[i].yjProductId}',
-                                                                '${list[i].clientId}',
-                                                                'AutoParts',
-                                                                '',
-                                                                '',
-                                                                1.toString(),
-                                                                '',
-                                                                '',
-                                                                sp
-                                                                    .getUserId()
-                                                                    .toString());
-                                                          },
-                                                            'Add',
-                                                            priceTextColor,
-                                                            white)
-                                                        : cartButton(
-                                                            () =>
-                                                                gotoLoginPage(),
-                                                            'Add',
-                                                            priceTextColor,
-                                                            white),
-                                                  ],
-                                                ),
                                               ],
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                );
-                              });
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child:
-                                  customText('${snapshot.error}', red, 20.0));
-                        } else
-                          return Center(
-                            child: CupertinoActivityIndicator(
-                              radius: 25,
-                            ),
-                          );
-                      })
-                ],
-              ),
-            )),
-            Obx(() {
-              if (cartData.length > 0 && sp.isLogin() == true) {
-                var data = cartData.first;
-                return SizedBox(
-                    height: 0.06.sh,
-                    child: RaisedButton.icon(
-                      color: Color(0xff5BC0DE),
-                      onPressed: () {
-                        gotoCart();
-                      },
-                      icon: Icon(Icons.shopping_cart_outlined),
-                      label: Text(
-                          'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
-                    ));
-              }
-              return SizedBox(
-                  height: 0.06.sh,
-                  child: RaisedButton.icon(
-                    color: Color(0xff5BC0DE),
-                    onPressed: () {
-                      gotoLoginPage();
-                    },
-                    icon: Icon(Icons.shopping_cart_outlined),
-                    label: Text('Order Cart *(0)* || \$0.0'),
-                  )
-                  // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
-                  );
-            })
-          ],
-        ),
-      ),
-    );
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+                Obx(() {
+                  if (cartData.length > 0 && sp.isLogin() == true) {
+                    var data = cartData.first;
+                    return SizedBox(
+                        height: 0.06.sh,
+                        child: RaisedButton.icon(
+                          color: Color(0xff5BC0DE),
+                          onPressed: () {
+                            gotoCart();
+                          },
+                          icon: Icon(Icons.shopping_cart_outlined),
+                          label: Text(
+                              'Order Cart *(${data.orderCartCount})* || JMD\$${data.subtotal}'),
+                        ));
+                  }
+                  return SizedBox(
+                      height: 0.06.sh,
+                      child: RaisedButton.icon(
+                        color: Color(0xff5BC0DE),
+                        onPressed: () {
+                          gotoLoginPage();
+                        },
+                        icon: Icon(Icons.shopping_cart_outlined),
+                        label: Text('Order Cart *(0)* || \$0.0'),
+                      )
+                      // label: Text('Order Cart *(${_cartData.exc})* || \$0.0')),
+                      );
+                })
+              ],
+            ),
+          ),
+        ));
   }
 
   void _getData() async {
@@ -436,7 +428,7 @@ class _AutoPartsState extends State<AutoParts> {
     _autoPartsSubCategoryList =
         (await networkcallService.getPartsSubCatAPICall(autoCatId))!;
     hideProgress(context);
-    _getProductData();
+    _autoPartsData();
     setState(() {});
   }
 
@@ -452,16 +444,16 @@ class _AutoPartsState extends State<AutoParts> {
     setState(() {});
   }
 
-  void _getProductData() async {
+  void _autoPartsData() async {
     showProgress(context);
-    _autoPartsFuture = networkcallService.getAutoPartList(
+    var res = (await networkcallService.getAutoPartList(
         searchController.text,
         _autoCatId ?? '0',
         _autoSubCatId ?? '0',
         _sortId ?? '0',
-        _pageIndex.toString());
+        _pageIndex.toString()))!;
+    _autoPartsList.addAll(res);
     hideProgress(context);
-    setState(() {});
   }
 
   void _addToCart(

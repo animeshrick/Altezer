@@ -9,7 +9,7 @@ class GetCartOrderDetails {
   final String message;
   final String status;
   final List<CartProductList> cartProductList;
-  final List<OrderDetail> orderDetails;
+  final List<MyOrderDetail> orderDetails;
 
   factory GetCartOrderDetails.fromJson(Map<String, dynamic> json) =>
       GetCartOrderDetails(
@@ -17,8 +17,8 @@ class GetCartOrderDetails {
         status: json["status"],
         cartProductList: List<CartProductList>.from(
             json["CartProductList"].map((x) => CartProductList.fromJson(x))),
-        orderDetails: List<OrderDetail>.from(
-            json["OrderDetails"].map((x) => OrderDetail.fromJson(x))),
+        orderDetails: List<MyOrderDetail>.from(
+            json["OrderDetails"].map((x) => MyOrderDetail.fromJson(x))),
       );
 }
 
@@ -83,19 +83,19 @@ class CartProductList {
       );
 }
 
-class OrderDetail {
-  OrderDetail({
-    required this.subtotal,
-    required this.usdSubTotal,
-    required this.exchangeRate,
-    required this.orderCartCount,
-    required this.salesTax,
-    required this.totalCouponDiscount,
-    required this.shippingCost,
-    required this.serviceFee,
-    required this.isContainsGroceryItems,
-    required this.totalCost,
-    required this.totalCostInUsd,
+class MyOrderDetail {
+  MyOrderDetail({
+    this.subtotal,
+    this.usdSubTotal,
+    this.exchangeRate,
+    this.orderCartCount,
+    this.salesTax,
+    this.totalCouponDiscount,
+    this.shippingCost,
+    this.serviceFee,
+    this.isContainsGroceryItems,
+    this.totalCost,
+    this.totalCostInUsd,
   });
 
   final String? subtotal;
@@ -110,7 +110,7 @@ class OrderDetail {
   final String? totalCost;
   final double? totalCostInUsd;
 
-  factory OrderDetail.fromJson(Map<String, dynamic> json) => OrderDetail(
+  factory MyOrderDetail.fromJson(Map<String, dynamic> json) => MyOrderDetail(
         subtotal: json["subtotal"],
         usdSubTotal: json["USD_Sub_Total"],
         exchangeRate: json["Exchange_Rate"],

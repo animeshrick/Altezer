@@ -12,10 +12,13 @@ import 'package:altezar/view/home/grocery/grocery.dart';
 import 'package:altezar/view/home/registry/viewListItems.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/searchField.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../productDetails.dart';
 
 class AddRegistry extends StatefulWidget {
   @override
@@ -43,7 +46,9 @@ class _AddRegistryState extends State<AddRegistry> {
       });
   }
 
-  var newAddedRegistryList = <ListOrRegistry?>[].obs;
+  var showRegistry =
+      AddRegListModel(listOrRegistry: [], status: '', message: '').obs;
+  // var newAddedRegistryList = <ListOrRegistry?>[].obs;
   var registryList = <RegistryList?>[].obs;
   // var registryTypeList = <ListType?>[].obs;
   List<ListType?> registryTypeList = [];
@@ -164,7 +169,9 @@ class _AddRegistryState extends State<AddRegistry> {
 
                   SizedBox(
                       width: 1.sw,
-                      child: Obx(() => newAddedRegistryList.length != 0
+                      child: Obx(() => showRegistry
+                                  .value.listOrRegistry.length !=
+                              0
                           ? ListView.separated(
                               primary: false,
                               shrinkWrap: true,
@@ -183,33 +190,118 @@ class _AddRegistryState extends State<AddRegistry> {
                                         Row(
                                           children: [
                                             Text(
-                                                ' ${newAddedRegistryList[i]!.registryName} | Total items-${newAddedRegistryList[i]!.totalItems} | '),
-                                            TextButton(
-                                                onPressed: () {
-                                                  Get.to(() => ViewListItems(
-                                                        registryID:
-                                                            newAddedRegistryList[
-                                                                    i]!
-                                                                .registryId,
-                                                      ));
-                                                },
-                                                child: Text('View All',
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold)))
+                                                ' ${showRegistry.value.listOrRegistry[i].registryName} | Total items-${showRegistry.value.listOrRegistry[i].totalItems} | '),
+                                            showRegistry.value.listOrRegistry[i]
+                                                        .totalItems ==
+                                                    '0'
+                                                ? customText(
+                                                    'View All', blue, 15)
+                                                : TextButton(
+                                                    onPressed: () {
+                                                      Get.to(() => ViewListItems(
+                                                          registryID: int.parse(
+                                                              showRegistry
+                                                                  .value
+                                                                  .listOrRegistry[
+                                                                      i]
+                                                                  .registryId)));
+                                                    },
+                                                    child: Text('View All',
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)))
                                           ],
                                         ),
                                         Text(
-                                            'Registry-ID : ${newAddedRegistryList[i]!.registryId}'),
+                                            'Registry-ID : ${showRegistry.value.listOrRegistry[i].registryId}'),
                                         Text(
-                                            'Registry-type : ${newAddedRegistryList[i]!.registryType}'),
+                                            'Registry-type : ${showRegistry.value.listOrRegistry[i].registryType}'),
                                         Text(
-                                            'Event Date : ${newAddedRegistryList[i]!.eventDate}'),
+                                            'Event Date : ${showRegistry.value.listOrRegistry[i].eventDate}'),
                                         Text(
-                                            'Benifit Name : ${newAddedRegistryList[i]!.benefitName}'),
+                                            'Benifit Name : ${showRegistry.value.listOrRegistry[i].benefitName}'),
                                         Text(
-                                            'Shipping Addrss : ${newAddedRegistryList[i]!.shippingAddress}'),
+                                            'Shipping Addrss : ${showRegistry.value.listOrRegistry[i].shippingAddress}'),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        if (showRegistry.value.listOrRegistry[i]
+                                                .listitemdata !=
+                                            null)
+                                          SizedBox(
+                                            width: 1.sw,
+                                            child: ListView.builder(
+                                                primary: false,
+                                                shrinkWrap: true,
+                                                itemCount: showRegistry
+                                                    .value
+                                                    .listOrRegistry[i]
+                                                    .listitemdata!
+                                                    .length,
+                                                itemBuilder: (_, int j) {
+                                                  var listdata = showRegistry
+                                                      .value
+                                                      .listOrRegistry[i]
+                                                      .listitemdata![j];
+                                                  return Row(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .fromLTRB(
+                                                                15, 0, 5, 0),
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            Get.to(() =>
+                                                                ProductDetailsPage(
+                                                                  prdTypeId:
+                                                                      '2',
+                                                                  prdId:
+                                                                      '${showRegistry.value.listOrRegistry[i].listitemdata![j].productId}',
+                                                                ));
+                                                          },
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            imageUrl:
+                                                                "$imgBaseUrl${listdata.productImageUrl}",
+                                                            height: 0.25.sh,
+                                                            width: 0.25.sw,
+                                                            placeholder: (context,
+                                                                    url) =>
+                                                                Center(
+                                                                    child:
+                                                                        CircularProgressIndicator()),
+                                                            errorWidget: (context,
+                                                                    url,
+                                                                    error) =>
+                                                                Image.network(
+                                                                    imageNotFound),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      customText(
+                                                          '[Qty - ${listdata.qty}] ',
+                                                          black,
+                                                          15),
+                                                      customText(
+                                                          'Price- ${listdata.price}',
+                                                          black,
+                                                          15),
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            _removeRegistryItems(
+                                                                pid: listdata
+                                                                    .registryItemId);
+                                                          },
+                                                          icon: Icon(
+                                                              Icons.close,
+                                                              color: red))
+                                                    ],
+                                                  );
+                                                }),
+                                          ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
@@ -218,20 +310,30 @@ class _AddRegistryState extends State<AddRegistry> {
                                               style: TextButton.styleFrom(
                                                   primary: red),
                                               onPressed: () {
-                                                _deleteRegistry(
-                                                    newAddedRegistryList[i]!
-                                                        .registryId
-                                                        .toString());
+                                                _deleteRegistry(showRegistry
+                                                    .value
+                                                    .listOrRegistry[i]
+                                                    .registryId
+                                                    .toString());
                                               },
                                               child: Text('Delete'),
                                             ),
-                                            TextButton(
-                                              style: TextButton.styleFrom(
-                                                  primary: buttonColor),
-                                              onPressed: () {},
-                                              child: Text(
-                                                  'Add list items to cart'),
-                                            ),
+                                            showRegistry.value.listOrRegistry[i]
+                                                        .totalItems ==
+                                                    '0'
+                                                ? customText(
+                                                    'Add list items to cart',
+                                                    blue,
+                                                    15)
+                                                : TextButton(
+                                                    style: TextButton.styleFrom(
+                                                        primary: buttonColor),
+                                                    onPressed: () {
+                                                      _addAlltoCart();
+                                                    },
+                                                    child: Text(
+                                                        'Add list items to cart'),
+                                                  ),
                                           ],
                                         ),
                                       ],
@@ -242,7 +344,8 @@ class _AddRegistryState extends State<AddRegistry> {
                               separatorBuilder: (_, __) => SizedBox(
                                     height: 10,
                                   ),
-                              itemCount: newAddedRegistryList.length)
+                              itemCount: showRegistry.value.listOrRegistry
+                                  .length /*newAddedRegistryList.length*/)
                           : Center(
                               child: customText(
                                   'You have no list/registry', black, 15)))),
@@ -434,7 +537,7 @@ class _AddRegistryState extends State<AddRegistry> {
                         height: 15,
                       ),
                       customText('Benefit name :', black, 15.0),
-                      searchField(benefitNameController, 'List/Registry Name'),
+                      searchField(benefitNameController, 'Benefit name'),
                       SizedBox(
                         height: 15,
                       ),
@@ -456,7 +559,7 @@ class _AddRegistryState extends State<AddRegistry> {
                         height: 15,
                       ),
                       customText('Shipping Address :', black, 15.0),
-                      searchField(addressController, 'List/Registry Name'),
+                      searchField(addressController, 'Shipping Address '),
                       SizedBox(
                         height: 15,
                       ),
@@ -493,6 +596,18 @@ class _AddRegistryState extends State<AddRegistry> {
     );
   }
 
+  void _addAlltoCart() async {
+    showProgress(context);
+    var res = await networkcallService.getAddRegistryItems(
+        regID: showRegistry.value.listOrRegistry[0].registryId.toString(),
+        userID: sp.getUserId().toString());
+    hideProgress(context);
+    if (res) {
+      getregistryList();
+      cartBox();
+    }
+  }
+
   void getRegistryType() async {
     showProgress(context);
     registryTypeList = await networkcallService.getListCodeTypeAPICall();
@@ -508,13 +623,12 @@ class _AddRegistryState extends State<AddRegistry> {
 
   void _newRegList() async {
     showProgress(context);
-    newAddedRegistryList.value =
-        await networkcallService.getNewAddedRegListAPICall(
+    showRegistry.value = (await networkcallService.getNewAddedRegListAPICall(
       pageIndex: '0',
       userID: sp.getUserId().toString(),
       registryId:
           _registryTypeId.toString() == '' ? '0' : _registryTypeId.toString(),
-    );
+    ))!;
     hideProgress(context);
     getregistryList();
   }
@@ -524,7 +638,7 @@ class _AddRegistryState extends State<AddRegistry> {
     var resullt = await networkcallService.getAddRegistryAPICall(
       add: addressController.text,
       benifitName: benefitNameController.text,
-      eventDate: '12/12/2012',//selectedDate.toString(),
+      eventDate: selectedDate.toString(),
       isPrivate: valueFirst == false ? '0' : '1',
       name: listNameController.text,
       typeID: _registryTypeId.toString(),
@@ -550,6 +664,16 @@ class _AddRegistryState extends State<AddRegistry> {
         regID: regiD, userID: sp.getUserId().toString());
     hideProgress(context);
     if (result) {
+      _newRegList();
+    }
+  }
+
+  void _removeRegistryItems({required String pid}) async {
+    showProgress(context);
+    var res = await networkcallService.getRemoveRegistryPoductsAPICall(
+        registryItemId: pid);
+    hideProgress(context);
+    if (res) {
       _newRegList();
     }
   }

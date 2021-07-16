@@ -1,8 +1,9 @@
 import 'package:altezar/utils/const.dart';
 import 'package:flutter/material.dart';
 
-Widget searchField(TextEditingController controller, String hintText) {
+Widget searchField(TextEditingController controller, String hintText,{TextInputType? keyboardType}) {
   return TextFormField(
+    keyboardType:keyboardType,
     controller: controller,
     autofocus: false,
     decoration: InputDecoration(
