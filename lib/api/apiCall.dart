@@ -840,8 +840,8 @@ class Networkcall {
         await MyClient().post(Uri.parse(removeCartItem), body: data);
     var resp = response.body;
     final myResponse = jsonDecode(resp);
-    // print('removeCartItem -- $removeCartItem');
-    // print('$data --- $resp');
+
+    print('removeCartItem -- $removeCartItem $data --- $resp');
     try {
       if (response.statusCode == 200) {
         if (myResponse['status'] == success) {
@@ -1380,7 +1380,7 @@ class Networkcall {
         await MyClient().post(Uri.parse(getCartOrderDetails), body: data);
     var resp = response.body;
     final myResponse = GetCartOrderDetails.fromJson(jsonDecode(resp));
-    // print('xyz $getCartOrderDetails -- $data + $resp');
+    print('xyz $getCartOrderDetails -- $data + $resp');
     try {
       if (response.statusCode == 200) {
         if (myResponse.status == success) {
@@ -1483,7 +1483,6 @@ class Networkcall {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId) async {
-    // print(' add to cart  $addtoCart');
     try {
       Map<String, dynamic> data = {
         'product_id': productId,
@@ -1496,10 +1495,10 @@ class Networkcall {
         'MTO_Image_Path': mtoImgPath,
         'YJUserId': userId,
       };
-      // print(data);
+
       final response = await MyClient().post(Uri.parse(addtoCart), body: data);
       final resp = response.body;
-      // print('response $resp');
+      print('$addtoCart $data $resp');
       final jsonResponse = jsonDecode(resp);
       if (response.statusCode == 200) {
         if (jsonResponse['status'] == success) {
@@ -1601,7 +1600,7 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.sortList;
         } else {
-          showToast('myResponse.message', red);
+          showToast(myResponse.message, red);
           return null;
         }
       } else {
@@ -1626,7 +1625,8 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.groceryStateList;
         } else {
-          return showToast(myResponse.message, red);
+          showToast(myResponse.message, red);
+          return null;
         }
       } else {
         throw response.body;
@@ -1934,7 +1934,8 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse;
         } else {
-          showToast('myResponse.message --- failed', red);
+          showToast(myResponse.message, red);
+          return null;
         }
       } else {
         // print('have err');
@@ -1959,7 +1960,8 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.stateList;
         } else {
-          showToast('myResponse.message --- failed', red);
+          showToast(myResponse.message, red);
+          return [];
         }
       } else {
         // print('have err');

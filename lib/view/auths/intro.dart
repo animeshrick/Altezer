@@ -156,7 +156,7 @@ class _IntroState extends State<Intro> {
                 Center(
                   child: InkWell(
                     onTap: () {
-                      Get.to(SignUp());
+                      Get.to(()=>SignUp());
                     },
                     child: RichText(
                       text: TextSpan(

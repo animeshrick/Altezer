@@ -56,7 +56,7 @@ class _SignUpState extends State<SignUp> {
   List<MonthDayList> _monthDayList = [];
   List<MonthNumberList> _monthNumberList = [];
   List<YearList> _yearList = [];
-  List<StateList>? _stateList = [];
+  List<StateList> _stateList = [];
   int? random1, random2;
 
   @override
@@ -295,7 +295,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() {
                                 _stateValue = newValue!;
                               });
-                              stateId = _stateList!
+                              stateId = _stateList
                                   .where((element) =>
                                       element.stateName == _stateValue)
                                   .toList()
@@ -304,7 +304,7 @@ class _SignUpState extends State<SignUp> {
                                   .toString();
                               print('stateId $stateId');
                             },
-                            items: _stateList!
+                            items: _stateList
                                 .map<DropdownMenuItem<String>>((value) {
                               return DropdownMenuItem<String>(
                                 value: value.stateName,
@@ -748,7 +748,7 @@ class _SignUpState extends State<SignUp> {
 
   void _getState(String id) async {
     showProgress(context);
-    _stateList = await networkcallService.getStateValue(id);
+    _stateList = (await networkcallService.getStateValue(id))!;
     hideProgress(context);
     setState(() {});
   }

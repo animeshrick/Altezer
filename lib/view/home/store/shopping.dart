@@ -59,7 +59,8 @@ class _ShoppingState extends State<Shopping> {
     });
 
     _listContr.addListener(() {
-      if (_listContr.position.pixels==_listContr.position.maxScrollExtent && _catId != null) {
+      if (_listContr.position.pixels == _listContr.position.maxScrollExtent &&
+          _catId != null) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
         _getProductData();
@@ -250,7 +251,7 @@ class _ShoppingState extends State<Shopping> {
                 controller: searchController,
                 autofocus: false,
                 decoration: InputDecoration(
-                  hintText: 'Search by Product name,brnad, etc ......',
+                  hintText: 'Search by Product name,brand, etc ......',
                   border: OutlineInputBorder(),
                 ),
               ),

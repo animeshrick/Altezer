@@ -1015,7 +1015,7 @@ class _CartPageState extends State<CartPage> {
                                                 16),
                                         InkWell(
                                             onTap: () {
-                                              removeCartItem();
+                                              removeCartItem(index:i);
                                             },
                                             child: customText('Delete', red, 16,
                                                 fontWeight: FontWeight.bold)),
@@ -1189,11 +1189,11 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  void removeCartItem() async {
+  void removeCartItem({int? index}) async {
     showProgress(context);
     var data = await networkcallService.getRemoveCartProduct(
         sp.getUserId().toString(),
-        _cartData.value.cartProductList.first.productCartItemId.toString());
+        _cartData.value.cartProductList[index!].productCartItemId.toString());
     hideProgress(context);
     if (data) {
       _getCartPrdDetails();

@@ -30,29 +30,68 @@ class ListOrRegistry {
     required this.benefitName,
     required this.isPrivate,
     required this.totalItems,
+    required this.listitemdata,
   });
 
-  final int registryId;
+  final String registryId;
   final String registryName;
-  final int registryTypeCode;
+  final String registryTypeCode;
   final String registryType;
-  final int yjUserId;
-  final DateTime eventDate;
+  final String yjUserId;
+  final String eventDate;
   final String shippingAddress;
   final String benefitName;
-  final int isPrivate;
-  final int totalItems;
+  final String isPrivate;
+  final String totalItems;
+  final List<Listitemdata>? listitemdata;
 
   factory ListOrRegistry.fromJson(Map<String, dynamic> json) => ListOrRegistry(
-        registryId: json["Registry_Id"],
-        registryName: json["Registry_Name"],
-        registryTypeCode: json["Registry_Type_Code"],
-        registryType: json["Registry_Type"],
-        yjUserId: json["YJ_User_Id"],
-        eventDate: DateTime.parse(json["Event_Date"]),
-        shippingAddress: json["Shipping_Address"],
-        benefitName: json["Benefit_Name"],
-        isPrivate: json["Is_Private"],
-        totalItems: json["Total_Items"],
+        registryId: json["Registry_Id"] ?? '',
+        registryName: json["Registry_Name"] ?? '',
+        registryTypeCode: json["Registry_Type_Code"] ?? '',
+        registryType: json["Registry_Type"] ?? '',
+        yjUserId: json["YJ_User_Id"] ?? '',
+        eventDate: json["Event_Date"] ?? '',
+        shippingAddress: json["Shipping_Address"] ?? '',
+        benefitName: json["Benefit_Name"] ?? '',
+        isPrivate: json["Is_Private"] ?? '',
+        totalItems: json["Total_Items"] ?? '',
+        listitemdata: json["listitemdata"] == null
+            ? null
+            : List<Listitemdata>.from(
+                json["listitemdata"].map((x) => Listitemdata.fromJson(x))),
+      );
+}
+
+class Listitemdata {
+  Listitemdata({
+    required this.registryItemId,
+    required this.registryId,
+    required this.price,
+    required this.productName,
+    required this.productId,
+    required this.productImageUrl,
+    required this.qty,
+    required this.isMadeToOrder,
+  });
+
+  final String registryItemId;
+  final String registryId;
+  final String price;
+  final String productName;
+  final String productId;
+  final String productImageUrl;
+  final String qty;
+  final String isMadeToOrder;
+
+  factory Listitemdata.fromJson(Map<String, dynamic> json) => Listitemdata(
+        registryItemId: json["Registry_Item_ID"] ?? '',
+        registryId: json["Registry_ID"] ?? '',
+        price: json["price"] ?? '',
+        productName: json["Product_Name"] ?? '',
+        productId: json["Product_ID"] ?? '',
+        productImageUrl: json["Product_Image_URL"] ?? '',
+        qty: json["Qty"] ?? '',
+        isMadeToOrder: json["is_Made_To_Order"] ?? '',
       );
 }

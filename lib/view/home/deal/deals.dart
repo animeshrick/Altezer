@@ -109,6 +109,7 @@ class _DealsState extends State<Deals> {
                           .toString();
                       print('_catId $_catId');
                       list.clear();
+                      _pageIndex = 0;
                       _getDealList(_catId);
                     },
                   ),

@@ -141,6 +141,7 @@ class _AutoPartsState extends State<AutoParts> {
                                     .toString();
                                 print('_autoCatId  $_autoCatId');
                                 _autoPartsList.clear();
+                                _pageIndex = 0;
                                 _getSubAutoCat(_autoCatId!);
                               },
                             ),
@@ -186,6 +187,7 @@ class _AutoPartsState extends State<AutoParts> {
                                     .productCategorySub2Id
                                     .toString();
                                 print('_autoSubCatId  $_autoSubCatId');
+                                _pageIndex = 0;
                                 _autoPartsList.clear();
                                 _autoPartsData();
                               },
@@ -233,6 +235,7 @@ class _AutoPartsState extends State<AutoParts> {
                                     .toString();
                                 print('_sortId  $_sortId');
                                 _autoPartsList.clear();
+                                _pageIndex = 0;
                                 _autoPartsData();
                               },
                             ),

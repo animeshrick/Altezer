@@ -194,8 +194,9 @@ class _AddRegistryState extends State<AddRegistry> {
                                             showRegistry.value.listOrRegistry[i]
                                                         .totalItems ==
                                                     '0'
-                                                ? customText(
-                                                    'View All', blue, 15)
+                                                ? customInkWellText(() {
+                                                    _showEmptyAlert();
+                                                  }, 'View All', blue, 15)
                                                 : TextButton(
                                                     onPressed: () {
                                                       Get.to(() => ViewListItems(
@@ -257,7 +258,7 @@ class _AddRegistryState extends State<AddRegistry> {
                                                             Get.to(() =>
                                                                 ProductDetailsPage(
                                                                   prdTypeId:
-                                                                      '2',
+                                                                      '1',
                                                                   prdId:
                                                                       '${showRegistry.value.listOrRegistry[i].listitemdata![j].productId}',
                                                                 ));
@@ -321,15 +322,15 @@ class _AddRegistryState extends State<AddRegistry> {
                                             showRegistry.value.listOrRegistry[i]
                                                         .totalItems ==
                                                     '0'
-                                                ? customText(
-                                                    'Add list items to cart',
-                                                    blue,
-                                                    15)
+                                                ? customInkWellText(() {
+                                                    _showEmptyAlert();
+                                                  }, 'Add list items to cart',
+                                                    blue, 15)
                                                 : TextButton(
                                                     style: TextButton.styleFrom(
                                                         primary: buttonColor),
                                                     onPressed: () {
-                                                      _addAlltoCart();
+                                                      _addAlltoCart(i);
                                                     },
                                                     child: Text(
                                                         'Add list items to cart'),
@@ -596,10 +597,10 @@ class _AddRegistryState extends State<AddRegistry> {
     );
   }
 
-  void _addAlltoCart() async {
+  void _addAlltoCart(int i) async {
     showProgress(context);
     var res = await networkcallService.getAddRegistryItems(
-        regID: showRegistry.value.listOrRegistry[0].registryId.toString(),
+        regID: showRegistry.value.listOrRegistry[i].registryId.toString(),
         userID: sp.getUserId().toString());
     hideProgress(context);
     if (res) {
@@ -676,5 +677,31 @@ class _AddRegistryState extends State<AddRegistry> {
     if (res) {
       _newRegList();
     }
+  }
+
+  Future<void> _showEmptyAlert() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                customText('No product avaiable here.', red, 16),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

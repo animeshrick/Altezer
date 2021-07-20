@@ -1159,64 +1159,105 @@ class _AccountSettingsState extends State<AccountSettings> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    searchField(accNameController, 'Name on Account'),
+                    accNameController.text.isEmpty
+                        ? searchField(accNameController, 'Name on Account')
+                        : readonlysearchField(
+                            accNameController, 'Name on Account', true),
                     SizedBox(
                       height: 10,
                     ),
 
                     /// --------- bank ----------
-                    Card(
-                      margin: EdgeInsets.zero,
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: bankValue,
-                            icon: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: grey,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: white,
-                                  )),
-                            ),
-                            hint: Text('Select your bank'),
-                            iconSize: 24,
-                            elevation: 16,
-                            isExpanded: true,
-                            style: const TextStyle(color: Colors.black),
-                            onChanged: (String? newValue) {
-                              mState(() {
-                                bankValue = newValue!;
-                                _branchData.clear();
-                                bankBranchValue = null;
-                              });
-                              bankID = _bankData
-                                  .where((element) =>
-                                      element.bankname == bankValue)
-                                  .toList()
-                                  .first
-                                  .customerBankId
-                                  .toString();
-                              print('bankID = $bankID');
-                              _getBankBranch();
-                            },
-                            items: _bankData.map((value) {
-                              return DropdownMenuItem<String>(
-                                value: value.bankname,
-                                child: Text(
-                                  value.bankname,
-                                  style: TextStyle(fontSize: 18),
+                    bankValue == null && bankID == null
+                        ? Card(
+                            margin: EdgeInsets.zero,
+                            color: Colors.grey[300],
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: bankValue,
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: grey,
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: white,
+                                        )),
+                                  ),
+                                  hint: Text('Select your bank'),
+                                  iconSize: 24,
+                                  elevation: 16,
+                                  isExpanded: true,
+                                  style: const TextStyle(color: Colors.black),
+                                  onChanged: (String? newValue) {
+                                    mState(() {
+                                      bankValue = newValue!;
+                                      _branchData.clear();
+                                      bankBranchValue = null;
+                                    });
+                                    bankID = _bankData
+                                        .where((element) =>
+                                            element.bankname == bankValue)
+                                        .toList()
+                                        .first
+                                        .customerBankId
+                                        .toString();
+                                    print('bankID = $bankID');
+                                    _getBankBranch();
+                                  },
+                                  items: _bankData.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.bankname,
+                                      child: Text(
+                                        value.bankname,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            }).toList(),
+                              ),
+                            ),
+                          )
+                        : Card(
+                            margin: EdgeInsets.zero,
+                            color: Colors.grey[300],
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: bankValue,
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: grey,
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: white,
+                                        )),
+                                  ),
+                                  hint: Text('Select your bank'),
+                                  iconSize: 24,
+                                  elevation: 16,
+                                  isExpanded: true,
+                                  style: const TextStyle(color: Colors.black),
+                                  onChanged: null,
+                                  items: _bankData.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.bankname,
+                                      child: Text(
+                                        value.bankname,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                     SizedBox(
                       height: 10,
                     ),
@@ -1226,69 +1267,117 @@ class _AccountSettingsState extends State<AccountSettings> {
                     ),
 
                     /// ------------- branch --------------
-                    Card(
-                      margin: EdgeInsets.zero,
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: bankBranchValue,
-                            icon: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: grey,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: white,
-                                  )),
-                            ),
-                            hint: Text('Select branch'),
-                            iconSize: 24,
-                            elevation: 16,
-                            isExpanded: true,
-                            style: const TextStyle(color: Colors.black),
-                            onChanged: (String? newValue) {
-                              mState(() {
-                                bankBranchValue = newValue!;
-                              });
-                              branchID = _branchData
-                                  .where((element) =>
-                                      element.branchName == bankBranchValue)
-                                  .toList()
-                                  .first
-                                  .customerBankBranchId
-                                  .toString();
-                              print('customerBankBranchId = $branchID');
-                            },
-                            items: _branchData.map((value) {
-                              return DropdownMenuItem<String>(
-                                value: value.branchName,
-                                child: Text(
-                                  value.branchName,
-                                  style: TextStyle(fontSize: 18),
+                    bankBranchValue == null && branchID == null
+                        ? Card(
+                            margin: EdgeInsets.zero,
+                            color: Colors.grey[300],
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: bankBranchValue,
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: grey,
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: white,
+                                        )),
+                                  ),
+                                  hint: Text('Select branch'),
+                                  iconSize: 24,
+                                  elevation: 16,
+                                  isExpanded: true,
+                                  style: const TextStyle(color: Colors.black),
+                                  onChanged: (String? newValue) {
+                                    mState(() {
+                                      bankBranchValue = newValue!;
+                                    });
+                                    branchID = _branchData
+                                        .where((element) =>
+                                            element.branchName ==
+                                            bankBranchValue)
+                                        .toList()
+                                        .first
+                                        .customerBankBranchId
+                                        .toString();
+                                    print('customerBankBranchId = $branchID');
+                                  },
+                                  items: _branchData.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.branchName,
+                                      child: Text(
+                                        value.branchName,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            }).toList(),
+                              ),
+                            ),
+                          )
+                        : Card(
+                            margin: EdgeInsets.zero,
+                            color: Colors.grey[300],
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: bankBranchValue,
+                                  icon: Padding(
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: grey,
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: white,
+                                        )),
+                                  ),
+                                  hint: Text('Select branch'),
+                                  iconSize: 24,
+                                  elevation: 16,
+                                  isExpanded: true,
+                                  style: const TextStyle(color: Colors.black),
+                                  onChanged: null,
+                                  items: _branchData.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.branchName,
+                                      child: Text(
+                                        value.branchName,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                     SizedBox(
                       height: 10,
                     ),
-                    searchField(accNumberController, 'Account number'),
+                    accNumberController.text.isEmpty
+                        ? searchField(accNumberController, 'Account number')
+                        : readonlysearchField(
+                            accNumberController, 'Account number', true),
                     SizedBox(
                       height: 10,
                     ),
-                    searchField(
-                        repetaccNumberController, 'Re-enter account number'),
+                    repetaccNumberController.text.isEmpty
+                        ? searchField(
+                            repetaccNumberController, 'Re-enter account number')
+                        : readonlysearchField(repetaccNumberController,
+                            'Re-enter account number', true),
                     SizedBox(
                       height: 10,
                     ),
-                    searchField(driverLicenseNumberController,
-                        'Driver License Number/TRN'),
+                    driverLicenseNumberController.text.isEmpty
+                        ? searchField(driverLicenseNumberController,
+                            'Driver License Number/TRN')
+                        : readonlysearchField(driverLicenseNumberController,
+                            'Driver License Number/TRN', true),
                     SizedBox(
                       height: 10,
                     ),
@@ -1305,15 +1394,15 @@ class _AccountSettingsState extends State<AccountSettings> {
                                 value == null ? 'Enter your State' : null,
                             value: _stateValue,
                             icon: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: grey,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: white,
-                                  )),
-                            ),
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: grey,
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: white,
+                                        )),
+                                  ),
                             hint: Text('Choose your Reside State'),
                             iconSize: 24,
                             elevation: 16,

@@ -179,6 +179,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   width: 0.95.sw,
                                   height: 0.08.sh,
                                   child: button(() {
+                                    print('${detail.yjProductId}');
+                                    print('${detail.clientId}');
                                     _addToCart(
                                         '${detail.yjProductId}',
                                         '${detail.clientId}',
@@ -239,7 +241,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'Select List or Regitry and click add item',
+                                                'Select List or Registry and click add item',
                                                 style: TextStyle(
                                                     color: black,
                                                     fontWeight: FontWeight.w400,
@@ -658,6 +660,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       String mtoImgPath,
       String userId) async {
     showProgress(context);
+    print(
+        'addtoCart $prdID $clientId $orderType $selectedStyle $mtoInfo $qty $mtoDelivaryDate $mtoImgPath $userId');
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,

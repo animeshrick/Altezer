@@ -119,9 +119,9 @@ class _OnlineOrderState extends State<OnlineOrder> {
                                     15.0),
                                 _orderList[i].totalItems == 0
                                     ? customInkWellText(
-                                        () {}, 'Track Delivary', blue, 15.0)
+                                        () {}, 'Track Delivery', blue, 15.0)
                                     : customInkWellText(
-                                        () {}, 'Track Delivary', blue, 15.0),
+                                        () {}, 'Track Delivery', blue, 15.0),
                                 _orderList[i].totalItems != 0
                                     ? _orderList[i].orderStatusCode == 1511
                                         ? customText(

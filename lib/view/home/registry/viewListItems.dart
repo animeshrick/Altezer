@@ -178,7 +178,7 @@ class _ViewListItemsState extends State<ViewListItems> {
                                 return InkWell(
                                   onTap: () {
                                     Get.to(() => ProductDetailsPage(
-                                          prdTypeId: '2',
+                                          prdTypeId: '1',
                                           prdId:
                                               '${_regListInfoList[i]!.yjProductId}',
                                         ));
