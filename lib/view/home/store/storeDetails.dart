@@ -40,7 +40,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
 
   var result =
       BannerImage(message: '', imgCover: '', imgLogo: '', status: '').obs;
-  Future<List<Productlist>>? _storeDetailFuture;
   @override
   void initState() {
     super.initState();

@@ -51,7 +51,6 @@ class _OnlineOrderState extends State<OnlineOrder> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       getMyOrders();
       _getData();
-      print('hi');
       _getState();
     });
   }
@@ -186,7 +185,7 @@ class _OnlineOrderState extends State<OnlineOrder> {
     // showProgress(context);
     _stateList = await networkcallService.getStateValue('668');
     // hideProgress(context);
-    print('len --- ${_stateList!.length}');
+    
     setState(() {});
   }
 

@@ -22,8 +22,10 @@ import 'cart/cart.dart';
 class ProductDetailsPage extends StatefulWidget {
   final String prdTypeId;
   final String prdId;
+  final String? action;
 
-  ProductDetailsPage({required this.prdTypeId, required this.prdId});
+  ProductDetailsPage(
+      {required this.prdTypeId, required this.prdId, this.action});
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
 }
@@ -179,12 +181,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   width: 0.95.sw,
                                   height: 0.08.sh,
                                   child: button(() {
-                                    print('${detail.yjProductId}');
-                                    print('${detail.clientId}');
+                                    // print('${detail.yjProductId}');
+                                    // print('${detail.clientId}');
                                     _addToCart(
                                         '${detail.yjProductId}',
                                         '${detail.clientId}',
-                                        'AutoParts',
+                                        widget.action != null
+                                            ? 'Autoparts'
+                                            : 'Products',
                                         '',
                                         '',
                                         1.toString(),
@@ -660,8 +664,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       String mtoImgPath,
       String userId) async {
     showProgress(context);
-    print(
-        'addtoCart $prdID $clientId $orderType $selectedStyle $mtoInfo $qty $mtoDelivaryDate $mtoImgPath $userId');
+    // print(
+    //     'addtoCart $prdID $clientId $orderType $selectedStyle $mtoInfo $qty $mtoDelivaryDate $mtoImgPath $userId');
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,

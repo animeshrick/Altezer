@@ -274,6 +274,7 @@ class _AutoPartsState extends State<AutoParts> {
                             return InkWell(
                               onTap: () {
                                 Get.to(() => ProductDetailsPage(
+                                  action: 'autoparts',
                                       prdTypeId: '2',
                                       prdId: '${_autoPartsList[i].yjProductId}',
                                     ));

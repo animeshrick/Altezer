@@ -5,9 +5,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class Fab extends StatelessWidget {
+// class Fab extends StatefulWidget {
+//   const Fab({ Key? key }) : super(key: key);
+
+//   @override
+//   _FabState createState() => _FabState();
+// }
+
+// class _FabState extends State<Fab> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Tawk(
+//           directChatLink: 'YOUR_DIRECT_CHAT_LINK',
+//           visitor: TawkVisitor(
+//             name: 'Ayoub AMINE',
+//             email: 'ayoubamine2a@gmail.com',
+//           ),
+//           onLoad: () {
+//             print('Hello Tawk!');
+//           },
+//           onLinkTap: (String url) {
+//             print(url);
+//           },
+//           placeholder: Center(
+//             child: Text('Loading...'),
+//           ),
+//         );
+      
+//   }
+// }
+
+
+class Fab extends StatefulWidget {
+  @override
+  _FabState createState() => _FabState();
+}
+
+class _FabState extends State<Fab> {
   TextEditingController nameController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
+
   TextEditingController messageController = TextEditingController();
 
   @override
