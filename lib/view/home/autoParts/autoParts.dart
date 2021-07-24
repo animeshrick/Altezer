@@ -256,6 +256,7 @@ class _AutoPartsState extends State<AutoParts> {
                           child: button(() {
                             // print('x');
                             _autoPartsList.clear();
+                            _pageIndex = 0;
                             _autoPartsData();
                           }, 'Search', Color(0xffEC971F), white)),
                       SizedBox(
@@ -274,7 +275,7 @@ class _AutoPartsState extends State<AutoParts> {
                             return InkWell(
                               onTap: () {
                                 Get.to(() => ProductDetailsPage(
-                                  action: 'autoparts',
+                                      action: 'autoparts',
                                       prdTypeId: '2',
                                       prdId: '${_autoPartsList[i].yjProductId}',
                                     ));

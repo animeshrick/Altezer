@@ -28,13 +28,13 @@ class _DashBoardState extends State<DashBoard>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(() => Fab());
-        },
-        child: const Icon(Icons.message_outlined),
-        backgroundColor: Colors.green,
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Get.to(() => Fab());
+      //   },
+      //   child: const Icon(Icons.message_outlined),
+      //   backgroundColor: Colors.green,
+      // ),
       appBar: AppBar(
         // primary: false,
         //automaticallyImplyLeading: true,

@@ -224,7 +224,7 @@ class _AddRegistryState extends State<AddRegistry> {
                                         Text(
                                             'Benifit Name : ${showRegistry.value.listOrRegistry[i].benefitName}'),
                                         Text(
-                                            'Shipping Addrss : ${showRegistry.value.listOrRegistry[i].shippingAddress}'),
+                                            'Shipping Address : ${showRegistry.value.listOrRegistry[i].shippingAddress}'),
                                         SizedBox(
                                           height: 10,
                                         ),
@@ -624,12 +624,13 @@ class _AddRegistryState extends State<AddRegistry> {
 
   void _newRegList() async {
     showProgress(context);
-    showRegistry.value = (await networkcallService.getNewAddedRegListAPICall(
+    var res = await networkcallService.getNewAddedRegListAPICall(
       pageIndex: '0',
       userID: sp.getUserId().toString(),
       registryId:
           _registryTypeId.toString() == '' ? '0' : _registryTypeId.toString(),
-    ))!;
+    );
+    if (res != null) showRegistry.value = res;
     hideProgress(context);
     getregistryList();
   }

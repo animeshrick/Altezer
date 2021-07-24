@@ -6,6 +6,7 @@ import 'package:altezar/models/getSortByData.dart';
 import 'package:altezar/models/getSubCatList.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
+import 'package:altezar/view/auths/intro.dart';
 import 'package:altezar/view/auths/signUp.dart';
 import 'package:altezar/view/home/grocery/grocery.dart';
 import 'package:altezar/view/home/productDetails.dart';
@@ -141,6 +142,14 @@ class _ShoppingState extends State<Shopping> {
                             .toString();
                         _subCatName = null;
                         _subCatId = null;
+                        _pageIndex = 0;
+                        print('_catId - $_catId');
+                        if (_catId == '32' && sp.isLogin() != true)
+                          Get.to(() => Intro(
+                                isChecked: false,
+                              ));
+                        else
+                        
                         _catId == '22'
                             ? Get.to(() => Grocery())?.then((value) {
                                 _catId = null;
@@ -148,7 +157,6 @@ class _ShoppingState extends State<Shopping> {
                                 setState(() {});
                               })
                             : _getSubCat();
-                        print('_catId - $_catId');
                         //_getProductData();
                       },
                     ),
@@ -192,6 +200,7 @@ class _ShoppingState extends State<Shopping> {
                             .first
                             .prdCatSubId
                             .toString();
+                        _pageIndex = 0;
                         print('_subCatId  $_subCatId');
                         _getProductData();
                       },
@@ -237,6 +246,7 @@ class _ShoppingState extends State<Shopping> {
                             .first
                             .sortId
                             .toString();
+                        _pageIndex = 0;
                         print('_sortId  $_sortId');
                         _getProductData();
                       },
@@ -267,6 +277,7 @@ class _ShoppingState extends State<Shopping> {
                       _catId = '0';
                     }
                     showProgress(context);
+                    _pageIndex = 0;
                     await _getProductData();
                     hideProgress(context);
                   }, 'Search', Color(0xffEC971F), white)),
@@ -379,89 +390,130 @@ class _ShoppingState extends State<Shopping> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: _prdList.length,
                       itemBuilder: (_, i) {
-                        return Column(
-                          children: [
-                            Row(
-                              // mainAxisAlignment:
-                              //     MainAxisAlignment.spaceBetween,
-                              children: [
-                                CachedNetworkImage(
-                                  imageUrl: "$imgBaseUrl${_prdList[i].prdImg}",
-                                  width: 0.3.sw,
-                                  height: 0.2.sh,
-                                  placeholder: (context, url) => Center(
-                                      child: CircularProgressIndicator()),
-                                  errorWidget: (context, url, error) =>
-                                      Image.network(imageNotFound),
-                                ),
-                                SizedBox(
-                                  width: 0.15.sw,
-                                ),
-                                Flexible(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${_prdList[i].prdFullName}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: blue),
-                                      ),
-                                      Text(
-                                        'Price - ${_prdList[i].price}',
-                                        style: TextStyle(
-                                            fontSize: 14, color: green),
-                                      ),
-                                      _prdList[i].size == null
-                                          ? Text(' | ${_prdList[i].sellerName}')
-                                          : Text(
-                                              '${_prdList[i].size} | ${_prdList[i].sellerName} ',
-                                              style: TextStyle(
-                                                  fontSize: 14, color: grey),
-                                            ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          button(() {
-                                            Get.to(() => ProductDetailsPage(
-                                                prdTypeId: '1',
-                                                prdId:
-                                                    '${_prdList[i].yjprdId}'));
-                                          }, 'Details', green, white),
-                                          sp.isLogin() == true
-                                              ? cartButton(() {
-                                                  _addToCart(
-                                                      '${_prdList[i].yjprdId}',
-                                                      '${_prdList[i].clientId}',
-                                                      'Products',
-                                                      '',
-                                                      '',
-                                                      1.toString(),
-                                                      '',
-                                                      '',
-                                                      sp
-                                                          .getUserId()
-                                                          .toString());
-                                                }, 'Add', priceTextColor, white)
-                                              : cartButton(
-                                                  () => Get.to(() => SignUp()),
-                                                  'Add',
-                                                  priceTextColor,
-                                                  white),
-                                        ],
-                                      ),
-                                    ],
+                        return InkWell(
+                          onTap: () {
+                            if (_catId == '14')
+                              Get.to(() => ProductDetailsPage(
+                                  prdTypeId: '2',
+                                  prdId: '${_prdList[i].yjprdId}'));
+                            if (_catId == '28')
+                              Get.to(() => ProductDetailsPage(
+                                  prdTypeId: '3',
+                                  prdId: '${_prdList[i].yjprdId}'));
+                            // if (_catId == '25')
+                            //   Get.to(() => ProductDetailsPage(
+                            //       prdTypeId: '4',
+                            //       prdId:
+                            //           '${_prdList[i].yjprdId}'));
+                            else
+                              Get.to(() => ProductDetailsPage(
+                                  prdTypeId: '1',
+                                  prdId: '${_prdList[i].yjprdId}'));
+                          },
+                          child: Column(
+                            children: [
+                              Row(
+                                // mainAxisAlignment:
+                                //     MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CachedNetworkImage(
+                                    imageUrl:
+                                        "$imgBaseUrl${_prdList[i].prdImg}",
+                                    width: 0.3.sw,
+                                    height: 0.2.sh,
+                                    placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Image.network(imageNotFound),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                          ],
+                                  SizedBox(
+                                    width: 0.15.sw,
+                                  ),
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${_prdList[i].prdFullName}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: blue),
+                                        ),
+                                        Text(
+                                          'Price - ${_prdList[i].price}',
+                                          style: TextStyle(
+                                              fontSize: 14, color: green),
+                                        ),
+                                        _prdList[i].size == null
+                                            ? Text(
+                                                ' | ${_prdList[i].sellerName}')
+                                            : Text(
+                                                '${_prdList[i].size} | ${_prdList[i].sellerName} ',
+                                                style: TextStyle(
+                                                    fontSize: 14, color: grey),
+                                              ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            button(() {
+                                              if (_catId == '14')
+                                                Get.to(() => ProductDetailsPage(
+                                                    prdTypeId: '2',
+                                                    prdId:
+                                                        '${_prdList[i].yjprdId}'));
+                                              if (_catId == '28')
+                                                Get.to(() => ProductDetailsPage(
+                                                    prdTypeId: '3',
+                                                    prdId:
+                                                        '${_prdList[i].yjprdId}'));
+                                              // if (_catId == '25')
+                                              //   Get.to(() => ProductDetailsPage(
+                                              //       prdTypeId: '4',
+                                              //       prdId:
+                                              //           '${_prdList[i].yjprdId}'));
+                                              else
+                                                Get.to(() => ProductDetailsPage(
+                                                    prdTypeId: '1',
+                                                    prdId:
+                                                        '${_prdList[i].yjprdId}'));
+                                            }, 'Details', green, white),
+                                            sp.isLogin() == true
+                                                ? cartButton(() {
+                                                    _addToCart(
+                                                        '${_prdList[i].yjprdId}',
+                                                        '${_prdList[i].clientId}',
+                                                        'Products',
+                                                        '',
+                                                        '',
+                                                        1.toString(),
+                                                        '',
+                                                        '',
+                                                        sp
+                                                            .getUserId()
+                                                            .toString());
+                                                  }, 'Add', priceTextColor,
+                                                    white)
+                                                : cartButton(
+                                                    () =>
+                                                        Get.to(() => SignUp()),
+                                                    'Add',
+                                                    priceTextColor,
+                                                    white),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
                         );
                       });
                 })

@@ -51,7 +51,8 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
     });
 
     _listContr.addListener(() {
-      if (_listContr.position.atEdge && _catId != null) {
+      if (_listContr.position.pixels == _listContr.position.maxScrollExtent &&
+          _catId != null) {
         print('contr- ${_listContr.position.pixels}');
         _pageIndex++;
         _getPrdData();
@@ -125,6 +126,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .toString();
                               _subCatName = null;
                               _getSubCat();
+                              _pageIndex = 0;
                               print('productId - $_catId');
                               _getPrdData();
                             },
@@ -169,7 +171,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .toList()
                                   .first
                                   .prdCatSubId
-                                  .toString();
+                                  .toString();  _pageIndex = 0;
                               print('_subCatId  $_subCatId');
                               _getPrdData();
                             },
@@ -215,7 +217,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .first
                                   .sortId
                                   .toString();
-                              print('_sortId  $_sortId');
+                              print('_sortId  $_sortId');  _pageIndex = 0;
                               _getPrdData();
                             },
                           ),
@@ -230,6 +232,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                     SizedBox(
                         width: double.infinity,
                         child: button(() {
+                          _pageIndex = 0;
                           _getPrdData();
                         }, 'Search', Color(0xffF0AD4E), white)),
                     SizedBox(

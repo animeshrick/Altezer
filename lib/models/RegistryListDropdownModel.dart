@@ -12,7 +12,7 @@ class RegistryListDropdownModel {
     factory RegistryListDropdownModel.fromJson(Map<String, dynamic> json) => RegistryListDropdownModel(
         message: json["message"],
         status: json["status"],
-        registryListdata: List<RegistryListData>.from(json["RegistryList"].map((x) => RegistryListData.fromJson(x))),
+        registryListdata:json["RegistryList"] == null?[]: List<RegistryListData>.from(json["RegistryList"].map((x) => RegistryListData.fromJson(x))),
     );
 }
 

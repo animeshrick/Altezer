@@ -530,9 +530,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 15,
                           ),
-                          Text('Suggestion Items',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w500)),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text('Related Items',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500)),
+                          ),
                           SizedBox(
                             height: 15,
                           ),
@@ -548,11 +551,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     );
                                   },
                                   itemBuilder: (_, i) {
-                                    // print('length - $x');
+                                    print(
+                                        'length - $imgBaseUrl${sameList[i].productUrl}');
                                     return InkWell(
                                       onTap: () {
-                                        print(
-                                            '${sameList[i].yjProductId.toString()}');
+                                        // print(
+                                        //     '${sameList[i].yjProductId.toString()}');
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -581,7 +585,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             children: [
                                               CachedNetworkImage(
                                                 imageUrl:
-                                                    "$imgBaseUrl${sameList[i].productUrl}",
+                                                    "$imgBaseUrl${sameList[i].productImageUrl}",
                                                 height: 0.15.sh,
                                                 width: 0.2.sw,
                                                 placeholder: (context, url) =>

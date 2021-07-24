@@ -93,56 +93,69 @@ class _InvoicePageState extends State<InvoicePage> {
                         ),
                         _orderedPrdInvoive.length == 0
                             ? customText('No item available', red, 20)
-                            : Table(
-                                border: TableBorder.all(),
-                                columnWidths: const <int, TableColumnWidth>{
-                                  0: IntrinsicColumnWidth(),
-                                  1: FlexColumnWidth(),
-                                  2: FixedColumnWidth(64),
+                            : ListView.separated(
+                                primary: false,
+                                shrinkWrap: true,
+                                separatorBuilder: (_, __) => SizedBox(
+                                  height: 5,
+                                ),
+                                itemCount: _orderedPrdInvoive.length,
+                                itemBuilder: (_, int i) {
+                                  return Table(
+                                    defaultColumnWidth: FixedColumnWidth(200.0),
+                                    border: TableBorder.all(),
+                                    columnWidths: const <int, TableColumnWidth>{
+                                      0: IntrinsicColumnWidth(),
+                                      1: FlexColumnWidth(),
+                                      2: FixedColumnWidth(64),
+                                    },
+                                    defaultVerticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    children: <TableRow>[
+                                      // TableRow(
+                                      //   children: <Widget>[
+                                      //     Container(
+                                      //       height: 0.1.sh,
+                                      //       child:
+                                      //           Center(child: Text('  Qty  ')),
+                                      //     ),
+                                      //     Container(
+                                      //       height: 0.1.sh,
+                                      //       child: Center(
+                                      //           child: Text('Product Name')),
+                                      //     ),
+                                      //     Container(
+                                      //       height: 0.1.sh,
+                                      //       child: Center(child: Text('Price')),
+                                      //     ),
+                                      //   ],
+                                      // ),
+
+                                      TableRow(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 0.1.sh,
+                                            child: Center(
+                                                child: Text(
+                                                    ' ${i + 1}> Qty - ${_orderedPrdInvoive[i]!.quantity} ')),
+                                          ),
+                                          Container(
+                                            height: 0.1.sh,
+                                            child: Center(
+                                                child: Text(
+                                                    'Product Name - ${_orderedPrdInvoive[i]!.productName} ')),
+                                          ),
+                                          Container(
+                                            height: 0.1.sh,
+                                            child: Center(
+                                                child: Text(
+                                                    'Price - JMD\$${_orderedPrdInvoive[i]!.productPurchasePrice} ')),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
                                 },
-                                defaultVerticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                children: <TableRow>[
-                                  TableRow(
-                                    children: <Widget>[
-                                      Container(
-                                        height: 0.1.sh,
-                                        child: Center(child: Text('  Qty  ')),
-                                      ),
-                                      Container(
-                                        height: 0.1.sh,
-                                        child:
-                                            Center(child: Text('Product Name')),
-                                      ),
-                                      Container(
-                                        height: 0.1.sh,
-                                        child: Center(child: Text('Price')),
-                                      ),
-                                    ],
-                                  ),
-                                  TableRow(
-                                    children: <Widget>[
-                                      Container(
-                                        height: 0.1.sh,
-                                        child: Center(
-                                            child: Text(
-                                                '${_orderedPrdInvoive[0]!.quantity}')),
-                                      ),
-                                      Container(
-                                        height: 0.1.sh,
-                                        child: Center(
-                                            child: Text(
-                                                '${_orderedPrdInvoive[0]!.productName}')),
-                                      ),
-                                      Container(
-                                        height: 0.1.sh,
-                                        child: Center(
-                                            child: Text(
-                                                'JMD\$${_orderedPrdInvoive[0]!.productPurchasePrice}')),
-                                      ),
-                                    ],
-                                  ),
-                                ],
                               ),
                         Divider(),
                         // _orderedPrdInvoive.length == 0

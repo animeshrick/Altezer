@@ -109,8 +109,8 @@ class _ReceiptState extends State<Receipt> {
 
   void _getReceipt() async {
     showProgress(context);
-    _receiptList.value = (await networkcallService.getReciptAPICall(
-        userId: sp.getUserId().toString()))!;
+    _receiptList.value = await networkcallService.getReciptAPICall(
+        userId: sp.getUserId().toString());
     if (_receiptList.length == 0) {
       isShow.value = true;
     } else {

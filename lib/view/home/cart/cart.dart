@@ -996,7 +996,7 @@ class _CartPageState extends State<CartPage> {
                                                 16),
                                         InkWell(
                                             onTap: () {
-                                              _qtyUpdateBox();
+                                              _qtyUpdateBox(i);
                                             },
                                             child: customText(
                                                 'Change Quantity', blue, 16,
@@ -1020,7 +1020,7 @@ class _CartPageState extends State<CartPage> {
                                             child: customText('Delete', red, 16,
                                                 fontWeight: FontWeight.bold)),
                                         InkWell(
-                                          onTap: () => _sellerNotes(),
+                                          onTap: () => _sellerNotes(index:i),
                                           child: customText(
                                               'Add note to seller', blue, 16,
                                               fontWeight: FontWeight.bold),
@@ -1176,11 +1176,11 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  void addNotetoSeller() async {
+  void addNotetoSeller(int index) async {
     showProgress(context);
     var data = await networkcallService.getAddNotestoSeller(
         noteCtrl.text.toString(),
-        _cartData.value.cartProductList.first.productCartItemId.toString());
+        _cartData.value.cartProductList[index].productCartItemId.toString());
     hideProgress(context);
     if (data) {
       noteCtrl.clear();
@@ -1212,10 +1212,10 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  void cartQtyUpdate() async {
+  void cartQtyUpdate(int i) async {
     showProgress(context);
     var cartQty = await networkcallService.getIncreasedCartPrd(updateQty.text,
-        _cartData.value.cartProductList.first.productCartItemId.toString());
+        _cartData.value.cartProductList[i].productCartItemId.toString());
     hideProgress(context);
     if (cartQty) {
       updateQty.clear();
@@ -1235,7 +1235,7 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  Future<void> _qtyUpdateBox() async {
+  Future<void> _qtyUpdateBox(int i) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -1260,7 +1260,7 @@ class _CartPageState extends State<CartPage> {
             TextButton(
               child: Text('Save and Close'),
               onPressed: () {
-                cartQtyUpdate();
+                cartQtyUpdate(i);
               },
             ),
             TextButton(
@@ -1275,7 +1275,7 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Future<void> _sellerNotes() async {
+  Future<void> _sellerNotes({required int index}) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -1302,7 +1302,7 @@ class _CartPageState extends State<CartPage> {
             TextButton(
               child: Text('Save and Close'),
               onPressed: () {
-                addNotetoSeller();
+                addNotetoSeller(index);
               },
             ),
             TextButton(

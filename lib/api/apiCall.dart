@@ -39,9 +39,11 @@ import 'package:altezar/models/groceryStoreList.dart';
 import 'package:altezar/models/invoiceModel.dart';
 import 'package:altezar/models/myOrderModel.dart';
 import 'package:altezar/models/orderDetailsModel.dart';
+import 'package:altezar/models/orderTrackingModel.dart';
 import 'package:altezar/models/pageDetailsModel.dart';
 import 'package:altezar/models/paymentModel.dart';
 import 'package:altezar/models/productDetailsModel.dart';
+import 'package:altezar/models/receiptModel.dart';
 import 'package:altezar/models/registryInfoModel.dart';
 import 'package:altezar/models/registryListModel.dart';
 import 'package:altezar/models/registryTypeCodeModel.dart';
@@ -60,6 +62,65 @@ class Networkcall {
 
   factory Networkcall() {
     return networkcall;
+  }
+
+  /// ---------- track orders ----------------
+  Future<OrderTrackingModel?> getOrderTrackAPICall({
+    required String userId,
+    required String orderID,
+  }) async {
+    Map<String, dynamic> data = {
+      'UserId': userId,
+      'orderNumber': orderID,
+    };
+    final response =
+        await MyClient().post(Uri.parse(orderTracking), body: data);
+    final resp = response.body;
+    print('$orderTracking --> $data = $resp');
+    final myResponse = OrderTrackingModel.fromJson(jsonDecode(resp));
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse;
+        } else {
+          showToast(myResponse.message, red);
+          return null;
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
+  }
+
+  /// ---------- recipt ----------------
+  Future<List<Transactionslist>> getReciptAPICall({
+    required String userId,
+  }) async {
+    Map<String, dynamic> data = {
+      'UserId': userId,
+    };
+    final response = await MyClient().post(Uri.parse(receiptApi), body: data);
+    final resp = response.body;
+    // print('$receiptApi --> $data = $resp');
+    final myResponse = ReciptModel.fromJson(jsonDecode(resp));
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse.transactionslist;
+        } else {
+          showToast(myResponse.message, red);
+          return [];
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
   }
 
   /// ------------------- getCartSubtotalAndItemCount.ashx ------------------
@@ -316,7 +377,7 @@ class Networkcall {
     Map<String, dynamic> data = {'orderNumber': orderNumber, 'UserId': userID};
     final response = await MyClient().post(Uri.parse(orderInvoice), body: data);
     final resp = response.body;
-    // print('$orderInvoice --> $data = $resp');
+    print('$orderInvoice --> $data = $resp');
     final myResponse = InvoiceModel.fromJson(jsonDecode(resp));
     try {
       if (response.statusCode == 200) {
@@ -1539,7 +1600,7 @@ class Networkcall {
       final response =
           await MyClient().post(Uri.parse(getDetailsOfPages), body: data);
       final resp = response.body;
-      // print(' $getDetailsOfPages $data $resp');
+      print(' $getDetailsOfPages $data $resp');
       final myResponse = ProductDetails.fromJson(jsonDecode(resp));
 
       if (response.statusCode == 200) {
@@ -2009,7 +2070,7 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.dataList;
         } else {
-          showToast(myResponse.message, red);
+          showToast('No sub-category available', red);
           return [];
         }
       } else {

@@ -42,8 +42,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     return Scaffold(
       drawer: customDrawer(),
+      
       appBar: AppBar(
+
         elevation: 0,
+        // automaticallyImplyLeading: false,
         automaticallyImplyLeading: isLogin!,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

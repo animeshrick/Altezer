@@ -6,6 +6,7 @@ import 'package:altezar/models/myOrderModel.dart';
 import 'package:altezar/models/orderDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
+import 'package:altezar/view/home/orders/trackOrder.dart';
 import 'package:altezar/view/widgets/searchField.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -119,8 +120,12 @@ class _OnlineOrderState extends State<OnlineOrder> {
                                 _orderList[i].totalItems == 0
                                     ? customInkWellText(
                                         () {}, 'Track Delivery', blue, 15.0)
-                                    : customInkWellText(
-                                        () {}, 'Track Delivery', blue, 15.0),
+                                    : customInkWellText(() {
+                                        Get.to(() => TrackOrder(
+                                            orderID: _orderList[i]
+                                                .productOrderId
+                                                .toString()));
+                                      }, 'Track Delivery', blue, 15.0),
                                 _orderList[i].totalItems != 0
                                     ? _orderList[i].orderStatusCode == 1511
                                         ? customText(
@@ -185,7 +190,7 @@ class _OnlineOrderState extends State<OnlineOrder> {
     // showProgress(context);
     _stateList = await networkcallService.getStateValue('668');
     // hideProgress(context);
-    
+
     setState(() {});
   }
 
