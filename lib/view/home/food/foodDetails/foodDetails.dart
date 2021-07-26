@@ -269,7 +269,6 @@ class _FoodDetailsState extends State<FoodDetails> {
                                           CachedNetworkImage(
                                             imageUrl:
                                                 "$imgBaseUrl${_prdList[i].productImageUrl}",
-                                            // height: 0.3.sh,
                                             width: 0.3.sw,
                                             placeholder: (context, url) => Center(
                                                 child:

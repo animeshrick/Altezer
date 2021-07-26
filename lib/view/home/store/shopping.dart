@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Shopping extends StatefulWidget {
   @override
@@ -53,7 +54,8 @@ class _ShoppingState extends State<Shopping> {
   void initState() {
     super.initState();
     _latestDealsFuture = networkcallService.getAllLatestDealsAPICall();
-    _catList.add(CategoriesList(prdId: 0, prdName: 'All Category'));
+    // _catList.add(CategoriesList(prdId: 0, prdName: 'All Category'));
+    // _catList.add(CategoriesList(prdId: 0, prdName: ''));
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _getData();
       _getSortData();
@@ -86,7 +88,8 @@ class _ShoppingState extends State<Shopping> {
           _sortId = null;
           searchController.clear();
           _latestDealsFuture = networkcallService.getAllLatestDealsAPICall();
-          _catList.add(CategoriesList(prdId: 0, prdName: 'All Category'));
+          // _catList.add(CategoriesList(prdId: 0, prdName: 'All Category'));
+          // _catList.add(CategoriesList(prdId: 0, prdName: ''));
           _getData();
           _getSortData();
           setState(() {});
@@ -116,7 +119,7 @@ class _ShoppingState extends State<Shopping> {
                           )),
                       isExpanded: true,
                       value: _categoriesName, //'Shoping Category',
-                      hint: Text('All Category'),
+                      hint: Text('Shopping Category'),
                       items: _catList.map((value) {
                         return DropdownMenuItem<String>(
                           value: value.prdName,
@@ -140,6 +143,7 @@ class _ShoppingState extends State<Shopping> {
                             .first
                             .prdId
                             .toString();
+                        _prdList.clear();
                         _subCatName = null;
                         _subCatId = null;
                         _pageIndex = 0;
@@ -149,14 +153,13 @@ class _ShoppingState extends State<Shopping> {
                                 isChecked: false,
                               ));
                         else
-                        
-                        _catId == '22'
-                            ? Get.to(() => Grocery())?.then((value) {
-                                _catId = null;
-                                _categoriesName = null;
-                                setState(() {});
-                              })
-                            : _getSubCat();
+                          _catId == '22'
+                              ? Get.to(() => Grocery())?.then((value) {
+                                  _catId = null;
+                                  _categoriesName = null;
+                                  setState(() {});
+                                })
+                              : _getSubCat();
                         //_getProductData();
                       },
                     ),
@@ -442,7 +445,7 @@ class _ShoppingState extends State<Shopping> {
                                               color: blue),
                                         ),
                                         Text(
-                                          'Price - ${_prdList[i].price}',
+                                          '${_prdList[i].price} | ${_prdList[i].inoutStock}',
                                           style: TextStyle(
                                               fontSize: 14, color: green),
                                         ),
@@ -454,32 +457,40 @@ class _ShoppingState extends State<Shopping> {
                                                 style: TextStyle(
                                                     fontSize: 14, color: grey),
                                               ),
+                                        if (_prdList[i].perks != '')
+                                          customText('${_prdList[i].perks}',
+                                              green, 14),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            button(() {
-                                              if (_catId == '14')
-                                                Get.to(() => ProductDetailsPage(
-                                                    prdTypeId: '2',
-                                                    prdId:
-                                                        '${_prdList[i].yjprdId}'));
-                                              if (_catId == '28')
-                                                Get.to(() => ProductDetailsPage(
-                                                    prdTypeId: '3',
-                                                    prdId:
-                                                        '${_prdList[i].yjprdId}'));
-                                              // if (_catId == '25')
-                                              //   Get.to(() => ProductDetailsPage(
-                                              //       prdTypeId: '4',
-                                              //       prdId:
-                                              //           '${_prdList[i].yjprdId}'));
-                                              else
-                                                Get.to(() => ProductDetailsPage(
-                                                    prdTypeId: '1',
-                                                    prdId:
-                                                        '${_prdList[i].yjprdId}'));
-                                            }, 'Details', green, white),
+                                            if (_prdList[i].prdUrl!.isNotEmpty)
+                                              button(() {
+                                                launch(_prdList[i].prdUrl!);
+                                              }, 'Details', green, white)
+                                            else
+                                              button(() {
+                                                if (_catId == '14')
+                                                  Get.to(() => ProductDetailsPage(
+                                                      prdTypeId: '2',
+                                                      prdId:
+                                                          '${_prdList[i].yjprdId}'));
+                                                if (_catId == '28')
+                                                  Get.to(() => ProductDetailsPage(
+                                                      prdTypeId: '3',
+                                                      prdId:
+                                                          '${_prdList[i].yjprdId}'));
+                                                // if (_catId == '25')
+                                                //   Get.to(() => ProductDetailsPage(
+                                                //       prdTypeId: '4',
+                                                //       prdId:
+                                                //           '${_prdList[i].yjprdId}'));
+                                                else
+                                                  Get.to(() => ProductDetailsPage(
+                                                      prdTypeId: '1',
+                                                      prdId:
+                                                          '${_prdList[i].yjprdId}'));
+                                              }, 'Details', green, white),
                                             sp.isLogin() == true
                                                 ? cartButton(() {
                                                     _addToCart(
@@ -555,13 +566,15 @@ class _ShoppingState extends State<Shopping> {
 
   Future _getProductData() async {
     showProgress(context);
-    _prdList.value = (await networkcallService.getProductsAPICall(
+    var res = (await networkcallService.getProductsAPICall(
         _catId ?? '0',
         searchController.text,
         _subCatId ?? '0',
         _sortId ?? '0',
         _pageIndex.toString()))!;
-    setState(() {});
+    // _prdList.value = res;
+    _prdList.addAll(res);
+    // setState(() {});
     hideProgress(context);
   }
 

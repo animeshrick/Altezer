@@ -124,8 +124,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             height: 10,
                           ),
                           detail.inStock != null
-                              ? Text(
-                                  '${detail.inStockOrOutOfStock} - ${detail.inStock}',
+                              ? Text('${detail.inStockOrOutOfStock}',
                                   style: TextStyle(
                                       color: Colors.green[700], fontSize: 19))
                               : Text('${detail.inStockOrOutOfStock}',
@@ -149,7 +148,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               : Text('Colors - ',
                                   style: TextStyle(fontSize: 19)),
                           SizedBox(
-                            height: 20,
+                            height: 10,
+                          ),
+                          customText(
+                              'Product description : ${detail.description}',
+                              black,
+                              15),
+                          SizedBox(
+                            height: 10,
                           ),
                           detail.sellerNameMobile != null
                               ? customText(
@@ -479,14 +485,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 25,
                           ),
-                          detail.shippingInfo != ''
-                              ? detail.shippingInfo != null
-                                  ? customText(
-                                      'Shipping info ${detail.shippingInfo}',
-                                      black,
-                                      18.0)
-                                  : Text('Shipping info not available')
-                              : Text('Shipping info not available'),
+                          if (detail.freeShipping.toString() == '1')
+                            customText('+Free Shipping', green, 16),
+                          customText(
+                              'Shipping islandwide, Caribbean, USA, Canada',
+                              black,
+                              16),
                           SizedBox(
                             height: 15,
                           ),
@@ -540,7 +544,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             height: 15,
                           ),
                           x == 0
-                              ? customText('Data not dound', red, 18)
+                              ? customText('Data not found', red, 18)
                               : ListView.separated(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
@@ -601,35 +605,33 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                 width: 0.1.sw,
                                               ),
                                               Flexible(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                        '${sameList[i].productName}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 18,
-                                                            color: Colors
-                                                                .blueAccent)),
-                                                    Text('${sameList[i].price}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color:
-                                                                priceTextColor)),
-                                                    Text(
-                                                        '${sameList[i].brandName}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: grey)),
-                                                    // Text('Shipping --- ${sameList[i].productName}',
-                                                    //     style: TextStyle(fontSize: 16, color: black)),
-                                                  ],
+                                                child: SizedBox(
+                                                  width: 0.4.sw,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text(
+                                                          '${sameList[i].productName}',
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: Colors
+                                                                  .blueAccent)),
+                                                      Text(
+                                                          '${sameList[i].price}',
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  priceTextColor)),
+                                                      Text(
+                                                          '${sameList[i].brandName}',
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: grey)),
+                                                      // Text('Shipping --- ${sameList[i].productName}',
+                                                      //     style: TextStyle(fontSize: 16, color: black)),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ],
