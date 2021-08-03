@@ -80,6 +80,6 @@ class ProductListData {
         prdCatSubId2: myjson['Product_Category_Sub2_ID'] ?? 0,
         inStock: myjson['in_stock'] ?? 0,
         isMadetoOrder: myjson['is_Made_To_Order'] ?? 0,
-        clientId: myjson['client_id'] ?? 0);
+        clientId: myjson['Client_Id'] == null ? 0 : myjson['Client_Id']);
   }
 }

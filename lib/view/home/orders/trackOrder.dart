@@ -60,109 +60,100 @@ class _TrackOrderState extends State<TrackOrder> {
                   child: _trackOrder.value.orderTrackingDetails == null
                       ? customText('Loading .... ', red, 16)
                       : Container(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 30),
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: black,
                             ),
                           ),
-                          child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 30),
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                primary: false,
-                                separatorBuilder: (_, __) => SizedBox(
-                                  height: 15,
-                                ),
-                                itemCount: _trackOrder
-                                    .value.orderTrackingDetails!.length,
-                                itemBuilder: (_, int i) {
-                                  var data = _trackOrder
-                                      .value.orderTrackingDetails![i];
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      customText(
-                                          'Delivered on ${data.deliveryDate} @${data.deliveryTime}',
-                                          green,
-                                          20),
-                                      SizedBox(
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            primary: false,
+                            separatorBuilder: (_, __) => SizedBox(
+                              height: 15,
+                            ),
+                            itemCount:
+                                _trackOrder.value.orderTrackingDetails!.length,
+                            itemBuilder: (_, int i) {
+                              var data =
+                                  _trackOrder.value.orderTrackingDetails![i];
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  customText(
+                                      'Delivered on ${data.deliveryDate} @${data.deliveryTime}',
+                                      green,
+                                      20),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  customText(
+                                      'By ${data.deliveryType}', green, 18),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  customText(
+                                      'Tracking# : ${data.deliveryTrackingNumber}',
+                                      green,
+                                      18),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  customText('Status# : ${data.deliveryStatus}',
+                                      green, 18),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  customText('Order# : ${data.orderNumber}',
+                                      green, 18),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  customText(
+                                      'Estimated Delivery Date# : ${data.estimatedDeliveryDate}',
+                                      green,
+                                      18),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  customText('Notes/Addresses : ', black, 20),
+                                  customText(
+                                      'Tracking Updates Status : ', black, 20),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  SizedBox(
+                                    width: 1.sw,
+                                    child: ListView.separated(
+                                      shrinkWrap: true,
+                                      primary: false,
+                                      separatorBuilder: (_, __) => SizedBox(
                                         height: 15,
                                       ),
-                                      customText(
-                                          'By ${data.deliveryType}', green, 18),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      customText(
-                                          'Tracking# : ${data.deliveryTrackingNumber}',
-                                          green,
-                                          18),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      customText(
-                                          'Status# : ${data.deliveryStatus}',
-                                          green,
-                                          18),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      customText('Order# : ${data.orderNumber}',
-                                          green, 18),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      customText(
-                                          'Estimated Delivery Date# : ${data.estimatedDeliveryDate}',
-                                          green,
-                                          18),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      customText(
-                                          'Notes/Addresses : ', black, 20),
-                                      customText('Tracking Updates Status : ',
-                                          black, 20),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      SizedBox(
-                                        width: 1.sw,
-                                        child: Flexible(
-                                          child: ListView.separated(
-                                            shrinkWrap: true,
-                                            primary: false,
-                                            separatorBuilder: (_, __) =>
-                                                SizedBox(
-                                              height: 15,
-                                            ),
-                                            itemCount: _trackOrder
-                                                .value
-                                                .orderTrackingDetails![0]
-                                                .deliveryupdatedlist
-                                                .length,
-                                            itemBuilder: (_, int j) {
-                                              var data1 = _trackOrder
-                                                  .value
-                                                  .orderTrackingDetails![0]
-                                                  .deliveryupdatedlist;
-                                              return customText(
-                                                  '${data1[j].timeStamp} | ${data1[j].time} |\n| ${data1[j].actionAndUpdate}',
-                                                  green,
-                                                  18);
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                    ],
-                                  );
-                                },
-                              )),
+                                      itemCount: _trackOrder
+                                          .value
+                                          .orderTrackingDetails![0]
+                                          .deliveryupdatedlist
+                                          .length,
+                                      itemBuilder: (_, int j) {
+                                        var data1 = _trackOrder
+                                            .value
+                                            .orderTrackingDetails![0]
+                                            .deliveryupdatedlist;
+                                        return customText(
+                                            '${data1[j].timeStamp} | ${data1[j].time} |\n| ${data1[j].actionAndUpdate}',
+                                            green,
+                                            18);
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                         ),
                 )),
             SizedBox(

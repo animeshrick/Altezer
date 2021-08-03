@@ -81,6 +81,11 @@ final card3 = 'assets/card3.png';
 final strip = 'assets/strip.png';
 final checkout = 'assets/checkout.gif';
 
+final wp = 'assets/wp.svg';
+final fb = 'assets/facebook.svg';
+final twitter = 'assets/twitter.svg';
+final mail = 'assets/gmail.svg';
+
 final imageNotFound =
     'https://demo20.gowebbi.us//CompanyLogos/altezer_grocery_logo.png';
 /*-------------------------Fluttertoast-------------------------*/
@@ -202,9 +207,12 @@ final String regListDD = '$_baseUrl/GetUserRegistryListById.ashx';
 final String addItemtoDD = '$_baseUrl/AddItemToListOfRegstryUser.ashx';
 final String payment = '$_baseUrl/PurchaseOnlineOrderWithOffline.ashx';
 final String confpayment = '$_baseUrl/GetOnlineOrderConfirmationByOrderId.ashx';
-final String saveUpdateCheckoutShippig = '$_baseUrl/SaveOrUpdateCheckOutShipping.ashx';
-final String getCartSubtotalAndItemCountAPI = '$_baseUrl/getCartSubtotalAndItemCount.ashx';
+final String saveUpdateCheckoutShippig =
+    '$_baseUrl/SaveOrUpdateCheckOutShipping.ashx';
+final String getCartSubtotalAndItemCountAPI =
+    '$_baseUrl/getCartSubtotalAndItemCount.ashx';
 final String receiptApi = '$_baseUrl/getIndividualCustomerTransactions.ashx';
+final String imgPrdDetails = '$_baseUrl/saveImage.ashx';
 
 /* -------------------------------- text --------------------------- */
 final String internetError = "Please check your Internet! 😢";
@@ -242,5 +250,4 @@ void cartBox() async {
   if (sp.getUserId() != null)
     cartData.value = (await networkcallService
         .getCartBoxAPICall(sp.getUserId().toString()))!;
-  // print('l ${_cartData.length}');
 }

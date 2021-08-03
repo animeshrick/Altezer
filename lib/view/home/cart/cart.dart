@@ -95,7 +95,7 @@ class _CartPageState extends State<CartPage> {
             if (_cartData.value.status == '')
               return Center(
                 child: CupertinoActivityIndicator(
-                  radius: 50,
+                  radius: 25,
                 ),
               );
             else {
@@ -675,8 +675,9 @@ class _CartPageState extends State<CartPage> {
                                     width: 0.8.sw,
                                     height: 0.09.sh,
                                     child: button(() {
-                                     Get.to(() => PaypalPayment(
-                                            amount: "${_orderDetails.value.totalCostInUsd}",
+                                      Get.to(() => PaypalPayment(
+                                            amount:
+                                                "${_orderDetails.value.totalCostInUsd}",
                                             userName: sp.getFirstName(),
                                             onFinish: (id) {
                                               print('paypal -- $id');
@@ -844,7 +845,8 @@ class _CartPageState extends State<CartPage> {
                                     height: 0.09.sh,
                                     child: button(() {
                                       Get.to(() => PaypalPayment(
-                                            amount: "${_orderDetails.value.totalCostInUsd}",
+                                            amount:
+                                                "${_orderDetails.value.totalCostInUsd}",
                                             userName: sp.getFirstName(),
                                             onFinish: (id) {
                                               print('paypal -- $id');
@@ -900,7 +902,7 @@ class _CartPageState extends State<CartPage> {
                                           height: 0.09.sh,
                                           child: button(() {
                                             _getCOD();
-                                          }, 'Pay cash on delivary',
+                                          }, 'Pay cash on delivery',
                                               Colors.green, white),
                                         )
                                       : SizedBox(
@@ -908,7 +910,7 @@ class _CartPageState extends State<CartPage> {
                                           height: 0.09.sh,
                                           child: button(
                                               () {},
-                                              'Pay cash on delivary',
+                                              'Pay cash on delivery',
                                               Colors.green,
                                               white),
                                         ),
@@ -949,13 +951,14 @@ class _CartPageState extends State<CartPage> {
                           /// prd list -------------------------------------------------
                           ListView.separated(
                               separatorBuilder: (_, __) => SizedBox(
-                                    height: 12,
+                                    height: 5,
                                   ),
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: _prdDetailsList.length,
                               itemBuilder: (_, i) {
                                 return Card(
+                                  elevation: 5,
                                   child: Padding(
                                     padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
                                     child: Column(
@@ -985,7 +988,7 @@ class _CartPageState extends State<CartPage> {
                                         _prdDetailsList[i].price == null
                                             ? Text('No price available')
                                             : customText(
-                                                '${_prdDetailsList[i].price}',
+                                                '${_prdDetailsList[i].price} | ${_prdDetailsList[i].inStockOrOutOfStock}',
                                                 green,
                                                 16),
                                         _prdDetailsList[i].price == null
@@ -1015,12 +1018,12 @@ class _CartPageState extends State<CartPage> {
                                                 16),
                                         InkWell(
                                             onTap: () {
-                                              removeCartItem(index:i);
+                                              removeCartItem(index: i);
                                             },
                                             child: customText('Delete', red, 16,
                                                 fontWeight: FontWeight.bold)),
                                         InkWell(
-                                          onTap: () => _sellerNotes(index:i),
+                                          onTap: () => _sellerNotes(index: i),
                                           child: customText(
                                               'Add note to seller', blue, 16,
                                               fontWeight: FontWeight.bold),
@@ -1322,7 +1325,7 @@ class _CartPageState extends State<CartPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Chnage Shipping Address'),
+          title: Text('Change Shipping Address'),
           content: StatefulBuilder(
             builder: (context, mState) {
               return Obx(() => SizedBox(

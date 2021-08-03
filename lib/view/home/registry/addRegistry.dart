@@ -689,7 +689,7 @@ class _AddRegistryState extends State<AddRegistry> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                customText('No product avaiable here.', red, 16),
+                customText('No product available here.', red, 16),
               ],
             ),
           ),

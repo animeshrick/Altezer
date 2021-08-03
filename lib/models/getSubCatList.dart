@@ -9,9 +9,11 @@ class GetSubCatList {
     return GetSubCatList(
       message: myjson['message'],
       status: myjson['status'],
-      dataList: myjson['SubCategoryList']==null?[]: (myjson['SubCategoryList'] as List)
-          .map((e) => GetSubCateProductsList.fromJson(e))
-          .toList(),
+      dataList: myjson['SubCategoryList'] == null
+          ? []
+          : (myjson['SubCategoryList'] as List)
+              .map((e) => GetSubCateProductsList.fromJson(e))
+              .toList(),
     );
   }
 }
@@ -24,7 +26,7 @@ class GetSubCateProductsList {
 
   factory GetSubCateProductsList.fromJson(Map<String, dynamic> myjson) {
     return GetSubCateProductsList(
-        prdCatSubId: myjson['product_category_sub1_Id'] as int,
+        prdCatSubId: myjson['product_category_sub1_Id'],
         prdName: myjson['Name'] as String);
   }
 }

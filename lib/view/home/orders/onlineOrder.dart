@@ -114,7 +114,7 @@ class _OnlineOrderState extends State<OnlineOrder> {
                                     black,
                                     15.0),
                                 customText(
-                                    'Payment Method: ${_orderList[i].paymentMethod}',
+                                    'Payment Method: ${_orderList[i].deliveryOption}',
                                     black,
                                     15.0),
                                 _orderList[i].totalItems == 0

@@ -44,11 +44,11 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      _getBannerImage();
       _getData();
       _getSortData();
       cartBox();
       _getPrdData();
-      _getBannerImage();
     });
 
     _listContr.addListener(() {
@@ -75,14 +75,14 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: "$imgBaseUrl${result.value.imgCover}",
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) =>
-                          Image.network(imageNotFound),
-                    ),
+                    Obx(() => CachedNetworkImage(
+                          imageUrl: "$imgBaseUrl${result.value.imgCover}",
+                          fit: BoxFit.fill,
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              Image.network(imageNotFound),
+                        )),
                     SizedBox(
                       height: 15,
                     ),
@@ -172,7 +172,8 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                   .first
                                   .prdCatSubId
                                   .toString();
-                              print('_subCatId  $_subCatId');_pageIndex = 0;
+                              print('_subCatId  $_subCatId');
+                              _pageIndex = 0;
                               _getPrdData();
                             },
                           ),
@@ -217,7 +218,8 @@ class _GroceryDetailsPageState extends State<GroceryDetailsPage> {
                                   .first
                                   .sortId
                                   .toString();
-                              print('_sortId  $_sortId');_pageIndex = 0;
+                              print('_sortId  $_sortId');
+                              _pageIndex = 0;
                               _getPrdData();
                             },
                           ),

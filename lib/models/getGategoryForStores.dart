@@ -18,7 +18,7 @@ class StoreCatList {
         message: json["message"],
         status: json["status"],
         storeCatList: List<StoreCatListElement>.from(
-            json["storeCatList"].map((x) => StoreCatListElement.fromJson(x))),
+            json["storeCatList"].map((x) => StoreCatListElement.fromJson(x))) ,
       );
 }
 

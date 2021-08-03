@@ -275,9 +275,11 @@ class _ShoppingState extends State<Shopping> {
                   height: 0.07.sh,
                   width: 1.sw,
                   child: button(() async {
-                    // list.clear();
+                    _prdList.clear();
                     if (_catId == null) {
-                      _catId = '0';
+                      setState(() {
+                        _catId = '0';
+                      });
                     }
                     showProgress(context);
                     _pageIndex = 0;
@@ -395,23 +397,27 @@ class _ShoppingState extends State<Shopping> {
                       itemBuilder: (_, i) {
                         return InkWell(
                           onTap: () {
-                            if (_catId == '14')
-                              Get.to(() => ProductDetailsPage(
-                                  prdTypeId: '2',
-                                  prdId: '${_prdList[i].yjprdId}'));
-                            if (_catId == '28')
-                              Get.to(() => ProductDetailsPage(
-                                  prdTypeId: '3',
-                                  prdId: '${_prdList[i].yjprdId}'));
-                            // if (_catId == '25')
-                            //   Get.to(() => ProductDetailsPage(
-                            //       prdTypeId: '4',
-                            //       prdId:
-                            //           '${_prdList[i].yjprdId}'));
-                            else
-                              Get.to(() => ProductDetailsPage(
-                                  prdTypeId: '1',
-                                  prdId: '${_prdList[i].yjprdId}'));
+                            if (_prdList[i].prdUrl!.isNotEmpty)
+                              launch(_prdList[i].prdUrl!);
+                            else {
+                              if (_catId == '14')
+                                Get.to(() => ProductDetailsPage(
+                                    prdTypeId: '2',
+                                    prdId: '${_prdList[i].yjprdId}'));
+                              if (_catId == '28')
+                                Get.to(() => ProductDetailsPage(
+                                    prdTypeId: '3',
+                                    prdId: '${_prdList[i].yjprdId}'));
+                              // if (_catId == '25')
+                              //   Get.to(() => ProductDetailsPage(
+                              //       prdTypeId: '4',
+                              //       prdId:
+                              //           '${_prdList[i].yjprdId}'));
+                              else
+                                Get.to(() => ProductDetailsPage(
+                                    prdTypeId: '1',
+                                    prdId: '${_prdList[i].yjprdId}'));
+                            }
                           },
                           child: Column(
                             children: [
@@ -467,52 +473,133 @@ class _ShoppingState extends State<Shopping> {
                                             if (_prdList[i].prdUrl!.isNotEmpty)
                                               button(() {
                                                 launch(_prdList[i].prdUrl!);
+                                                Get.back();
                                               }, 'Details', green, white)
                                             else
                                               button(() {
-                                                if (_catId == '14')
-                                                  Get.to(() => ProductDetailsPage(
-                                                      prdTypeId: '2',
-                                                      prdId:
-                                                          '${_prdList[i].yjprdId}'));
-                                                if (_catId == '28')
-                                                  Get.to(() => ProductDetailsPage(
-                                                      prdTypeId: '3',
-                                                      prdId:
-                                                          '${_prdList[i].yjprdId}'));
-                                                // if (_catId == '25')
-                                                //   Get.to(() => ProductDetailsPage(
-                                                //       prdTypeId: '4',
-                                                //       prdId:
-                                                //           '${_prdList[i].yjprdId}'));
-                                                else
-                                                  Get.to(() => ProductDetailsPage(
-                                                      prdTypeId: '1',
-                                                      prdId:
-                                                          '${_prdList[i].yjprdId}'));
+                                                if (_prdList[i]
+                                                    .prdUrl!
+                                                    .isNotEmpty)
+                                                  launch(_prdList[i].prdUrl!);
+                                                else {
+                                                  if (_catId == '14')
+                                                    Get.to(() => ProductDetailsPage(
+                                                        prdTypeId: '2',
+                                                        prdId:
+                                                            '${_prdList[i].yjprdId}'));
+                                                  if (_catId == '28')
+                                                    Get.to(() => ProductDetailsPage(
+                                                        prdTypeId: '3',
+                                                        prdId:
+                                                            '${_prdList[i].yjprdId}'));
+                                                  // if (_catId == '25')
+                                                  //   Get.to(() => ProductDetailsPage(
+                                                  //       prdTypeId: '4',
+                                                  //       prdId:
+                                                  //           '${_prdList[i].yjprdId}'));
+                                                  else
+                                                    Get.to(() => ProductDetailsPage(
+                                                        prdTypeId: '1',
+                                                        prdId:
+                                                            '${_prdList[i].yjprdId}'));
+                                                }
                                               }, 'Details', green, white),
-                                            sp.isLogin() == true
-                                                ? cartButton(() {
-                                                    _addToCart(
-                                                        '${_prdList[i].yjprdId}',
-                                                        '${_prdList[i].clientId}',
-                                                        'Products',
-                                                        '',
-                                                        '',
-                                                        1.toString(),
-                                                        '',
-                                                        '',
-                                                        sp
-                                                            .getUserId()
-                                                            .toString());
-                                                  }, 'Add', priceTextColor,
-                                                    white)
-                                                : cartButton(
-                                                    () =>
-                                                        Get.to(() => SignUp()),
-                                                    'Add',
-                                                    priceTextColor,
-                                                    white),
+                                            // if (_prdList[i].isMadetoOrder != 0)
+                                            //    Get.to(ProductDetailsPage(prdTypeId: '1', prdId: '${_prdList[i].yjprdId}'));
+                                            if (_prdList[i].prdId == '1')
+                                              sp.isLogin() == true
+                                                  ? cartButton(() {
+                                                      _addToCart(
+                                                          '${_prdList[i].yjprdId}',
+                                                          '${_prdList[i].clientId}',
+                                                          'Products',
+                                                          '',
+                                                          '',
+                                                          1.toString(),
+                                                          '',
+                                                          '',
+                                                          sp
+                                                              .getUserId()
+                                                              .toString());
+                                                    }, 'Add', priceTextColor,
+                                                      white)
+                                                  : cartButton(
+                                                      () => Get.to(
+                                                          () => SignUp()),
+                                                      'Add',
+                                                      priceTextColor,
+                                                      white),
+                                            if (_prdList[i].prdId == '2')
+                                              sp.isLogin() == true
+                                                  ? cartButton(() {
+                                                      _addToCart(
+                                                          '${_prdList[i].yjprdId}',
+                                                          '${_prdList[i].clientId}',
+                                                          'AutoParts',
+                                                          '',
+                                                          '',
+                                                          1.toString(),
+                                                          '',
+                                                          '',
+                                                          sp
+                                                              .getUserId()
+                                                              .toString());
+                                                    }, 'Add', priceTextColor,
+                                                      white)
+                                                  : cartButton(
+                                                      () => Get.to(
+                                                          () => SignUp()),
+                                                      'Add',
+                                                      priceTextColor,
+                                                      white),
+                                            if (_prdList[i].prdId == '3')
+                                              sp.isLogin() == true
+                                                  ? cartButton(() {
+                                                      print(
+                                                          'cid ---${_prdList[i].clientId}');
+                                                      _addToCart(
+                                                          '${_prdList[i].yjprdId}',
+                                                          '${_prdList[i].clientId}',
+                                                          'AutoTires',
+                                                          '',
+                                                          '',
+                                                          1.toString(),
+                                                          '',
+                                                          '',
+                                                          sp
+                                                              .getUserId()
+                                                              .toString());
+                                                    }, 'Add', priceTextColor,
+                                                      white)
+                                                  : cartButton(
+                                                      () => Get.to(
+                                                          () => SignUp()),
+                                                      'Add',
+                                                      priceTextColor,
+                                                      white),
+                                            if (_prdList[i].prdId == '4')
+                                              sp.isLogin() == true
+                                                  ? cartButton(() {
+                                                      _addToCart(
+                                                          '${_prdList[i].yjprdId}',
+                                                          '${_prdList[i].clientId}',
+                                                          'Rest',
+                                                          '',
+                                                          '',
+                                                          1.toString(),
+                                                          '',
+                                                          '',
+                                                          sp
+                                                              .getUserId()
+                                                              .toString());
+                                                    }, 'Add', priceTextColor,
+                                                      white)
+                                                  : cartButton(
+                                                      () => Get.to(
+                                                          () => SignUp()),
+                                                      'Add',
+                                                      priceTextColor,
+                                                      white),
                                           ],
                                         ),
                                       ],
@@ -550,7 +637,7 @@ class _ShoppingState extends State<Shopping> {
     _subCatList = (await networkcallService.getSubCatAPICall(_catId!))!;
     hideProgress(context);
     // print("${_subCatList.length} oo");
-    // setState(() {});
+    setState(() {});
     _getProductData();
   }
 

@@ -1,6 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:altezar/api/apiCall.dart';
 import 'package:altezar/models/RegistryListDropdownModel.dart';
-import 'package:altezar/models/getCartBox.dart';
 import 'package:altezar/models/productDetailsModel.dart';
 import 'package:altezar/utils/const.dart';
 import 'package:altezar/utils/sharedPref.dart';
@@ -8,14 +9,17 @@ import 'package:altezar/view/auths/intro.dart';
 import 'package:altezar/view/home/registry/addRegistry.dart';
 import 'package:altezar/view/widgets/button.dart';
 import 'package:altezar/view/widgets/detailsPageAppBar.dart';
-import 'package:altezar/view/widgets/dropDown.dart';
 import 'package:altezar/view/widgets/searchField.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'cart/cart.dart';
 
@@ -31,11 +35,31 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  late String imgPath, fileName;
+  File? _image;
+  final picker = ImagePicker();
+  DateTime selectedDate = DateTime.now();
+  Future<void> _selectDate(BuildContext context, StateSetter mState) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now().subtract(Duration(days: 0)),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != selectedDate)
+      mState(() {
+        selectedDate = picked;
+      });
+  }
+
   bool pressed = false;
   TextEditingController quantityController = TextEditingController();
+  TextEditingController ctrl = TextEditingController();
+  TextEditingController titleCtrl = TextEditingController();
+  TextEditingController qtyCtrl = TextEditingController();
   String? _regListVal, _regListId;
   List<RegistryListData> _regList = [];
-
+  String? base64Img;
   Future<ProdDetailModel?>? _dealDetailFuture;
   void initState() {
     super.initState();
@@ -50,6 +74,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: white,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(50.0), child: detailsPageAppBar()),
       body: SingleChildScrollView(
@@ -71,9 +96,25 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('${detail.productName}',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text('${detail.productName}',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    Share.share(
+                                        'https://demo20.gowebbi.us/Mobile/ProductDetails?ProductId=${widget.prdId}&ProductTypeId=${widget.prdTypeId}');
+                                    print(
+                                        'https://demo20.gowebbi.us/Mobile/ProductDetails?ProductId=${widget.prdId}&ProductTypeId=${widget.prdTypeId}');
+                                  },
+                                  icon: Icon(Icons.share, size: 15))
+                            ],
+                          ),
                           CachedNetworkImage(
                             imageUrl: "$imgBaseUrl${detail.productImageUrl}",
                             height: 0.5.sh,
@@ -134,18 +175,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             height: 10,
                           ),
                           detail.size != null
-                              ? Text('Size - ${detail.size}',
+                              ? Text('Size(s) - ${detail.size}',
                                   style: TextStyle(fontSize: 19))
-                              : Text('Size - All Size(s)',
+                              : Text('Size(s) - All Size(s)',
                                   style: TextStyle(fontSize: 19)),
                           SizedBox(
                             height: 10,
                           ),
                           detail.productColorStyleType != null &&
                                   detail.productColorStyleType != ''
-                              ? Text('Color - ${detail.productColorStyleType}',
+                              ? Text(
+                                  'Color(s) - ${detail.productColorStyleType}',
                                   style: TextStyle(fontSize: 19))
-                              : Text('Colors - ',
+                              : Text('Color(s) - ',
                                   style: TextStyle(fontSize: 19)),
                           SizedBox(
                             height: 10,
@@ -157,57 +199,211 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           SizedBox(
                             height: 10,
                           ),
-                          detail.sellerNameMobile != null
-                              ? customText(
-                                  '${detail.sellerNameMobile}', black, 16.0)
-                              : Text('Seller Info not available for that item',
-                                  style: TextStyle(fontSize: 19)),
+                          // detail.sellerNameMobile != null
+                          //     ? customText(
+                          //         '${detail.sellerNameMobile}', black, 16.0)
+                          //     : Text('Seller Info not available for that item',
+                          //         style: TextStyle(fontSize: 19)),
+                          customText('${detail.forSaleBy}', black, 15),
                           SizedBox(
                             height: 5,
                           ),
                           customText(
                               'Price - ${detail.price}', priceTextColor, 16.0),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          TextField(
-                            decoration: InputDecoration(
-                              border: new OutlineInputBorder(
-                                  borderSide:
-                                      new BorderSide(color: Colors.teal)),
-                              hintText:
-                                  'Enter your customized color and size -- ',
+                          if (detail.isMadeToOrder != 0)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                customText(
+                                    'We have a turnaround time of about two days after ordering. If you would like to have your image on the cake please email your photo at BakeMeAWish@gmail.com. Thank you for ordering ',
+                                    black,
+                                    15),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                customText(
+                                    'Please Enter the Requirements for Your Made To Order: ',
+                                    black,
+                                    15),
+                                TextField(
+                                  controller: titleCtrl,
+                                  decoration: InputDecoration(
+                                    border: new OutlineInputBorder(
+                                        borderSide:
+                                            new BorderSide(color: Colors.teal)),
+                                    hintText:
+                                        "Cake title, frosting color etc...",
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                customText('Enter quantity: ', black, 15),
+                                TextField(
+                                  controller: qtyCtrl,
+                                  decoration: InputDecoration(
+                                    border: new OutlineInputBorder(
+                                        borderSide:
+                                            new BorderSide(color: Colors.teal)),
+                                    hintText: 'e.g.  2',
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    customText(
+                                        'Delivery Date Here :', black, 15.0),
+                                    Row(
+                                      children: [
+                                        Text("${selectedDate.toLocal()}"
+                                            .split(' ')[0]),
+                                        IconButton(
+                                          onPressed: () =>
+                                              _selectDate(context, setState),
+                                          icon: Icon(Icons.calendar_today),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 1.sw,
+                                  child: button(() {
+                                    _pickImage();
+                                  }, 'Click Below To Upload Photo (Optional)',
+                                      white, black),
+                                ),
+                                _image == null
+                                    ? Center(
+                                        child: customText(
+                                            'No Image picked', red, 15))
+                                    : Center(
+                                        child: Image.file(
+                                          _image!,
+                                          scale: 2,
+                                          filterQuality: FilterQuality.high,
+                                          cacheHeight: 200,
+                                          cacheWidth: 200,
+                                        ),
+                                      ),
+                              ],
                             ),
-                          ),
+
                           SizedBox(
                             height: 15,
                           ),
-                          sp.isLogin() == true
-                              ? SizedBox(
-                                  width: 0.95.sw,
-                                  height: 0.08.sh,
-                                  child: button(() {
-                                    // print('${detail.yjProductId}');
-                                    // print('${detail.clientId}');
-                                    _addToCart(
-                                        '${detail.yjProductId}',
-                                        '${detail.clientId}',
-                                        widget.action != null
-                                            ? 'Autoparts'
-                                            : 'Products',
-                                        '',
-                                        '',
-                                        1.toString(),
-                                        '',
-                                        '',
-                                        sp.getUserId().toString());
-                                  }, 'Add to cart', Color(0xff5BC0DE), white))
-                              : SizedBox(
-                                  width: 0.95.sw,
-                                  height: 0.08.sh,
-                                  child: button(() {
-                                    Get.to(() => gotoLoginPage());
-                                  }, 'Add to cart', Color(0xff5BC0DE), white)),
+                          if (detail.isMadeToOrder == 0)
+                            TextField(
+                              controller: ctrl,
+                              decoration: InputDecoration(
+                                border: new OutlineInputBorder(
+                                    borderSide:
+                                        new BorderSide(color: Colors.teal)),
+                                hintText:
+                                    'Enter your customized color and size -- ',
+                              ),
+                            ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          if (detail.isMadeToOrder == 0)
+                            sp.isLogin() == true
+                                ? SizedBox(
+                                    width: 0.95.sw,
+                                    height: 0.08.sh,
+                                    child: button(() {
+                                      if (detail.productTypeId == 1) {
+                                        _addToCart(
+                                            // print('${detail.yjProductId}');
+                                            // print('${detail.clientId}');
+                                            '${detail.yjProductId}',
+                                            '${detail.clientId}',
+                                            'Products',
+                                            ctrl.text,
+                                            '',
+                                            1.toString(),
+                                            '',
+                                            '',
+                                            sp.getUserId().toString());
+                                      } else if (detail.productTypeId == 2) {
+                                        _addToCart(
+                                            // print('${detail.yjProductId}');
+                                            // print('${detail.clientId}');
+                                            '${detail.yjProductId}',
+                                            '${detail.clientId}',
+                                            'AutoParts',
+                                            ctrl.text,
+                                            '',
+                                            1.toString(),
+                                            '',
+                                            '',
+                                            sp.getUserId().toString());
+                                      } else if (detail.productTypeId == 3) {
+                                        _addToCart(
+                                            // print('${detail.yjProductId}');
+                                            // print('${detail.clientId}');
+                                            '${detail.yjProductId}',
+                                            '${detail.clientId}',
+                                            'AutoTires',
+                                            ctrl.text,
+                                            '',
+                                            1.toString(),
+                                            '',
+                                            '',
+                                            sp.getUserId().toString());
+                                      } else if (detail.productTypeId == 4) {
+                                        _addToCart(
+                                            // print('${detail.yjProductId}');
+                                            // print('${detail.clientId}');
+                                            '${detail.yjProductId}',
+                                            '${detail.clientId}',
+                                            'Rest',
+                                            ctrl.text,
+                                            '',
+                                            1.toString(),
+                                            '',
+                                            '',
+                                            sp.getUserId().toString());
+                                      }
+                                    }, 'Add to cart', Color(0xff5BC0DE), white))
+                                : SizedBox(
+                                    width: 0.95.sw,
+                                    height: 0.08.sh,
+                                    child: button(() {
+                                      gotoLoginPage();
+                                    }, 'Add to cart', Color(0xff5BC0DE),
+                                        white)),
+                          if (detail.isMadeToOrder != 0)
+                            sp.isLogin() == true
+                                ? SizedBox(
+                                    width: 0.95.sw,
+                                    height: 0.08.sh,
+                                    child: button(() {
+                                      // print('${detail.yjProductId}');
+                                      // print('${detail.clientId}');
+                                      _placeOrder(
+                                          '${detail.yjProductId}',
+                                          '${detail.clientId}',
+                                          'Products',
+                                          'MTO',
+                                          titleCtrl.text,
+                                          qtyCtrl.text,
+                                          selectedDate.toString(),
+                                          imgPath.toString(),
+                                          sp.getUserId().toString(),
+                                          base64Img.toString());
+                                    }, 'Place Order', Color(0xff5BC0DE), white))
+                                : SizedBox(
+                                    width: 0.95.sw,
+                                    height: 0.08.sh,
+                                    child: button(() {
+                                      gotoLoginPage();
+                                    }, 'Place Order', Color(0xff5BC0DE),
+                                        white)),
                           SizedBox(
                             height: 15,
                           ),
@@ -555,8 +751,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     );
                                   },
                                   itemBuilder: (_, i) {
-                                    print(
-                                        'length - $imgBaseUrl${sameList[i].productUrl}');
+                                    // print(
+                                    //     'length - $imgBaseUrl${sameList[i].productUrl}');
                                     return InkWell(
                                       onTap: () {
                                         // print(
@@ -652,6 +848,43 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         ),
                       );
                   }),
+              SizedBox(
+                height: 10,
+              ),
+              // SizedBox(
+              //   height: 20,
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //     children: [
+              //       InkWell(
+              //         onTap:(){
+
+              //         },
+              //         child: SvgPicture.asset(
+              //           wp,
+              //           height: 35,
+              //           color: green,
+              //         ),
+              //       ),
+              //       InkWell(
+              //           onTap: () {},
+              //           child: SvgPicture.asset(fb, height: 35, color: blue)),
+              //       InkWell(
+              //           onTap: () {},
+              //           child: SvgPicture.asset(twitter, height: 35)),
+              //       InkWell(
+              //           onTap: () {
+              //             customLaunch(
+              //                 'mailto:your@email.com?subject=MTO Product Details | Altezer.com&body=https://demo20.gowebbi.us/Mobile/ProductDetails?ProductId=${widget.prdId}&ProductTypeId=${widget.prdTypeId}');
+              //           },
+              //           child: SvgPicture.asset(mail, height: 35, color: red)),
+              //     ],
+              //   ),
+              // ),
+
+              SizedBox(
+                height: 30,
+              ),
             ],
           ),
         ),
@@ -659,7 +892,45 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     );
   }
 
+  void _getImage() async {
+    showProgress(context);
+    var uploadImage =
+        await networkcallService.getImage(basedata: base64Img.toString());
+    hideProgress(context);
+  }
+
   void _addToCart(
+    String prdID,
+    String clientId,
+    String orderType,
+    String selectedStyle,
+    String mtoInfo,
+    String qty,
+    String mtoDelivaryDate,
+    String mtoImgPath,
+    String userId,
+  ) async {
+    showProgress(context);
+    var data = await networkcallService.addToCartAPICall(
+      prdID,
+      clientId,
+      orderType,
+      selectedStyle,
+      mtoInfo,
+      qty,
+      mtoDelivaryDate,
+      mtoImgPath,
+      userId,
+    );
+    if (data!) {
+      ctrl.clear();
+      titleCtrl.clear();
+      qtyCtrl.clear();
+    }
+    hideProgress(context);
+  }
+
+  void _placeOrder(
       String prdID,
       String clientId,
       String orderType,
@@ -668,10 +939,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       String qty,
       String mtoDelivaryDate,
       String mtoImgPath,
-      String userId) async {
+      String userId,
+      String img) async {
+    print('PLACE ORDER');
     showProgress(context);
-    // print(
-    //     'addtoCart $prdID $clientId $orderType $selectedStyle $mtoInfo $qty $mtoDelivaryDate $mtoImgPath $userId');
     var data = await networkcallService.addToCartAPICall(
         prdID,
         clientId,
@@ -681,7 +952,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         qty,
         mtoDelivaryDate,
         mtoImgPath,
-        userId);
+        userId,
+        img: img);
+    if (data!) {
+      ctrl.clear();
+      titleCtrl.clear();
+      qtyCtrl.clear();
+    }
     hideProgress(context);
   }
 
@@ -707,6 +984,96 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       _regListId = null;
       _regListVal = null;
       // _regList = [];
+    }
+  }
+
+  Future getImagefromCam() async {
+    final pickedImage = await picker.pickImage(
+        source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    setState(() {
+      if (pickedImage != null) {
+        _image = File(pickedImage.path);
+        imgPath = pickedImage.path;
+        // fileName = _image!.path.split('/').last;
+        // print('fileName cam $fileName');
+        String base64 = 'data:image/jpeg;base64,' +
+            base64Encode(File(imgPath).readAsBytesSync());
+        base64Img = base64;
+        print('img --- $base64Img');
+        Get.back();
+      } else {
+        showToast('Image not picked', red);
+      }
+    });
+  }
+
+  Future getImagefromGallery() async {
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedImage != null) {
+        _image = File(pickedImage.path);
+        // fileName = _image!.path.split('/').last;
+        // print('fileName gal $fileName');
+
+        String base64 = 'data:image/jpeg;base64,' +
+            base64Encode(File(imgPath).readAsBytesSync());
+        base64Img = base64;
+        print('img --- $base64Img');
+        Get.back();
+      } else {
+        showToast('Image not picked', red);
+      }
+    });
+  }
+
+  Future<void> _pickImage() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Your Image'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                ElevatedButton.icon(
+                  label: customText('Camera', black, 15),
+                  onPressed: () {
+                    getImagefromCam();
+                    // _selectImage();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.grey,
+                      onPrimary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  icon: Icon(Icons.camera),
+                ),
+                ElevatedButton.icon(
+                  label: customText('Gallery', black, 15),
+                  onPressed: () {
+                    getImagefromGallery();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.grey,
+                      onPrimary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  icon: Icon(Icons.file_present),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void customLaunch(command) async {
+    if (await canLaunch(command)) {
+      await launch(command);
+    } else {
+      print(' could not launch $command');
     }
   }
 }

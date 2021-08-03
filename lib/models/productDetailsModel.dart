@@ -101,7 +101,7 @@ class Detail {
         sellerName: json["Seller_Name"] ?? '',
         sellerNameMobile: json["Seller_Name_Mobile"] ?? '',
         inStockOrOutOfStock: json["InStock_Or_OutOfStock"] ?? '',
-        clientId: json["client_id"] ?? 0,
+        clientId: json["Client_Id"] ?? 0,
         forSaleBy: json["for_sale_by"] ?? '',
         brand: json["brand"] ?? '',
         description: json["description"] ?? '',

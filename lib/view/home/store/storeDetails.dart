@@ -44,6 +44,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      _getBannerImage();
       _getData();
       _getSortData();
       cartBox();
@@ -58,7 +59,6 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
         _getPrdData();
       }
     });
-    _getBannerImage();
   }
 
   @override
@@ -75,13 +75,13 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    CachedNetworkImage(
+                 Obx(()=>   CachedNetworkImage(
                       imageUrl: "$imgBaseUrl${result.value.imgCover}",
                       placeholder: (context, url) =>
                           Center(child: CircularProgressIndicator()),
                       errorWidget: (context, url, error) =>
                           Image.network(imageNotFound),
-                    ),
+                    ),),
                     SizedBox(
                       height: 15,
                     ),
@@ -171,7 +171,8 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .toList()
                                   .first
                                   .prdCatSubId
-                                  .toString();  _pageIndex = 0;
+                                  .toString();
+                              _pageIndex = 0;
                               print('_subCatId  $_subCatId');
                               _getPrdData();
                             },
@@ -217,7 +218,8 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .first
                                   .sortId
                                   .toString();
-                              print('_sortId  $_sortId');  _pageIndex = 0;
+                              print('_sortId  $_sortId');
+                              _pageIndex = 0;
                               _getPrdData();
                             },
                           ),

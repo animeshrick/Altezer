@@ -36,6 +36,7 @@ import 'package:altezar/models/getUserInfo.dart';
 import 'package:altezar/models/getdealsList.dart';
 import 'package:altezar/models/groceryStateList.dart';
 import 'package:altezar/models/groceryStoreList.dart';
+import 'package:altezar/models/imgModel.dart';
 import 'package:altezar/models/invoiceModel.dart';
 import 'package:altezar/models/myOrderModel.dart';
 import 'package:altezar/models/orderDetailsModel.dart';
@@ -62,6 +63,35 @@ class Networkcall {
 
   factory Networkcall() {
     return networkcall;
+  }
+
+  /// ------------- prd img ------------------
+  Future<UploadImgModel?> getImage({
+    required String basedata,
+  }) async {
+    Map<String, dynamic> data = {
+      'basedata': basedata,
+    };
+    final response =
+        await MyClient().post(Uri.parse(imgPrdDetails), body: data);
+    final resp = response.body;
+    print('$imgPrdDetails --> $data = $resp');
+    final myResponse = UploadImgModel.fromJson(jsonDecode(resp));
+    try {
+      if (response.statusCode == 200) {
+        if (myResponse.status == success) {
+          return myResponse;
+        } else {
+          showToast(myResponse.message, red);
+          return null;
+        }
+      } else {
+        throw response.body;
+      }
+    } on SocketException {
+      showToast(internetError, red);
+      throw internetError;
+    }
   }
 
   /// ---------- track orders ----------------
@@ -1522,7 +1552,8 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.storeCatList;
         } else {
-          return showToast(myResponse.message, red);
+          showToast(myResponse.message, red);
+          return null;
         }
       } else {
         throw response.body;
@@ -1535,19 +1566,21 @@ class Networkcall {
 
   /// ----------------------- add to cart --------------------------
   Future<bool?> addToCartAPICall(
-      String productId,
-      String clientId,
-      String orderType,
-      String selectedStyle,
-      String mtoInfo,
-      String qty,
-      String mtoDelivaryDate,
-      String mtoImgPath,
-      String userId) async {
+    String productId,
+    String clientId,
+    String orderType,
+    String selectedStyle,
+    String mtoInfo,
+    String qty,
+    String mtoDelivaryDate,
+    String mtoImgPath,
+    String userId,
+    {String? img,}
+  ) async {
     try {
       Map<String, dynamic> data = {
         'product_id': productId,
-        'Client_id': clientId,
+        'client_id': clientId,
         'order_Type': orderType,
         'Selected_Size_Color_Style': selectedStyle,
         'MTO_Information': mtoInfo,
@@ -1555,6 +1588,7 @@ class Networkcall {
         'MTO_DeliveryDate': mtoDelivaryDate,
         'MTO_Image_Path': mtoImgPath,
         'YJUserId': userId,
+        'basedata': img
       };
 
       final response = await MyClient().post(Uri.parse(addtoCart), body: data);
@@ -1600,14 +1634,14 @@ class Networkcall {
       final response =
           await MyClient().post(Uri.parse(getDetailsOfPages), body: data);
       final resp = response.body;
-      print(' $getDetailsOfPages $data $resp');
+      // print(' $getDetailsOfPages $data $resp');
       final myResponse = ProductDetails.fromJson(jsonDecode(resp));
 
       if (response.statusCode == 200) {
         if (myResponse.status == success) {
           return myResponse.productlist;
         } else {
-          showToast('${myResponse.message}', red);
+          showToast('No product found', red);
           return [];
         }
       } else {
@@ -1631,7 +1665,7 @@ class Networkcall {
       final response =
           await MyClient().post(Uri.parse(getProductDetails), body: data);
       var resp = response.body;
-      print(' get all prd details $getProductDetails -- $data -- $resp');
+      // print(' get all prd details $getProductDetails -- $data -- $resp');
       if (response.statusCode == 200) {
         final myResponse = ProdDetailModel.fromJson(jsonDecode(resp));
         if (myResponse.status == success) {
@@ -1715,7 +1749,7 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.storedataList;
         } else {
-          showToast(myResponse.message, red);
+          showToast('No product found', red);
           return [];
         }
       } else {
@@ -1743,7 +1777,7 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.dealList;
         } else {
-          showToast(myResponse.message, red);
+          showToast('No product found', red);
           return [];
         }
       } else {
@@ -1768,7 +1802,8 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.resTypelist;
         } else {
-          return showToast(myResponse.message, red);
+          showToast(myResponse.message, red);
+          return [];
         }
       } else {
         throw response.body;
@@ -1796,7 +1831,7 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.restList;
         } else {
-          showToast(myResponse.message, red);
+          showToast('No product found', red);
           return [];
         }
       } else {
@@ -1820,7 +1855,8 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.autoPartsCategory;
         } else {
-          return showToast(myResponse.message, red);
+          showToast(myResponse.message, red);
+          return [];
         }
       } else {
         throw response.body;
@@ -1872,7 +1908,8 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.groceryStoreList;
         } else {
-          return showToast(myResponse.message, red);
+          showToast('No product found', red);
+          return [];
         }
       } else {
         throw response.body;
@@ -1907,7 +1944,7 @@ class Networkcall {
         if (myResponse.status == success) {
           return myResponse.prdListData;
         } else {
-          showToast(myResponse.message, red);
+          showToast('No product found', red);
           return [];
         }
       } else {
@@ -1972,7 +2009,7 @@ class Networkcall {
         if (myresponse.status == success) {
           return myresponse.autoPartsList;
         } else {
-          showToast(myresponse.message, red);
+          showToast('No product found', red);
           return [];
         }
       } else {
