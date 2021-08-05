@@ -75,13 +75,15 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                 Obx(()=>   CachedNetworkImage(
-                      imageUrl: "$imgBaseUrl${result.value.imgCover}",
-                      placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) =>
-                          Image.network(imageNotFound),
-                    ),),
+                    Obx(
+                      () => CachedNetworkImage(
+                        imageUrl: "$imgBaseUrl${result.value.imgCover}",
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) =>
+                            Image.network(imageNotFound),
+                      ),
+                    ),
                     SizedBox(
                       height: 15,
                     ),
@@ -125,6 +127,8 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .productCategoryId
                                   .toString();
                               _subCatName = null;
+                              _subCatId = null;
+                              _prdList.clear();
                               _getSubCat();
                               _pageIndex = 0;
                               print('productId - $_catId');
@@ -172,6 +176,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .first
                                   .prdCatSubId
                                   .toString();
+                              _prdList.clear();
                               _pageIndex = 0;
                               print('_subCatId  $_subCatId');
                               _getPrdData();
@@ -218,6 +223,7 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
                                   .first
                                   .sortId
                                   .toString();
+                              _prdList.clear();
                               print('_sortId  $_sortId');
                               _pageIndex = 0;
                               _getPrdData();
@@ -450,10 +456,11 @@ class _StoreDetailsPageState extends State<StoreDetailsPage> {
         _sortId ?? '0',
         _pageIndex.toString(),
         widget.storeId.toString());
+    _prdList.addAll(data!);
     hideProgress(context);
-    if (data != null) {
-      _prdList(data);
-    }
+    // if (data != null) {
+    //   _prdList(data);
+    // }
   }
 
   void _getBannerImage() async {

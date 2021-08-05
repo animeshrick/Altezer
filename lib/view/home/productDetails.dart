@@ -35,7 +35,7 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  late String imgPath, fileName;
+  String? imgPath, fileName;
   File? _image;
   final picker = ImagePicker();
   DateTime selectedDate = DateTime.now();
@@ -940,7 +940,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       String mtoDelivaryDate,
       String mtoImgPath,
       String userId,
-      String img) async {
+      String? img) async {
     print('PLACE ORDER');
     showProgress(context);
     var data = await networkcallService.addToCartAPICall(
@@ -997,7 +997,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         // fileName = _image!.path.split('/').last;
         // print('fileName cam $fileName');
         String base64 = 'data:image/jpeg;base64,' +
-            base64Encode(File(imgPath).readAsBytesSync());
+            base64Encode(File(imgPath!).readAsBytesSync());
         base64Img = base64;
         print('img --- $base64Img');
         Get.back();
@@ -1016,7 +1016,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         // print('fileName gal $fileName');
 
         String base64 = 'data:image/jpeg;base64,' +
-            base64Encode(File(imgPath).readAsBytesSync());
+            base64Encode(File(imgPath!).readAsBytesSync());
         base64Img = base64;
         print('img --- $base64Img');
         Get.back();

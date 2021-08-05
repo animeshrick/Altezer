@@ -523,11 +523,9 @@ class _ShoppingState extends State<Shopping> {
                                                               .toString());
                                                     }, 'Add', priceTextColor,
                                                       white)
-                                                  : cartButton(
-                                                      () => Get.to(
-                                                          () => SignUp()),
-                                                      'Add',
-                                                      priceTextColor,
+                                                  : cartButton(() {
+                                                      gotoLoginPage();
+                                                    }, 'Add', priceTextColor,
                                                       white),
                                             if (_prdList[i].prdId == '2')
                                               sp.isLogin() == true

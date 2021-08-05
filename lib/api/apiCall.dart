@@ -1588,9 +1588,9 @@ class Networkcall {
         'MTO_DeliveryDate': mtoDelivaryDate,
         'MTO_Image_Path': mtoImgPath,
         'YJUserId': userId,
-        'basedata': img
+        'basedata': img??''
       };
-
+      print('param- $data');
       final response = await MyClient().post(Uri.parse(addtoCart), body: data);
       final resp = response.body;
       print('$addtoCart $data $resp');

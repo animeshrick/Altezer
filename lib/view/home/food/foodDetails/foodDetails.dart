@@ -132,6 +132,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                                   .productCategoryId
                                   .toString();
                               _subCatName = null;
+                              _subCatId = null;
+                              _prdList.clear();
                               _getSubCat();
                               _pageIndex = 0;
                               print('productId - $_catId');
@@ -178,6 +180,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                                   .first
                                   .prdCatSubId
                                   .toString();
+                              _prdList.clear();
                               print('_subCatId  $_subCatId');
                               _pageIndex = 0;
                               _getPrdData();
@@ -224,6 +227,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                                   .first
                                   .sortId
                                   .toString();
+                              _prdList.clear();
                               print('_sortId  $_sortId');
                               _pageIndex = 0;
                               _getPrdData();
@@ -422,6 +426,7 @@ class _FoodDetailsState extends State<FoodDetails> {
     _subCatList = (await networkcallService.getSubCatAPICall(_catId!))!;
     hideProgress(context);
     setState(() {});
+    _getPrdData();
   }
 
   void _getSortData() async {
@@ -436,17 +441,19 @@ class _FoodDetailsState extends State<FoodDetails> {
 
   void _getPrdData() async {
     showProgress(context);
-    final data = await networkcallService.getprdDetails(
+    var data = (await networkcallService.getprdDetails(
         _catId ?? '0',
         searchController.text,
         _subCatId ?? '0',
         _sortId ?? '0',
         _pageIndex.toString(),
-        widget.storeId.toString());
+        widget.storeId.toString()))!;
+    _prdList.addAll(data);
+    // _prdList(data);
     hideProgress(context);
-    if (data != null) {
-      _prdList(data);
-    }
+    // if (data != null) {
+    //   _prdList(data);
+    // }
   }
 
   void _addToCart(
